@@ -58,7 +58,11 @@
       }
       setStatus(createAccount ? "Creating account..." : "Signing in...", "Please wait.");
       const result = createAccount
-        ? await client.auth.signUp({ email, password })
+        ? await client.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: window.location.href }
+          })
         : await client.auth.signInWithPassword({ email, password });
       if (result.error) {
         setStatus("Sync sign-in failed", result.error.message);
