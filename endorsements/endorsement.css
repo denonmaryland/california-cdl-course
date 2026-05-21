@@ -1,0 +1,133 @@
+.endorsement-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.back-link {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: white;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.endorsement-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 0.42fr);
+}
+
+.endorsement-badge {
+  display: grid;
+  min-height: 250px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(31, 138, 112, 0.18), rgba(37, 92, 153, 0.16)),
+    #ffffff;
+}
+
+.endorsement-badge strong {
+  display: grid;
+  width: clamp(130px, 24vw, 190px);
+  height: clamp(130px, 24vw, 190px);
+  place-items: center;
+  border: 8px solid var(--ink);
+  border-radius: 50%;
+  font-size: clamp(4rem, 13vw, 7rem);
+  line-height: 1;
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.endorsement-dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.endorsement-dashboard div {
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfc;
+}
+
+.endorsement-dashboard strong,
+.endorsement-dashboard span {
+  display: block;
+}
+
+.endorsement-dashboard strong {
+  font-size: 1.8rem;
+}
+
+.endorsement-dashboard span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.endorsement-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.42fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.endorsement-module {
+  border-bottom: 1px solid var(--line);
+}
+
+.endorsement-module:last-child {
+  border-bottom: 0;
+}
+
+.module-title-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 1rem;
+  background: #fbfcfc;
+  border-bottom: 1px solid var(--line);
+}
+
+.module-title-row h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.lesson-toggle.static {
+  cursor: default;
+}
+
+.open-body {
+  display: block;
+}
+
+.lesson-card.complete .lesson-index {
+  border-color: var(--green);
+  background: #ebf8f3;
+}
+
+.side-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.side-stack .content-panel {
+  min-height: auto;
+}
+
+@media (max-width: 1040px) {
+  .endorsement-hero,
+  .endorsement-grid,
+  .endorsement-dashboard {
+    grid-template-columns: 1fr;
+  }
+}

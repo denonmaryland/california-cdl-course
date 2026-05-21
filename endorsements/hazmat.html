@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hazardous Materials Endorsement Course</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="./endorsement.css">
+  </head>
+  <body data-course="hazmat">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div><p class="eyebrow" id="courseEyebrow">Endorsement</p><h1 id="courseTitle">Loading...</h1></div>
+      </div>
+      <div class="top-actions"><a class="back-link" href="../index.html">Main Course</a><button class="icon-button" id="resetProgress" type="button" title="Reset progress" aria-label="Reset progress"><span aria-hidden="true">↺</span></button></div>
+    </header>
+    <section class="sync-strip" aria-label="Cloud progress sync">
+      <div><strong id="cloudStatus">Local progress only</strong><span id="cloudDetail">Sign in after setup to sync this course across devices.</span></div>
+      <div class="sync-controls"><input id="cloudEmail" type="email" autocomplete="email" placeholder="Email"><input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Password"><button class="secondary-button" id="cloudSignIn" type="button">Sign In</button><button class="secondary-button" id="cloudSignUp" type="button">Create Login</button><button class="secondary-button hidden" id="cloudSignOut" type="button">Sign Out</button></div>
+    </section>
+    <main class="course-shell">
+      <section class="dashboard-band endorsement-hero">
+        <div class="dashboard-copy">
+          <p class="eyebrow" id="courseSource"></p>
+          <h2 id="courseTitleHero">H Endorsement</h2>
+          <p id="courseSubtitle"></p>
+          <div class="endorsement-dashboard"><div><strong id="progressValue">0%</strong><span>course complete</span></div><div><strong id="scoreValue">0%</strong><span>best quiz score</span></div></div>
+        </div>
+        <div class="endorsement-badge"><strong>H</strong></div>
+      </section>
+      <section class="endorsement-grid">
+        <section class="content-panel"><div id="lessonList"></div></section>
+        <aside class="side-stack">
+          <section class="content-panel"><div class="panel-head"><div><p class="eyebrow">Practice</p><h2>Endorsement Quiz</h2></div><button class="primary-button" id="startQuiz" type="button">Start Quiz</button></div><div id="quizArea" class="practice-area"></div></section>
+          <section class="content-panel"><div class="panel-head"><div><p class="eyebrow">Recall</p><h2>Flashcards</h2></div></div><div id="flashcardArea" class="flashcard-area"></div></section>
+        </aside>
+      </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+    <script src="../cloud-sync.js"></script>
+    <script src="./endorsement-data.js"></script>
+    <script src="./endorsement-course.js"></script>
+    <script>document.getElementById("courseTitleHero").textContent = window.CDL_ENDORSEMENTS.hazmat.title;</script>
+  </body>
+</html>

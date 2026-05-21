@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>California Class A CDL Course</title>
+    <meta name="description" content="A local study course built from the California Commercial Driver Handbook for Class A CDL permit prep.">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to course</a>
+
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div>
+          <p class="eyebrow">California DMV handbook based</p>
+          <h1>Class A CDL Course</h1>
+        </div>
+      </div>
+      <div class="top-actions" role="group" aria-label="Course actions">
+        <button class="icon-button" id="resetProgress" type="button" title="Reset progress" aria-label="Reset progress">
+          <span aria-hidden="true">↺</span>
+        </button>
+        <button class="primary-button" id="continueButton" type="button">Continue</button>
+      </div>
+    </header>
+
+    <section class="sync-strip" aria-label="Cloud progress sync">
+      <div>
+        <strong id="cloudStatus">Local progress only</strong>
+        <span id="cloudDetail">Sign in after setup to sync this course across devices.</span>
+      </div>
+      <div class="sync-controls">
+        <input id="cloudEmail" type="email" autocomplete="email" placeholder="Email">
+        <input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Password">
+        <button class="secondary-button" id="cloudSignIn" type="button">Sign In</button>
+        <button class="secondary-button" id="cloudSignUp" type="button">Create Login</button>
+        <button class="secondary-button hidden" id="cloudSignOut" type="button">Sign Out</button>
+      </div>
+    </section>
+
+    <main id="main" class="course-shell">
+      <section class="dashboard-band" aria-labelledby="dashboardTitle">
+        <div class="dashboard-copy">
+          <p class="eyebrow">Permit target</p>
+          <h2 id="dashboardTitle">General Knowledge, Air Brakes, Combination Vehicles</h2>
+          <p>
+            Built for the California Class A path: learn the handbook in modules, prove recall with short checks,
+            then use timed practice and missed-question review until the weak spots shrink.
+          </p>
+          <div class="dashboard-metrics" aria-label="Progress summary">
+            <div>
+              <strong id="overallProgress">0%</strong>
+              <span>course complete</span>
+            </div>
+            <div>
+              <strong id="readinessScore">0%</strong>
+              <span>practice readiness</span>
+            </div>
+            <div>
+              <strong id="streakCount">0</strong>
+              <span>study day streak</span>
+            </div>
+          </div>
+        </div>
+        <div class="truck-visual" aria-label="Course coverage visual">
+          <svg viewBox="0 0 560 300" role="img" aria-labelledby="truckTitle truckDesc">
+            <title id="truckTitle">Commercial vehicle study map</title>
+            <desc id="truckDesc">A stylized tractor trailer connected to topic markers for inspection, air brakes, cargo, and combination vehicles.</desc>
+            <defs>
+              <linearGradient id="cabGradient" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0" stop-color="#1f8a70"/>
+                <stop offset="1" stop-color="#255c99"/>
+              </linearGradient>
+            </defs>
+            <rect x="30" y="130" width="305" height="72" rx="8" fill="#f2f6f4" stroke="#253038" stroke-width="4"/>
+            <rect x="346" y="102" width="132" height="100" rx="10" fill="url(#cabGradient)" stroke="#253038" stroke-width="4"/>
+            <path d="M476 138h42l22 30v34h-64z" fill="#ffce59" stroke="#253038" stroke-width="4"/>
+            <path d="M364 123h68v40h-68z" fill="#dff3ff" stroke="#253038" stroke-width="4"/>
+            <path d="M31 202h504" stroke="#253038" stroke-width="6" stroke-linecap="round"/>
+            <g fill="#253038">
+              <circle cx="100" cy="214" r="24"/>
+              <circle cx="268" cy="214" r="24"/>
+              <circle cx="383" cy="214" r="24"/>
+              <circle cx="491" cy="214" r="24"/>
+            </g>
+            <g fill="#ffffff">
+              <circle cx="100" cy="214" r="10"/>
+              <circle cx="268" cy="214" r="10"/>
+              <circle cx="383" cy="214" r="10"/>
+              <circle cx="491" cy="214" r="10"/>
+            </g>
+            <path d="M134 116c44-58 152-72 226-28" fill="none" stroke="#d9573b" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 12"/>
+            <path d="M382 84c42-20 76-18 118 2" fill="none" stroke="#1f8a70" stroke-width="5" stroke-linecap="round"/>
+            <g font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="#253038">
+              <text x="58" y="78">Inspect</text>
+              <text x="212" y="54">Air</text>
+              <text x="360" y="64">Couple</text>
+              <text x="425" y="260">Control</text>
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <nav class="mode-tabs" aria-label="Course modes">
+        <button class="tab-button active" data-mode="learn" type="button">Learn</button>
+        <button class="tab-button" data-mode="practice" type="button">Practice</button>
+        <button class="tab-button" data-mode="flashcards" type="button">Flashcards</button>
+        <button class="tab-button" data-mode="endorsements" type="button">Endorsements</button>
+        <button class="tab-button" data-mode="review" type="button">Review</button>
+        <button class="tab-button" data-mode="sources" type="button">Sources</button>
+      </nav>
+
+      <section class="workspace">
+        <aside class="module-rail" aria-label="Course modules">
+          <div class="rail-head">
+            <h2>Modules</h2>
+            <span id="moduleCount"></span>
+          </div>
+          <div id="moduleList" class="module-list"></div>
+        </aside>
+
+        <section class="content-panel" id="learnPanel" data-panel="learn">
+          <div class="lesson-toolbar">
+            <div>
+              <p class="eyebrow" id="moduleMeta">Module</p>
+              <h2 id="moduleTitle">Loading course...</h2>
+            </div>
+            <div class="lesson-actions">
+              <button class="secondary-button" id="prevModule" type="button">Previous</button>
+              <button class="secondary-button" id="nextModule" type="button">Next</button>
+            </div>
+          </div>
+          <div id="moduleSummary" class="module-summary"></div>
+          <div id="lessonList" class="lesson-stack"></div>
+        </section>
+
+        <section class="content-panel hidden" id="practicePanel" data-panel="practice">
+          <div class="panel-head">
+            <p class="eyebrow">Practice test</p>
+            <h2>Build exam stamina</h2>
+          </div>
+          <div class="practice-controls">
+            <label>
+              Test type
+              <select id="practiceType">
+                <option value="class-a">Class A Permit Mix</option>
+                <option value="general">General Knowledge</option>
+                <option value="air-brakes">Air Brakes</option>
+                <option value="combination">Combination Vehicles</option>
+                <option value="cargo">Cargo and Securement</option>
+                <option value="endorsements">Optional Endorsements</option>
+                <option value="endorsement-doubles">Doubles/Triples T</option>
+                <option value="endorsement-tanker">Tanker N</option>
+                <option value="endorsement-hazmat">HazMat H</option>
+                <option value="endorsement-passenger">Passenger P</option>
+                <option value="endorsement-school">School Bus S</option>
+                <option value="missed">Missed Questions</option>
+              </select>
+            </label>
+            <label>
+              Question count
+              <select id="questionCount">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+              </select>
+            </label>
+            <button class="primary-button" id="startPractice" type="button">Start</button>
+          </div>
+          <div id="practiceArea" class="practice-area"></div>
+        </section>
+
+        <section class="content-panel hidden" id="flashcardsPanel" data-panel="flashcards">
+          <div class="panel-head">
+            <p class="eyebrow">Active recall</p>
+            <h2>Flashcards due today</h2>
+          </div>
+          <div id="flashcardArea" class="flashcard-area"></div>
+        </section>
+
+        <section class="content-panel hidden" id="endorsementsPanel" data-panel="endorsements">
+          <div class="panel-head">
+            <p class="eyebrow">Deep study</p>
+            <h2>Standalone endorsement courses</h2>
+          </div>
+          <div id="endorsementsArea" class="sources-area"></div>
+        </section>
+
+        <section class="content-panel hidden" id="reviewPanel" data-panel="review">
+          <div class="panel-head">
+            <p class="eyebrow">Weak spots</p>
+            <h2>Missed-question review</h2>
+          </div>
+          <div id="reviewArea" class="review-area"></div>
+        </section>
+
+        <section class="content-panel hidden" id="sourcesPanel" data-panel="sources">
+          <div class="panel-head">
+            <p class="eyebrow">Traceability</p>
+            <h2>Handbook and online references</h2>
+          </div>
+          <div id="sourcesArea" class="sources-area"></div>
+        </section>
+      </section>
+    </main>
+
+    <template id="lessonTemplate">
+      <article class="lesson-card">
+        <button class="lesson-toggle" type="button">
+          <span class="lesson-index"></span>
+          <span class="lesson-name"></span>
+          <span class="lesson-status"></span>
+        </button>
+        <div class="lesson-body">
+          <p class="lesson-summary"></p>
+          <div class="lesson-grid">
+            <div>
+              <h3>Must Know</h3>
+              <ul class="must-know"></ul>
+            </div>
+            <div>
+              <h3>Memory Hook</h3>
+              <p class="memory-hook"></p>
+              <h3>Drill</h3>
+              <p class="drill-text"></p>
+            </div>
+          </div>
+          <div class="quick-check"></div>
+          <button class="complete-button" type="button">Mark Complete</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+    <script src="./cloud-sync.js"></script>
+    <script src="./course-data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
