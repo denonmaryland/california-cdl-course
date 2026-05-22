@@ -54,6 +54,8 @@ Project folder:
 - Module time labels show estimated reading time and a separate drill/study estimate. The course cards are intentionally compact, so the old 30-60 minute labels were too high for the visible module text.
 - The main course now includes expanded handbook-backed teaching blocks inside each lesson: Handbook Lesson, DMV Test Angle, On-The-Road Habit, and Common Traps.
 - Quick-check answers and endorsement quiz answers are shuffled so the correct answer is not always in the first position.
+- Lessons include teach-back notes and confidence markers so recall can be practiced, saved, and synced across devices.
+- The visual system uses a light theme with color-coded learning sections, richer cards, and shared styling across the main and endorsement courses.
 - Cloud progress sync uses Supabase and GitHub Pages; local progress still works if you are not signed in.
 
 This is a prep tool, not an official DMV product. It cannot guarantee a passing score, but it is designed around the handbook, official sample-test topic signals, active recall, spaced repetition, and weak-topic review.

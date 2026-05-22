@@ -10,7 +10,7 @@
   align-items: center;
   padding: 0.65rem 0.85rem;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   color: var(--ink);
   background: white;
   text-decoration: none;
@@ -26,23 +26,31 @@
   min-height: 250px;
   place-items: center;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 14px;
   background:
-    linear-gradient(135deg, rgba(31, 138, 112, 0.18), rgba(37, 92, 153, 0.16)),
+    linear-gradient(135deg, rgba(31, 157, 122, 0.2), rgba(47, 111, 221, 0.16), rgba(246, 189, 56, 0.14)),
     #ffffff;
 }
 
 .endorsement-badge strong {
   display: grid;
-  width: clamp(130px, 24vw, 190px);
-  height: clamp(130px, 24vw, 190px);
+  width: 170px;
+  height: 170px;
   place-items: center;
   border: 8px solid var(--ink);
   border-radius: 50%;
-  font-size: clamp(4rem, 13vw, 7rem);
+  font-size: 6rem;
   line-height: 1;
   background: white;
   box-shadow: var(--shadow);
+}
+
+@media (max-width: 720px) {
+  .endorsement-badge strong {
+    width: 130px;
+    height: 130px;
+    font-size: 4.5rem;
+  }
 }
 
 .endorsement-dashboard {
@@ -55,8 +63,9 @@
 .endorsement-dashboard div {
   padding: 0.9rem;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fbfcfc;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffffff, #f7fbfc);
+  box-shadow: var(--soft-shadow);
 }
 
 .endorsement-dashboard strong,
@@ -93,7 +102,8 @@
   gap: 0.75rem;
   align-items: center;
   padding: 1rem;
-  background: #fbfcfc;
+  background:
+    linear-gradient(90deg, rgba(239, 247, 255, 0.94), rgba(255, 255, 255, 0.95));
   border-bottom: 1px solid var(--line);
 }
 
@@ -113,6 +123,10 @@
 .lesson-card.complete .lesson-index {
   border-color: var(--green);
   background: #ebf8f3;
+}
+
+.endorsement-coach {
+  margin-top: 1rem;
 }
 
 .side-stack {

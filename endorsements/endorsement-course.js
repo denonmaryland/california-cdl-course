@@ -110,6 +110,11 @@
                     <p class="drill-text">Close the page and explain this lesson in one minute. Reopen it and fill the gaps.</p>
                   </div>
                 </div>
+                <div class="study-coach endorsement-coach">
+                  <p class="eyebrow">Exam cue</p>
+                  <h3>Turn this into a test answer</h3>
+                  <p>If DMV gives you a scenario about ${escapeHtml(lesson[0]).toLowerCase()}, choose the answer that protects control, inspection discipline, legal compliance, and extra space.</p>
+                </div>
                 <button class="complete-button" data-complete="${id}" ${complete ? "disabled" : ""} type="button">${complete ? "Completed" : "Mark Complete"}</button>
               </div>
             </article>

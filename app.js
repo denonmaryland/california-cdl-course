@@ -170,6 +170,7 @@
       node.querySelector(".memory-hook").textContent = lesson.memory;
       node.querySelector(".drill-text").textContent = lesson.drill;
       renderQuickCheck(node.querySelector(".quick-check"), lesson.check, lesson.id);
+      renderStudyTools(node.querySelector(".study-tools"), lesson);
       const completeButton = node.querySelector(".complete-button");
       completeButton.textContent = state.completedLessons[lesson.id] ? "Completed" : "Mark Complete";
       completeButton.disabled = Boolean(state.completedLessons[lesson.id]);
@@ -182,6 +183,42 @@
         node.classList.toggle("open");
       });
       els.lessonList.appendChild(node);
+    });
+  }
+
+  function renderStudyTools(container, lesson) {
+    const confidence = state.lessonConfidence[lesson.id] || "new";
+    const notes = state.lessonNotes[lesson.id] || "";
+    container.innerHTML = `
+      <section class="study-coach">
+        <div>
+          <p class="eyebrow">Make it stick</p>
+          <h3>Teach-back check</h3>
+          <p>Close the lesson, then explain this idea from memory in plain English. Write the version you would say to another student.</p>
+        </div>
+        <div class="confidence-picker" role="group" aria-label="Lesson confidence">
+          ${["again", "steady", "confident"].map((level) => `
+            <button class="confidence-chip ${confidence === level ? "active" : ""}" data-confidence-level="${level}" type="button">${confidenceLabel(level)}</button>
+          `).join("")}
+        </div>
+        <label class="recall-notes">
+          Recall notes
+          <textarea data-lesson-notes="${escapeAttribute(lesson.id)}" rows="4" placeholder="Explain the lesson without looking. Short, messy, honest notes are perfect.">${escapeHtml(notes)}</textarea>
+        </label>
+      </section>
+    `;
+    Array.from(container.querySelectorAll("[data-confidence-level]")).forEach((button) => {
+      button.addEventListener("click", () => {
+        state.lessonConfidence[lesson.id] = button.dataset.confidenceLevel;
+        saveState();
+        renderActiveModule();
+        renderModules();
+      });
+    });
+    const notesField = container.querySelector("[data-lesson-notes]");
+    notesField.addEventListener("input", () => {
+      state.lessonNotes[lesson.id] = notesField.value;
+      saveState();
     });
   }
 
@@ -699,6 +736,8 @@
         quizHistory: Array.isArray(parsed.quizHistory) ? parsed.quizHistory : [],
         missedQuestions: parsed.missedQuestions || {},
         flashcards: parsed.flashcards || {},
+        lessonConfidence: parsed.lessonConfidence || {},
+        lessonNotes: parsed.lessonNotes || {},
         streak: parsed.streak || { count: 0, lastDate: null }
       };
     } catch (error) {
@@ -708,6 +747,8 @@
         quizHistory: [],
         missedQuestions: {},
         flashcards: {},
+        lessonConfidence: {},
+        lessonNotes: {},
         streak: { count: 0, lastDate: null }
       };
     }
@@ -741,6 +782,8 @@
       quizHistory: Array.isArray(value?.quizHistory) ? value.quizHistory : [],
       missedQuestions: value?.missedQuestions || {},
       flashcards: value?.flashcards || {},
+      lessonConfidence: value?.lessonConfidence || {},
+      lessonNotes: value?.lessonNotes || {},
       streak: value?.streak || { count: 0, lastDate: null }
     };
   }
@@ -758,6 +801,8 @@
       quizHistory: [...remote.quizHistory, ...local.quizHistory].slice(-30),
       missedQuestions,
       flashcards: { ...remote.flashcards, ...local.flashcards },
+      lessonConfidence: { ...remote.lessonConfidence, ...local.lessonConfidence },
+      lessonNotes: { ...remote.lessonNotes, ...local.lessonNotes },
       streak: (local.streak?.count || 0) >= (remote.streak?.count || 0) ? local.streak : remote.streak
     };
   }
@@ -829,6 +874,15 @@
       missed: "Missed Questions"
     };
     return labels[type] || type;
+  }
+
+  function confidenceLabel(level) {
+    const labels = {
+      again: "Review again",
+      steady: "Getting it",
+      confident: "Confident"
+    };
+    return labels[level] || "New";
   }
 
   function startOfToday() {
