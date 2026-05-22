@@ -160,6 +160,7 @@
       node.querySelector(".lesson-name").textContent = lesson.title;
       node.querySelector(".lesson-status").textContent = state.completedLessons[lesson.id] ? "Complete" : "Open";
       node.querySelector(".lesson-summary").textContent = lesson.summary;
+      renderLessonDepth(node.querySelector(".lesson-depth"), lesson.deepDive);
       const mustKnow = node.querySelector(".must-know");
       lesson.mustKnow.forEach((item) => {
         const li = document.createElement("li");
@@ -182,6 +183,26 @@
       });
       els.lessonList.appendChild(node);
     });
+  }
+
+  function renderLessonDepth(container, deepDive) {
+    if (!deepDive) {
+      container.remove();
+      return;
+    }
+    const sections = [
+      ["Handbook Lesson", deepDive.handbook],
+      ["DMV Test Angle", deepDive.testAngle],
+      ["On-The-Road Habit", deepDive.roadHabit],
+      ["Common Traps", deepDive.traps]
+    ].filter(([, items]) => Array.isArray(items) && items.length);
+
+    container.innerHTML = sections.map(([title, items]) => `
+      <section class="depth-section">
+        <h3>${escapeHtml(title)}</h3>
+        ${items.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
+      </section>
+    `).join("");
   }
 
   function renderQuickCheck(container, check, seed) {
@@ -781,7 +802,13 @@
   }
 
   function moduleTimeLabel(module) {
-    const readMinutes = Math.max(5, Math.round(module.lessons.length * 2.5));
+    const depthCount = module.lessons.reduce((sum, lesson) => {
+      if (!lesson.deepDive) return sum;
+      return sum + ["handbook", "testAngle", "roadHabit", "traps"].reduce((sectionSum, key) => {
+        return sectionSum + (Array.isArray(lesson.deepDive[key]) ? lesson.deepDive[key].length : 0);
+      }, 0);
+    }, 0);
+    const readMinutes = Math.max(8, Math.round(module.lessons.length * 3 + depthCount * 1.4));
     const drillMinutes = Math.max(readMinutes + 4, Math.round(readMinutes * 1.7));
     return `${readMinutes} min read · ${drillMinutes} min with drills`;
   }

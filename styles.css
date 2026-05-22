@@ -521,6 +521,33 @@ a {
   color: var(--muted);
 }
 
+.lesson-depth {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1rem 0;
+}
+
+.depth-section {
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.depth-section h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.9rem;
+}
+
+.depth-section p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.depth-section p + p {
+  margin-top: 0.55rem;
+}
+
 .lesson-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);

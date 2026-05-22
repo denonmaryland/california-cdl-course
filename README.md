@@ -43,6 +43,7 @@ Project folder:
 
 - Extracted handbook text: `source/handbook-text.txt`
 - Course content: `course-data.js`
+- Expanded handbook lesson layer: `course-deep-dive.js`
 - App behavior: `app.js`
 - Standalone endorsement content: `endorsements/endorsement-data.js`
 - Standalone endorsement behavior: `endorsements/endorsement-course.js`
@@ -51,6 +52,7 @@ Project folder:
 ## Current Behavior Notes
 
 - Module time labels show estimated reading time and a separate drill/study estimate. The course cards are intentionally compact, so the old 30-60 minute labels were too high for the visible module text.
+- The main course now includes expanded handbook-backed teaching blocks inside each lesson: Handbook Lesson, DMV Test Angle, On-The-Road Habit, and Common Traps.
 - Quick-check answers and endorsement quiz answers are shuffled so the correct answer is not always in the first position.
 - Cloud progress sync uses Supabase and GitHub Pages; local progress still works if you are not signed in.
 
