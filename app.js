@@ -124,7 +124,7 @@
       const progress = Math.round((moduleCompleted / moduleLessons) * 100);
       button.innerHTML = `
         <span class="module-number">${index + 1}</span>
-        <span><strong>${escapeHtml(module.title)}</strong><span>${escapeHtml(module.exam)} · ${module.minutes} min</span></span>
+        <span><strong>${escapeHtml(module.title)}</strong><span>${escapeHtml(module.exam)} · ${escapeHtml(moduleTimeLabel(module))}</span></span>
         <span class="module-progress">${progress}%</span>
       `;
       button.addEventListener("click", () => {
@@ -140,7 +140,7 @@
   function renderActiveModule() {
     const module = getActiveModule();
     const moduleIndex = COURSE.modules.findIndex((item) => item.id === module.id);
-    els.moduleMeta.textContent = `Module ${moduleIndex + 1} · ${module.exam} · ${module.minutes} min`;
+    els.moduleMeta.textContent = `Module ${moduleIndex + 1} · ${module.exam} · ${moduleTimeLabel(module)}`;
     els.moduleTitle.textContent = module.title;
     els.prevModule.disabled = moduleIndex === 0;
     els.nextModule.disabled = moduleIndex === COURSE.modules.length - 1;
@@ -168,7 +168,7 @@
       });
       node.querySelector(".memory-hook").textContent = lesson.memory;
       node.querySelector(".drill-text").textContent = lesson.drill;
-      renderQuickCheck(node.querySelector(".quick-check"), lesson.check);
+      renderQuickCheck(node.querySelector(".quick-check"), lesson.check, lesson.id);
       const completeButton = node.querySelector(".complete-button");
       completeButton.textContent = state.completedLessons[lesson.id] ? "Completed" : "Mark Complete";
       completeButton.disabled = Boolean(state.completedLessons[lesson.id]);
@@ -184,7 +184,7 @@
     });
   }
 
-  function renderQuickCheck(container, check) {
+  function renderQuickCheck(container, check, seed) {
     container.innerHTML = `
       <h3>Quick Check</h3>
       <p>${escapeHtml(check.question)}</p>
@@ -193,22 +193,24 @@
     `;
     const options = container.querySelector(".quick-check-options");
     const feedback = container.querySelector(".feedback");
-    check.options.forEach((option, index) => {
+    const orderedOptions = stableShuffleChoices(check.options, check.answer, seed);
+    orderedOptions.forEach((option) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "answer-button";
-      button.textContent = option;
+      button.textContent = option.text;
       button.addEventListener("click", () => {
         Array.from(options.children).forEach((child) => {
           child.disabled = true;
           child.classList.remove("correct", "incorrect");
         });
-        if (index === check.answer) {
+        if (option.correct) {
           button.classList.add("correct");
           feedback.textContent = check.explanation;
         } else {
           button.classList.add("incorrect");
-          options.children[check.answer].classList.add("correct");
+          const correctIndex = orderedOptions.findIndex((item) => item.correct);
+          options.children[correctIndex].classList.add("correct");
           feedback.textContent = check.explanation;
         }
       });
@@ -238,7 +240,9 @@
 
   function startPractice(type, count) {
     const pool = getQuestionPool(type);
-    const selected = shuffle(pool).slice(0, Math.min(count, pool.length));
+    const selected = shuffle(pool)
+      .slice(0, Math.min(count, pool.length))
+      .map(shufflePracticeChoices);
     practiceSession = {
       type,
       questions: selected,
@@ -744,6 +748,42 @@
       [array[index], array[next]] = [array[next], array[index]];
     }
     return array;
+  }
+
+  function shufflePracticeChoices(question) {
+    const ordered = shuffleChoices(question.choices, question.answer);
+    return {
+      ...question,
+      choices: ordered.map((choice) => choice.text),
+      answer: ordered.findIndex((choice) => choice.correct)
+    };
+  }
+
+  function shuffleChoices(choices, correctIndex) {
+    return shuffle(choices.map((text, index) => ({ text, correct: index === correctIndex })));
+  }
+
+  function stableShuffleChoices(choices, correctIndex, seed) {
+    const array = choices.map((text, index) => ({ text, correct: index === correctIndex }));
+    let value = hashString(seed || choices.join("|"));
+    for (let index = array.length - 1; index > 0; index -= 1) {
+      value = (value * 1664525 + 1013904223) >>> 0;
+      const next = value % (index + 1);
+      [array[index], array[next]] = [array[next], array[index]];
+    }
+    return array;
+  }
+
+  function hashString(value) {
+    return String(value).split("").reduce((hash, char) => {
+      return ((hash << 5) - hash + char.charCodeAt(0)) >>> 0;
+    }, 2166136261);
+  }
+
+  function moduleTimeLabel(module) {
+    const readMinutes = Math.max(5, Math.round(module.lessons.length * 2.5));
+    const drillMinutes = Math.max(readMinutes + 4, Math.round(readMinutes * 1.7));
+    return `${readMinutes} min read · ${drillMinutes} min with drills`;
   }
 
   function labelForPractice(type) {

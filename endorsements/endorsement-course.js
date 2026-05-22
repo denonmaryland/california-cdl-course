@@ -57,7 +57,9 @@
     document.getElementById("startQuiz").addEventListener("click", () => {
       quiz = {
         current: 0,
-        questions: shuffle(course.questions).slice(0, Math.min(10, course.questions.length)),
+        questions: shuffle(course.questions)
+          .slice(0, Math.min(10, course.questions.length))
+          .map(shuffleQuestionChoices),
         answers: {}
       };
       renderQuiz();
@@ -273,6 +275,15 @@
       [array[index], array[next]] = [array[next], array[index]];
     }
     return array;
+  }
+
+  function shuffleQuestionChoices(question) {
+    const ordered = shuffle(question[1].map((text, index) => ({ text, correct: index === question[2] })));
+    return [
+      question[0],
+      ordered.map((choice) => choice.text),
+      ordered.findIndex((choice) => choice.correct)
+    ];
   }
 
   function escapeHtml(value) {

@@ -4,6 +4,14 @@ Local responsive study course built from the California Commercial Driver Handbo
 
 ## Open It
 
+Hosted course:
+
+https://denonmaryland.github.io/california-cdl-course/
+
+GitHub repository:
+
+https://github.com/denonmaryland/california-cdl-course
+
 Open `index.html` in a browser, or run a small local server from this folder:
 
 ```sh
@@ -29,11 +37,21 @@ Then visit `http://localhost:5173`.
 
 ## Source Trace
 
+Project folder:
+
+`/Users/mrmaryland/Documents/What Matters/Personal/Career/CDL Journey/California CDL Course`
+
 - Extracted handbook text: `source/handbook-text.txt`
 - Course content: `course-data.js`
 - App behavior: `app.js`
 - Standalone endorsement content: `endorsements/endorsement-data.js`
 - Standalone endorsement behavior: `endorsements/endorsement-course.js`
 - Layout: `styles.css`
+
+## Current Behavior Notes
+
+- Module time labels show estimated reading time and a separate drill/study estimate. The course cards are intentionally compact, so the old 30-60 minute labels were too high for the visible module text.
+- Quick-check answers and endorsement quiz answers are shuffled so the correct answer is not always in the first position.
+- Cloud progress sync uses Supabase and GitHub Pages; local progress still works if you are not signed in.
 
 This is a prep tool, not an official DMV product. It cannot guarantee a passing score, but it is designed around the handbook, official sample-test topic signals, active recall, spaced repetition, and weak-topic review.
