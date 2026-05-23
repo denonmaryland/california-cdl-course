@@ -80,6 +80,7 @@
   }
 
   function renderLessons() {
+    const firstOpenId = lessons.find((lesson) => !state.completed[lesson.id])?.id || lessons[0]?.id;
     els.lessonList.innerHTML = course.modules.map((module, moduleIndex) => `
       <section class="endorsement-module">
         <div class="module-title-row">
@@ -90,13 +91,13 @@
           const id = `${moduleIndex}-${lessonIndex}`;
           const complete = Boolean(state.completed[id]);
           return `
-            <article class="lesson-card ${complete ? "complete" : ""}">
-              <div class="lesson-toggle static">
+            <article class="lesson-card ${complete ? "complete" : ""} ${id === firstOpenId ? "open" : ""}">
+              <button class="lesson-toggle" type="button">
                 <span class="lesson-index">${moduleIndex + 1}.${lessonIndex + 1}</span>
                 <span class="lesson-name">${escapeHtml(lesson[0])}</span>
                 <span class="lesson-status">${complete ? "Complete" : "Study"}</span>
-              </div>
-              <div class="lesson-body open-body">
+              </button>
+              <div class="lesson-body">
                 <p class="lesson-summary">${escapeHtml(lesson[1])}</p>
                 <div class="lesson-grid">
                   <div>
@@ -128,6 +129,11 @@
         state.completed[button.dataset.complete] = true;
         saveState();
         render();
+      });
+    });
+    Array.from(document.querySelectorAll(".lesson-toggle")).forEach((button) => {
+      button.addEventListener("click", () => {
+        button.closest(".lesson-card").classList.toggle("open");
       });
     });
   }

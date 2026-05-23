@@ -6,6 +6,13 @@
     overallProgress: document.getElementById("overallProgress"),
     readinessScore: document.getElementById("readinessScore"),
     streakCount: document.getElementById("streakCount"),
+    focusLessonTitle: document.getElementById("focusLessonTitle"),
+    focusLessonMeta: document.getElementById("focusLessonMeta"),
+    dueCardCount: document.getElementById("dueCardCount"),
+    missedCount: document.getElementById("missedCount"),
+    focusContinue: document.getElementById("focusContinue"),
+    focusPractice: document.getElementById("focusPractice"),
+    focusSimulator: document.getElementById("focusSimulator"),
     continueButton: document.getElementById("continueButton"),
     resetProgress: document.getElementById("resetProgress"),
     moduleCount: document.getElementById("moduleCount"),
@@ -67,22 +74,16 @@
 
   function bindEvents() {
     els.continueButton.addEventListener("click", () => {
-      setMode("learn");
-      const nextLesson = allLessons.find((lesson) => !state.completedLessons[lesson.id]);
-      if (nextLesson) {
-        activeModuleId = nextLesson.moduleId;
-        state.activeModuleId = activeModuleId;
-        saveState();
-        renderAll();
-        setTimeout(() => {
-          const target = document.querySelector(`[data-lesson-id="${nextLesson.id}"]`);
-          if (target) {
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
-            target.classList.add("open");
-          }
-        }, 0);
-      }
+      continueLearning();
     });
+    els.focusContinue.addEventListener("click", continueLearning);
+    els.focusPractice.addEventListener("click", () => {
+      setMode("practice");
+      els.practiceType.value = "class-a";
+      els.questionCount.value = "10";
+      startPractice("class-a", 10);
+    });
+    els.focusSimulator.addEventListener("click", () => setMode("simulator"));
 
     els.resetProgress.addEventListener("click", () => {
       const confirmed = window.confirm("Reset local course progress, quiz history, and flashcard scheduling?");
@@ -122,9 +123,18 @@
 
   function renderDashboard() {
     const percent = Math.round((completedCount() / allLessons.length) * 100);
+    const nextLesson = nextIncompleteLesson();
+    const dueCount = getDueFlashcards().length;
+    const missedCount = Object.keys(state.missedQuestions).length;
     els.overallProgress.textContent = `${percent}%`;
     els.readinessScore.textContent = `${calculateReadiness()}%`;
     els.streakCount.textContent = String(state.streak.count || 0);
+    els.focusLessonTitle.textContent = nextLesson ? nextLesson.title : "Course complete";
+    els.focusLessonMeta.textContent = nextLesson
+      ? `${moduleTitle(nextLesson.moduleId)} · ${lessonStatusLabel(nextLesson.id)}`
+      : "Use mixed practice and review to keep recall sharp.";
+    els.dueCardCount.textContent = String(dueCount);
+    els.missedCount.textContent = String(missedCount);
   }
 
   function renderModules() {
@@ -140,8 +150,8 @@
       const progress = Math.round((moduleCompleted / moduleLessons) * 100);
       button.innerHTML = `
         <span class="module-number">${index + 1}</span>
-        <span><strong>${escapeHtml(module.title)}</strong><span>${escapeHtml(module.exam)} · ${escapeHtml(moduleTimeLabel(module))}</span></span>
-        <span class="module-progress">${progress}%</span>
+        <span class="module-copy"><strong>${escapeHtml(module.title)}</strong><span>${escapeHtml(module.exam)} · ${escapeHtml(moduleTimeLabel(module))}</span></span>
+        <span class="module-progress"><span>${progress}%</span><span class="mini-progress"><span style="width:${progress}%"></span></span></span>
       `;
       button.addEventListener("click", () => {
         activeModuleId = module.id;
@@ -168,10 +178,11 @@
     `;
 
     els.lessonList.innerHTML = "";
+    const defaultOpenLessonId = module.lessons.find((lesson) => !state.completedLessons[lesson.id])?.id || module.lessons[0]?.id;
     module.lessons.forEach((lesson, index) => {
       const node = els.lessonTemplate.content.firstElementChild.cloneNode(true);
       node.dataset.lessonId = lesson.id;
-      if (index === 0 || !state.completedLessons[lesson.id]) node.classList.add("open");
+      if (lesson.id === defaultOpenLessonId) node.classList.add("open");
       node.querySelector(".lesson-index").textContent = `${moduleIndex + 1}.${index + 1}`;
       node.querySelector(".lesson-name").textContent = lesson.title;
       node.querySelector(".lesson-status").textContent = state.completedLessons[lesson.id] ? "Complete" : "Open";
@@ -309,7 +320,37 @@
         <p>${readinessMessage()}</p>
         <div class="score-grid">${historyMarkup}</div>
       </div>
+      <div class="practice-start-grid" aria-label="Quick practice starts">
+        <button class="quick-start-card" data-practice-preset="class-a" type="button">
+          <span>10 questions</span>
+          <strong>Class A baseline</strong>
+          <em>General, air, combination, and cargo</em>
+        </button>
+        <button class="quick-start-card" data-practice-preset="air-brakes" type="button">
+          <span>10 questions</span>
+          <strong>Air Brakes tune-up</strong>
+          <em>Warning devices, leakage, spring brakes</em>
+        </button>
+        <button class="quick-start-card" data-practice-preset="combination" type="button">
+          <span>10 questions</span>
+          <strong>Combination tune-up</strong>
+          <em>Coupling, offtracking, rollover risk</em>
+        </button>
+        <button class="quick-start-card" data-practice-preset="missed" type="button">
+          <span>Review</span>
+          <strong>Missed questions</strong>
+          <em>Only the questions that caught you</em>
+        </button>
+      </div>
     `;
+    Array.from(els.practiceArea.querySelectorAll("[data-practice-preset]")).forEach((button) => {
+      button.addEventListener("click", () => {
+        const type = button.dataset.practicePreset;
+        els.practiceType.value = type;
+        els.questionCount.value = "10";
+        startPractice(type, 10);
+      });
+    });
   }
 
   function startPractice(type, count) {
@@ -842,6 +883,39 @@
 
   function getActiveModule() {
     return COURSE.modules.find((module) => module.id === activeModuleId) || COURSE.modules[0];
+  }
+
+  function continueLearning() {
+    setMode("learn");
+    const nextLesson = nextIncompleteLesson();
+    if (!nextLesson) return;
+    activeModuleId = nextLesson.moduleId;
+    state.activeModuleId = activeModuleId;
+    saveState();
+    renderAll();
+    setTimeout(() => {
+      const target = document.querySelector(`[data-lesson-id="${nextLesson.id}"]`);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.classList.add("open");
+      }
+    }, 0);
+  }
+
+  function nextIncompleteLesson() {
+    return allLessons.find((lesson) => !state.completedLessons[lesson.id]);
+  }
+
+  function moduleTitle(moduleId) {
+    return COURSE.modules.find((module) => module.id === moduleId)?.title || "Current module";
+  }
+
+  function lessonStatusLabel(lessonId) {
+    const confidence = state.lessonConfidence[lessonId];
+    if (confidence === "confident") return "marked confident";
+    if (confidence === "steady") return "getting steady";
+    if (confidence === "again") return "needs another pass";
+    return "not started yet";
   }
 
   function completedCount() {

@@ -66,43 +66,25 @@
               <span>study day streak</span>
             </div>
           </div>
+          <div class="dashboard-actions" aria-label="Recommended study actions">
+            <button class="primary-button" id="focusContinue" type="button">Continue Study</button>
+            <button class="secondary-button" id="focusPractice" type="button">10-Question Drill</button>
+            <button class="secondary-button" id="focusSimulator" type="button">Exam Simulators</button>
+          </div>
         </div>
-        <div class="truck-visual" aria-label="Course coverage visual">
-          <svg viewBox="0 0 560 300" role="img" aria-labelledby="truckTitle truckDesc">
-            <title id="truckTitle">Commercial vehicle study map</title>
-            <desc id="truckDesc">A stylized tractor trailer connected to topic markers for inspection, air brakes, cargo, and combination vehicles.</desc>
-            <defs>
-              <linearGradient id="cabGradient" x1="0" x2="1" y1="0" y2="1">
-                <stop offset="0" stop-color="#1f8a70"/>
-                <stop offset="1" stop-color="#255c99"/>
-              </linearGradient>
-            </defs>
-            <rect x="30" y="130" width="305" height="72" rx="8" fill="#f2f6f4" stroke="#253038" stroke-width="4"/>
-            <rect x="346" y="102" width="132" height="100" rx="10" fill="url(#cabGradient)" stroke="#253038" stroke-width="4"/>
-            <path d="M476 138h42l22 30v34h-64z" fill="#ffce59" stroke="#253038" stroke-width="4"/>
-            <path d="M364 123h68v40h-68z" fill="#dff3ff" stroke="#253038" stroke-width="4"/>
-            <path d="M31 202h504" stroke="#253038" stroke-width="6" stroke-linecap="round"/>
-            <g fill="#253038">
-              <circle cx="100" cy="214" r="24"/>
-              <circle cx="268" cy="214" r="24"/>
-              <circle cx="383" cy="214" r="24"/>
-              <circle cx="491" cy="214" r="24"/>
-            </g>
-            <g fill="#ffffff">
-              <circle cx="100" cy="214" r="10"/>
-              <circle cx="268" cy="214" r="10"/>
-              <circle cx="383" cy="214" r="10"/>
-              <circle cx="491" cy="214" r="10"/>
-            </g>
-            <path d="M134 116c44-58 152-72 226-28" fill="none" stroke="#d9573b" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 12"/>
-            <path d="M382 84c42-20 76-18 118 2" fill="none" stroke="#1f8a70" stroke-width="5" stroke-linecap="round"/>
-            <g font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="#253038">
-              <text x="58" y="78">Inspect</text>
-              <text x="212" y="54">Air</text>
-              <text x="360" y="64">Couple</text>
-              <text x="425" y="260">Control</text>
-            </g>
-          </svg>
+        <div class="focus-panel" aria-label="Today's study route">
+          <div>
+            <p class="eyebrow">Today's route</p>
+            <h3 id="focusLessonTitle">Loading next lesson...</h3>
+            <p id="focusLessonMeta">Your next study step will appear here.</p>
+          </div>
+          <div class="focus-route" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="focus-stats">
+            <div><strong id="dueCardCount">0</strong><span>cards due</span></div>
+            <div><strong id="missedCount">0</strong><span>review misses</span></div>
+          </div>
         </div>
       </section>
 
