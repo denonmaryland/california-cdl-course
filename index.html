@@ -30,16 +30,19 @@
     </header>
 
     <section class="sync-strip" aria-label="Cloud progress sync">
-      <div>
+      <button class="sync-strip-toggle" id="syncStripToggle" type="button" aria-expanded="false" aria-controls="syncStripBody">
         <strong id="cloudStatus">Local progress only</strong>
-        <span id="cloudDetail">Sign in after setup to sync this course across devices.</span>
-      </div>
-      <div class="sync-controls">
-        <input id="cloudEmail" type="email" autocomplete="email" placeholder="Email">
-        <input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Password">
-        <button class="secondary-button" id="cloudSignIn" type="button">Sign In</button>
-        <button class="secondary-button" id="cloudSignUp" type="button">Create Login</button>
-        <button class="secondary-button hidden" id="cloudSignOut" type="button">Sign Out</button>
+        <span id="cloudDetail">Sign in to sync across devices.</span>
+        <span class="sync-strip-chevron" aria-hidden="true">›</span>
+      </button>
+      <div class="sync-strip-body" id="syncStripBody">
+        <div class="sync-controls">
+          <input id="cloudEmail" type="email" autocomplete="email" placeholder="Email">
+          <input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Password">
+          <button class="secondary-button" id="cloudSignIn" type="button">Sign In</button>
+          <button class="secondary-button" id="cloudSignUp" type="button">Create Login</button>
+          <button class="secondary-button hidden" id="cloudSignOut" type="button">Sign Out</button>
+        </div>
       </div>
     </section>
 
@@ -72,19 +75,9 @@
             <button class="secondary-button" id="focusSimulator" type="button">Exam Simulators</button>
           </div>
         </div>
-        <div class="focus-panel" aria-label="Today's study route">
-          <div>
-            <p class="eyebrow">Today's route</p>
-            <h3 id="focusLessonTitle">Loading next lesson...</h3>
-            <p id="focusLessonMeta">Your next study step will appear here.</p>
-          </div>
-          <div class="focus-route" aria-hidden="true">
-            <span></span><span></span><span></span>
-          </div>
-          <div class="focus-stats">
-            <div><strong id="dueCardCount">0</strong><span>cards due</span></div>
-            <div><strong id="missedCount">0</strong><span>review misses</span></div>
-          </div>
+        <div class="focus-panel" aria-label="Today's study plan">
+          <p class="eyebrow">Today's plan</p>
+          <div id="todaysPlan" class="todays-plan" aria-live="polite"></div>
         </div>
       </section>
 

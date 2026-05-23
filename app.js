@@ -6,10 +6,9 @@
     overallProgress: document.getElementById("overallProgress"),
     readinessScore: document.getElementById("readinessScore"),
     streakCount: document.getElementById("streakCount"),
-    focusLessonTitle: document.getElementById("focusLessonTitle"),
-    focusLessonMeta: document.getElementById("focusLessonMeta"),
-    dueCardCount: document.getElementById("dueCardCount"),
-    missedCount: document.getElementById("missedCount"),
+    todaysPlan: document.getElementById("todaysPlan"),
+    syncStripToggle: document.getElementById("syncStripToggle"),
+    syncStripBody: document.getElementById("syncStripBody"),
     focusContinue: document.getElementById("focusContinue"),
     focusPractice: document.getElementById("focusPractice"),
     focusSimulator: document.getElementById("focusSimulator"),
@@ -88,6 +87,14 @@
       setMode("simulator", { scroll: true });
     });
 
+    if (els.syncStripToggle) {
+      els.syncStripToggle.addEventListener("click", () => {
+        const strip = els.syncStripToggle.closest(".sync-strip");
+        const expanded = strip.classList.toggle("open");
+        els.syncStripToggle.setAttribute("aria-expanded", String(expanded));
+      });
+    }
+
     els.resetProgress.addEventListener("click", () => {
       const confirmed = window.confirm("Reset local course progress, quiz history, and flashcard scheduling?");
       if (!confirmed) return;
@@ -126,18 +133,126 @@
 
   function renderDashboard() {
     const percent = Math.round((completedCount() / allLessons.length) * 100);
-    const nextLesson = nextIncompleteLesson();
-    const dueCount = getDueFlashcards().length;
-    const missedCount = Object.keys(state.missedQuestions).length;
     els.overallProgress.textContent = `${percent}%`;
     els.readinessScore.textContent = `${calculateReadiness()}%`;
     els.streakCount.textContent = String(state.streak.count || 0);
-    els.focusLessonTitle.textContent = nextLesson ? nextLesson.title : "Course complete";
-    els.focusLessonMeta.textContent = nextLesson
-      ? `${moduleTitle(nextLesson.moduleId)} · ${lessonStatusLabel(nextLesson.id)}`
-      : "Use mixed practice and review to keep recall sharp.";
-    els.dueCardCount.textContent = String(dueCount);
-    els.missedCount.textContent = String(missedCount);
+    renderTodaysPlan();
+  }
+
+  function buildTodaysPlan() {
+    const actions = [];
+
+    // 1. Due flashcards
+    const dueCards = getDueFlashcards();
+    if (dueCards.length > 0) {
+      actions.push({
+        icon: "🃏",
+        label: `${dueCards.length} flashcard${dueCards.length > 1 ? "s" : ""} due`,
+        detail: "Spaced repetition – keep recall sharp",
+        fn: () => { setMode("flashcards"); scrollToPanel("flashcards"); }
+      });
+    }
+
+    // 2. Missed questions
+    const missedEntries = Object.entries(state.missedQuestions)
+      .filter(([, count]) => count > 0)
+      .sort(([, a], [, b]) => b - a);
+    if (missedEntries.length > 0) {
+      const total = missedEntries.reduce((sum, [, n]) => sum + n, 0);
+      actions.push({
+        icon: "🎯",
+        label: `Review ${total} missed question${total > 1 ? "s" : ""}`,
+        detail: "Hit the weak spots before they stick",
+        fn: () => { setMode("practice"); startPractice("missed", Math.min(total, 20)); scrollToPanel("practice"); }
+      });
+    }
+
+    // 3. Weak topic from recent quiz history
+    if (actions.length < 3) {
+      const recent = state.quizHistory.slice(-12);
+      const topicMap = {};
+      recent.forEach((quiz) => {
+        if (!quiz.topicMap) return;
+        Object.entries(quiz.topicMap).forEach(([topic, data]) => {
+          if (!topicMap[topic]) topicMap[topic] = { correct: 0, total: 0 };
+          topicMap[topic].correct += data.correct || 0;
+          topicMap[topic].total += data.total || 0;
+        });
+      });
+      const weakTopics = Object.entries(topicMap)
+        .filter(([, d]) => d.total >= 3 && d.correct / d.total < 0.75)
+        .sort(([, a], [, b]) => (a.correct / a.total) - (b.correct / b.total));
+      if (weakTopics.length > 0) {
+        const [topic] = weakTopics[0];
+        const pct = Math.round((topicMap[topic].correct / topicMap[topic].total) * 100);
+        actions.push({
+          icon: "📊",
+          label: `Drill weak topic: ${topic}`,
+          detail: `${pct}% recent accuracy — needs reps`,
+          fn: () => { setMode("practice"); startPractice("class-a", 10); scrollToPanel("practice"); }
+        });
+      }
+    }
+
+    // 4. Low-confidence lesson
+    if (actions.length < 3) {
+      const lowConfLesson = allLessons.find(
+        (lesson) => state.lessonConfidence[lesson.id] === "again" && !state.completedLessons[lesson.id]
+      );
+      if (lowConfLesson) {
+        actions.push({
+          icon: "🔁",
+          label: `Re-study: ${lowConfLesson.title}`,
+          detail: `Marked "again" — another pass will help`,
+          fn: () => {
+            activeModuleId = lowConfLesson.moduleId;
+            state.activeModuleId = activeModuleId;
+            saveState();
+            setMode("learn");
+            renderAll();
+            scrollToPanel("learn");
+          }
+        });
+      }
+    }
+
+    // 5. Next incomplete lesson (always a fallback)
+    if (actions.length < 3) {
+      const nextLesson = nextIncompleteLesson();
+      if (nextLesson) {
+        actions.push({
+          icon: "📖",
+          label: nextLesson.title,
+          detail: `${moduleTitle(nextLesson.moduleId)} · ${lessonStatusLabel(nextLesson.id)}`,
+          fn: () => continueLearning()
+        });
+      } else {
+        actions.push({
+          icon: "✅",
+          label: "All lessons complete",
+          detail: "Run a full exam simulator to stay sharp",
+          fn: () => { setMode("simulator"); scrollToPanel("simulator"); }
+        });
+      }
+    }
+
+    return actions.slice(0, 3);
+  }
+
+  function renderTodaysPlan() {
+    const planEl = els.todaysPlan;
+    if (!planEl) return;
+    const actions = buildTodaysPlan();
+    planEl.innerHTML = actions.map((action, i) => `
+      <button class="plan-action plan-action-${i + 1}" type="button" data-plan-index="${i}">
+        <span class="plan-icon">${action.icon}</span>
+        <span class="plan-copy"><strong>${escapeHtml(action.label)}</strong><span>${escapeHtml(action.detail)}</span></span>
+        <span class="plan-arrow">→</span>
+      </button>
+    `).join("");
+    actions.forEach((action, i) => {
+      planEl.querySelector(`[data-plan-index="${i}"]`).addEventListener("click", action.fn);
+    });
   }
 
   function renderModules() {
@@ -146,11 +261,12 @@
     COURSE.modules.forEach((module, index) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = `module-item${module.id === activeModuleId ? " active" : ""}`;
-      button.dataset.moduleId = module.id;
       const moduleLessons = module.lessons.length;
       const moduleCompleted = module.lessons.filter((lesson) => state.completedLessons[lesson.id]).length;
+      const isDone = moduleCompleted === moduleLessons;
       const progress = Math.round((moduleCompleted / moduleLessons) * 100);
+      button.className = `module-item${module.id === activeModuleId ? " active" : ""}${isDone ? " module-done" : ""}`;
+      button.dataset.moduleId = module.id;
       button.innerHTML = `
         <span class="module-number">${index + 1}</span>
         <span class="module-copy"><strong>${escapeHtml(module.title)}</strong><span>${escapeHtml(module.exam)} · ${escapeHtml(moduleTimeLabel(module))}</span></span>
