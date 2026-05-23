@@ -1242,8 +1242,36 @@
     return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(date);
   }
 
+  function expandAcronyms(value) {
+    const expansions = [
+      ["GCWR", "Gross Combination Weight Rating"],
+      ["GVWR", "Gross Vehicle Weight Rating"],
+      ["FMCSA", "Federal Motor Carrier Safety Administration"],
+      ["ELDT", "Entry-Level Driver Training"],
+      ["HazMat", "Hazardous Materials"],
+      ["ABS", "Antilock Braking System"],
+      ["CDL", "Commercial Driver's License"],
+      ["CLP", "Commercial Learner's Permit"],
+      ["CMV", "Commercial Motor Vehicle"],
+      ["DMV", "Department of Motor Vehicles"],
+      ["GCW", "Gross Combination Weight"],
+      ["GVW", "Gross Vehicle Weight"],
+      ["GOAL", "Get Out And Look"],
+      ["PDF", "Portable Document Format"],
+      ["PSI", "Pounds per Square Inch"],
+      ["psi", "pounds per square inch"],
+      ["MPH", "Miles per Hour"],
+      ["mph", "miles per hour"],
+      ["ID", "Identification"]
+    ];
+    return expansions.reduce((text, [short, full]) => {
+      const pattern = new RegExp(`\\b${short}\\b(?!\\s*\\()`, "g");
+      return text.replace(pattern, `${short} (${full})`);
+    }, String(value));
+  }
+
   function escapeHtml(value) {
-    return String(value)
+    return expandAcronyms(value)
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")

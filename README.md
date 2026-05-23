@@ -61,6 +61,7 @@ Project folder:
 - Lessons include teach-back notes and confidence markers so recall can be practiced, saved, and synced across devices.
 - The Simulator tab provides one-question-at-a-time test flows for each core exam and endorsement area, with scores, explanations, history, missed-question review, and enough questions for every listed simulator length.
 - Practice mode draws from the same broader handbook-backed simulator bank, so topic drills and endorsement drills are deeper than the quick checks inside lessons.
+- Course text, quizzes, simulator questions, and endorsement pages automatically expand common CDL acronyms such as CMV, ABS, CLP, GVWR, and HazMat with parenthetical definitions.
 - The visual system uses a light theme with color-coded learning sections, richer cards, and shared styling across the main and endorsement courses.
 - Cloud progress sync uses Supabase and GitHub Pages; local progress still works if you are not signed in.
 
