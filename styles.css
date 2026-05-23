@@ -1478,15 +1478,17 @@ a {
 
   .module-summary,
   .lesson-grid,
-  .simulator-grid,
-  .score-grid,
-  .topic-grid,
-  .practice-start-grid,
   .endorsement-card-grid {
     grid-template-columns: 1fr;
   }
 
   .simulator-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .score-grid,
+  .topic-grid,
+  .practice-start-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1504,41 +1506,82 @@ a {
     padding: 0.65rem;
   }
 
+  /* Compact topbar — scrolls away, doesn't steal screen real estate */
   .topbar {
     position: relative;
-    align-items: flex-start;
-    padding: 0.75rem;
+    align-items: center;
+    padding: 0.6rem 0.75rem;
+    gap: 0.65rem;
+  }
+
+  .brand-block .eyebrow {
+    display: none;
+  }
+
+  .brand-block h1 {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: min(56vw, 280px);
   }
 
   .brand-mark {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    border-radius: 8px;
   }
 
   .top-actions {
     flex-shrink: 0;
   }
 
+  /* Mode tabs sticky at top once topbar scrolls away */
+  .mode-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(241, 246, 248, 0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    margin: 0 -0.65rem;
+    padding: 0.4rem 0.65rem;
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 2px 8px rgba(24, 36, 50, 0.07);
+  }
+
+  .tab-button {
+    min-height: 36px;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.82rem;
+  }
+
+  /* Dashboard */
   .dashboard-band {
     padding: 1rem;
   }
 
   .dashboard-copy h2 {
-    font-size: 1.55rem;
+    font-size: 1.5rem;
   }
 
   .dashboard-copy > p:not(.eyebrow) {
     display: none;
   }
 
-  .focus-stats,
-  .practice-controls,
-  .quick-check-options,
-  .confidence-row,
-  .sync-strip {
-    grid-template-columns: 1fr;
+  /* 2-col dashboard actions: primary spans full width */
+  .dashboard-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
   }
 
+  .dashboard-actions .primary-button {
+    grid-column: 1 / -1;
+  }
+
+  /* Metrics */
   .dashboard-metrics {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.4rem;
@@ -1556,10 +1599,10 @@ a {
     font-size: 0.7rem;
   }
 
+  /* Sync strip */
   .sync-controls {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    justify-content: stretch;
   }
 
   .sync-controls input,
@@ -1567,14 +1610,26 @@ a {
     width: 100%;
   }
 
-  .dashboard-actions {
-    display: grid;
+  /* Practice controls: stack vertically */
+  .practice-controls {
+    grid-template-columns: 1fr;
   }
 
-  .dashboard-actions button {
+  .practice-controls button {
     width: 100%;
   }
 
+  /* Quick-check: single column on narrow screens */
+  .quick-check-options {
+    grid-template-columns: 1fr;
+  }
+
+  /* Flashcard confidence: single column */
+  .confidence-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Lesson toolbar / panel head */
   .lesson-toolbar,
   .panel-head {
     display: grid;
@@ -1584,27 +1639,36 @@ a {
     width: 100%;
   }
 
-  .lesson-actions button,
-  .practice-controls button {
+  .lesson-actions button {
     width: 100%;
   }
 
+  /* Lesson toggle: hide status on far right, show below title */
   .lesson-toggle {
     grid-template-columns: 40px minmax(0, 1fr);
   }
 
   .lesson-status {
     grid-column: 2;
+    font-size: 0.78rem;
   }
 
+  /* Lesson body: tighter padding */
+  .lesson-body {
+    padding: 1rem;
+  }
+
+  /* Content panel: reasonable mobile min-height */
+  .content-panel {
+    order: 1;
+    min-height: 320px;
+  }
+
+  /* Module rail: horizontal scroll strip below content */
   .module-rail {
     order: 2;
     max-height: none;
     overflow: hidden;
-  }
-
-  .content-panel {
-    order: 1;
   }
 
   .endorsement-grid > .content-panel {
@@ -1621,6 +1685,7 @@ a {
     padding-bottom: 0.75rem;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
+    gap: 0.4rem;
   }
 
   .module-list::-webkit-scrollbar {
@@ -1628,23 +1693,175 @@ a {
   }
 
   .module-item {
-    min-width: min(260px, 80vw);
+    min-width: min(240px, 78vw);
     scroll-snap-align: start;
+    flex-shrink: 0;
   }
 
   .module-progress {
     grid-template-columns: auto minmax(80px, 1fr);
   }
 
+  /* Simulator: 1 column on mobile */
   .simulator-grid {
     grid-template-columns: 1fr;
   }
 
-  .plan-copy strong {
+  /* Practice start cards: 2 columns on mobile */
+  .practice-start-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .quick-start-card {
+    min-height: 110px;
+  }
+
+  /* Score / topic grids: 2 columns */
+  .score-grid,
+  .topic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Plan panel text: allow wrapping */
+  .plan-copy strong,
+  .plan-copy span {
     white-space: normal;
   }
 
-  .plan-copy span {
-    white-space: normal;
+  /* Tighten practice/simulator area padding */
+  .practice-area,
+  .simulator-area,
+  .flashcard-area,
+  .review-area,
+  .sources-area {
+    padding: 0.75rem;
+    gap: 0.65rem;
+  }
+
+  /* Tighter answer buttons */
+  .answer-button,
+  .confidence-button {
+    min-height: 48px;
+  }
+}
+
+/* ─── Touch device: tap feedback and interaction ─────────────── */
+
+button,
+select,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+/* JS-driven pressed state (see app.js touch handlers) */
+.is-pressed {
+  transform: scale(0.96) !important;
+  transition: transform 0.05s ease !important;
+}
+
+.primary-button.is-pressed,
+.complete-button.is-pressed {
+  opacity: 0.8;
+}
+
+.secondary-button.is-pressed,
+.icon-button.is-pressed {
+  background: var(--surface) !important;
+  border-color: rgba(40, 107, 216, 0.35) !important;
+}
+
+.tab-button.is-pressed:not(.active) {
+  background: var(--surface) !important;
+  border-color: rgba(40, 107, 216, 0.25) !important;
+}
+
+.tab-button.active.is-pressed {
+  opacity: 0.82;
+}
+
+.plan-action.is-pressed {
+  transform: scale(0.97) !important;
+  background: rgba(40, 107, 216, 0.06) !important;
+  border-color: rgba(40, 107, 216, 0.3) !important;
+}
+
+.quick-start-card.is-pressed,
+.simulator-option.is-pressed {
+  transform: scale(0.97) !important;
+  background: var(--surface) !important;
+  border-color: rgba(40, 107, 216, 0.3) !important;
+}
+
+.answer-button.is-pressed {
+  background: #f0f6ff !important;
+  border-color: rgba(40, 107, 216, 0.4) !important;
+}
+
+.module-item.is-pressed,
+.lesson-toggle.is-pressed {
+  background: var(--surface) !important;
+}
+
+/* On pure-touch devices, suppress hover states that look broken */
+@media (hover: none) {
+  .primary-button:hover,
+  .complete-button:hover {
+    transform: none;
+    box-shadow: 0 4px 14px rgba(31, 42, 55, 0.16);
+  }
+
+  .secondary-button:hover,
+  .icon-button:hover,
+  .tab-button:not(.active):hover {
+    transform: none;
+    border-color: var(--line);
+    box-shadow: none;
+  }
+
+  .answer-button:hover,
+  .confidence-button:hover {
+    transform: none;
+    border-color: var(--line);
+    background: var(--paper);
+  }
+
+  .plan-action:hover {
+    transform: none;
+    box-shadow: 0 1px 6px rgba(24, 36, 50, 0.05);
+    border-color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.88);
+  }
+
+  .plan-action:hover .plan-arrow {
+    transform: none;
+    color: var(--muted);
+  }
+
+  .quick-start-card:hover,
+  .simulator-option:hover {
+    transform: none;
+    border-color: var(--line);
+    box-shadow: var(--card-shadow);
+  }
+
+  .module-item:hover {
+    background: transparent;
+  }
+
+  .lesson-toggle:hover {
+    background: var(--paper);
+  }
+
+  .endorsement-card a:hover {
+    transform: none;
+    border-color: var(--line);
+  }
+
+  .sync-strip-toggle:hover {
+    background: transparent;
   }
 }

@@ -95,6 +95,24 @@
       });
     }
 
+    // Touch feedback: give all interactive elements a visible pressed state on tap
+    document.addEventListener("touchstart", (e) => {
+      const target = e.target.closest(
+        "button, .plan-action, .quick-start-card, .simulator-option"
+      );
+      if (target) target.classList.add("is-pressed");
+    }, { passive: true });
+
+    const clearPressed = () => {
+      setTimeout(() => {
+        document.querySelectorAll(".is-pressed").forEach((el) => el.classList.remove("is-pressed"));
+      }, 280);
+    };
+    document.addEventListener("touchend", clearPressed, { passive: true });
+    document.addEventListener("touchcancel", () => {
+      document.querySelectorAll(".is-pressed").forEach((el) => el.classList.remove("is-pressed"));
+    }, { passive: true });
+
     els.resetProgress.addEventListener("click", () => {
       const confirmed = window.confirm("Reset local course progress, quiz history, and flashcard scheduling?");
       if (!confirmed) return;
@@ -995,8 +1013,10 @@
     const panel = document.querySelector(`[data-panel="${mode}"]`);
     if (!panel) return;
     window.requestAnimationFrame(() => {
-      const offset = window.matchMedia("(max-width: 720px)").matches ? 10 : 18;
-      const top = panel.getBoundingClientRect().top + window.scrollY - offset;
+      // Measure actual height of sticky elements so we don't scroll under them
+      const tabs = document.querySelector(".mode-tabs");
+      const stickyH = tabs ? tabs.offsetHeight + 4 : 12;
+      const top = panel.getBoundingClientRect().top + window.scrollY - stickyH;
       window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     });
   }
