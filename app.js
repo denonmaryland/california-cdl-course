@@ -33,6 +33,19 @@
   const allLessons = COURSE.modules.flatMap((module) =>
     module.lessons.map((lesson) => ({ ...lesson, moduleId: module.id }))
   );
+  const simulatorConfigs = [
+    { id: "class-a", label: "Class A Full Mix", count: 100, description: "General Knowledge, Air Brakes, Combination Vehicles, cargo, and light endorsement coverage.", filter: (question) => ["general", "air-brakes", "combination", "cargo", "endorsements"].includes(question.exam) },
+    { id: "general", label: "General Knowledge", count: 50, description: "Inspection, speed, space, hazards, weather, emergencies, railroad crossings, and safe driving rules.", filter: (question) => question.exam === "general" },
+    { id: "air-brakes", label: "Air Brakes", count: 30, description: "Air system parts, warning devices, spring brakes, leakage tests, build rate, and low-air behavior.", filter: (question) => question.exam === "air-brakes" },
+    { id: "combination", label: "Combination Vehicles", count: 30, description: "Rollover, crack-the-whip, offtracking, backing, coupling systems, air lines, and uncoupling.", filter: (question) => question.exam === "combination" },
+    { id: "cargo", label: "Cargo and Securement", count: 25, description: "Cargo inspection, legal weight, balance, center of gravity, blocking, bracing, and tie-down thinking.", filter: (question) => question.exam === "cargo" },
+    { id: "doubles-triples", label: "Doubles/Triples T", count: 20, description: "Converter dollies, rearward amplification, shut-off valves, multi-trailer air checks, and space.", filter: (question) => question.topic === "Doubles/Triples" },
+    { id: "tanker", label: "Tank Vehicles N", count: 20, description: "Surge, outage, baffles, bulkheads, high center of gravity, and smooth tanker control.", filter: (question) => question.topic === "Tanker" },
+    { id: "hazmat", label: "HazMat H", count: 25, description: "Shipping papers, placards, loading rules, parking, incidents, and endorsement requirements.", filter: (question) => question.topic === "HazMat" },
+    { id: "tank-hazmat", label: "Tank + HazMat X", count: 30, description: "Combined tanker and hazardous-material logic for drivers pursuing the X endorsement path.", filter: (question) => ["Tanker", "HazMat"].includes(question.topic) },
+    { id: "passenger", label: "Passenger P", count: 20, description: "Passenger loading, exits, safe stops, supervision, railroad crossings, and prohibited practices.", filter: (question) => question.topic === "Passenger" },
+    { id: "school-bus", label: "School Bus S", count: 20, description: "Danger zones, mirror systems, loading and unloading, student management, evacuation, and crossings.", filter: (question) => question.topic === "School Bus" }
+  ];
 
   let state = loadState();
   let activeModuleId = state.activeModuleId || COURSE.modules[0].id;
@@ -456,30 +469,49 @@
       ? latest.map((attempt) => `
           <div>
             <strong>${attempt.score}%</strong>
-            <span>${attempt.correct}/${attempt.total} correct · ${formatDate(new Date(attempt.completedAt))}</span>
+            <span>${escapeHtml(attempt.label || "Simulator")} · ${attempt.correct}/${attempt.total} · ${formatDate(new Date(attempt.completedAt))}</span>
           </div>
         `).join("")
-      : `<p class="empty-state">Start a full 100-question run. The simulator is original, handbook-backed, and modeled after one-question-at-a-time DMV practice flow.</p>`;
+      : `<div><strong>Ready</strong><span>Choose an exam below to begin.</span></div>`;
+    const pool = getSimulatorPool();
     els.simulatorArea.innerHTML = `
       <div class="simulator-hero">
         <div>
           <p class="eyebrow">Exam mode</p>
-          <h3>100 questions, one at a time</h3>
-          <p>This section uses an original question bank built from the California handbook, course lessons, and DMV-style topic coverage. It is not a copy of the paid site's wording.</p>
-          <div class="practice-nav">
-            <button class="primary-button" id="startSimulator" type="button">Start 100-Question Simulator</button>
-          </div>
+          <h3>Pick the exam you want to drill</h3>
+          <p>Run one-question-at-a-time simulators for the core Class A tests and each endorsement path. Every attempt saves your score and sends misses to Review.</p>
         </div>
         <div class="score-grid">${latestMarkup}</div>
       </div>
+      <div class="simulator-grid">
+        ${simulatorConfigs.map((config) => {
+          const available = pool.filter(config.filter).length;
+          const count = Math.min(config.count, available);
+          return `
+            <article class="simulator-option">
+              <div>
+                <p class="eyebrow">${count} questions</p>
+                <h3>${escapeHtml(config.label)}</h3>
+                <p>${escapeHtml(config.description)}</p>
+              </div>
+              <button class="primary-button" data-simulator="${escapeAttribute(config.id)}" ${count ? "" : "disabled"} type="button">Start</button>
+            </article>
+          `;
+        }).join("")}
+      </div>
     `;
-    els.simulatorArea.querySelector("#startSimulator").addEventListener("click", startSimulator);
+    Array.from(els.simulatorArea.querySelectorAll("[data-simulator]")).forEach((button) => {
+      button.addEventListener("click", () => startSimulator(button.dataset.simulator));
+    });
   }
 
-  function startSimulator() {
+  function startSimulator(configId = "class-a") {
+    const config = simulatorConfigs.find((item) => item.id === configId) || simulatorConfigs[0];
     const pool = getSimulatorPool();
-    const questions = buildSimulatorSet(pool, 100).map(shufflePracticeChoices);
+    const questions = buildSimulatorSet(pool.filter(config.filter), config.count).map(shufflePracticeChoices);
     simulatorSession = {
+      type: config.id,
+      label: config.label,
       questions,
       current: 0,
       answers: {},
@@ -512,7 +544,7 @@
         <div class="feedback" aria-live="polite">${answered ? escapeHtml(question.explanation) : ""}</div>
         <div class="practice-nav">
           <button class="secondary-button" id="simPrev" type="button" ${simulatorSession.current === 0 ? "disabled" : ""}>Previous</button>
-          <button class="secondary-button" id="simNext" type="button">${simulatorSession.current === simulatorSession.questions.length - 1 ? "Finish Simulator" : "Next Question"}</button>
+          <button class="secondary-button" id="simNext" type="button">${simulatorSession.current === simulatorSession.questions.length - 1 ? "Finish ${escapeHtml(simulatorSession.label)}" : "Next Question"}</button>
           <button class="secondary-button" id="simQuit" type="button">Quit</button>
         </div>
       </article>
@@ -569,6 +601,8 @@
     });
     const attempt = {
       type: "simulator",
+      simulatorType: simulatorSession.type,
+      label: simulatorSession.label,
       score,
       correct,
       total,
@@ -592,21 +626,23 @@
         <div class="test-meta">
           <span class="pill ${score >= 80 ? "green" : "red"}">${score}%</span>
           <span class="pill">${correct}/${total} correct</span>
-          <span class="pill">100-question simulator</span>
+          <span class="pill">${escapeHtml(simulatorSession.label)}</span>
         </div>
         <h3>${score >= 80 ? "Passing-range simulator result" : "Below passing range"}</h3>
         <p>${score >= 80 ? "Strong signal. Keep reviewing misses until the explanations feel obvious." : "Use the topic breakdown, then retake after reviewing weak sections."}</p>
         <div class="topic-grid">${topicMarkup}</div>
         <div class="practice-nav">
-          <button class="primary-button" id="simAgain" type="button">Run Another Simulator</button>
+          <button class="primary-button" id="simAgain" type="button">Run This Simulator Again</button>
           <button class="secondary-button" id="simReview" type="button">Review Misses</button>
+          <button class="secondary-button" id="simMenu" type="button">Simulator Menu</button>
         </div>
       </article>
     `;
     renderDashboard();
     renderReview();
-    els.simulatorArea.querySelector("#simAgain").addEventListener("click", startSimulator);
+    els.simulatorArea.querySelector("#simAgain").addEventListener("click", () => startSimulator(attempt.simulatorType));
     els.simulatorArea.querySelector("#simReview").addEventListener("click", () => setMode("review"));
+    els.simulatorArea.querySelector("#simMenu").addEventListener("click", renderSimulatorIntro);
   }
 
   function renderFlashcards() {
@@ -836,21 +872,42 @@
   function getSimulatorPool() {
     return [
       ...COURSE.questions,
+      ...getStandaloneEndorsementQuestions(),
       ...((window.CDL_SIMULATOR_QUESTIONS || []).map((question) => ({ ...question, simulatorOnly: true })))
     ];
   }
 
   function buildSimulatorSet(pool, count) {
-    const core = pool.filter((question) => ["general", "air-brakes", "combination", "cargo"].includes(question.exam));
-    const endorsements = pool.filter((question) => question.exam === "endorsements");
-    const targetCore = Math.min(core.length, Math.round(count * 0.78));
-    const selected = [
-      ...shuffle(core).slice(0, targetCore),
-      ...shuffle(endorsements).slice(0, count - targetCore)
-    ];
-    const selectedIds = new Set(selected.map((question) => question.id));
-    const filler = shuffle(pool).filter((question) => !selectedIds.has(question.id));
-    return shuffle([...selected, ...filler]).slice(0, Math.min(count, pool.length));
+    return shuffle(pool).slice(0, Math.min(count, pool.length));
+  }
+
+  function getStandaloneEndorsementQuestions() {
+    const courses = window.CDL_ENDORSEMENTS || {};
+    return Object.entries(courses).flatMap(([courseId, course]) => {
+      const topic = endorsementTopic(courseId);
+      return (course.questions || []).map((question, index) => ({
+        id: `standalone-${courseId}-${index + 1}`,
+        topic,
+        exam: "endorsements",
+        difficulty: 2,
+        section: course.source || "Endorsement course",
+        question: question[0],
+        choices: question[1],
+        answer: question[2],
+        explanation: `${course.title}: ${course.subtitle}`
+      }));
+    });
+  }
+
+  function endorsementTopic(courseId) {
+    const topics = {
+      "doubles-triples": "Doubles/Triples",
+      tanker: "Tanker",
+      hazmat: "HazMat",
+      passenger: "Passenger",
+      "school-bus": "School Bus"
+    };
+    return topics[courseId] || courseId;
   }
 
   function findQuestionById(id) {

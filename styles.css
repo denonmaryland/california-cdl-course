@@ -848,7 +848,7 @@ a {
 
 .simulator-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   align-items: stretch;
   padding: 1rem;
@@ -871,6 +871,34 @@ a {
 .simulator-card {
   display: grid;
   gap: 1rem;
+}
+
+.simulator-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.simulator-option {
+  display: grid;
+  gap: 1rem;
+  align-content: space-between;
+  min-height: 225px;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 7px 18px rgba(31, 42, 55, 0.045);
+}
+
+.simulator-option h3,
+.simulator-option p {
+  margin: 0;
+}
+
+.simulator-option p:not(.eyebrow) {
+  color: var(--muted);
 }
 
 .simulator-progress {
@@ -1069,6 +1097,7 @@ a {
   .module-summary,
   .lesson-grid,
   .simulator-hero,
+  .simulator-grid,
   .score-grid,
   .topic-grid,
   .endorsement-card-grid {

@@ -32,7 +32,7 @@ Then visit `http://localhost:5173`.
   - `endorsements/school-bus.html`
 - Local progress tracking with `localStorage`.
 - Practice tests by topic, Class A mixed mode, individual endorsement filters, and missed-question review.
-- A separate 100-question DMV-style simulator using original handbook-backed questions and full-attempt scoring.
+- Separate DMV-style simulators for the Class A full mix, General Knowledge, Air Brakes, Combination Vehicles, cargo, Tanker, HazMat, Tank + HazMat, Doubles/Triples, Passenger, and School Bus.
 - Flashcards with simple spaced repetition scheduling.
 - Source links to the local handbook extraction and the official DMV/FMCSA references used for test framing.
 
@@ -56,7 +56,7 @@ Project folder:
 - The main course now includes expanded handbook-backed teaching blocks inside each lesson: Handbook Lesson, DMV Test Angle, On-The-Road Habit, and Common Traps.
 - Quick-check answers and endorsement quiz answers are shuffled so the correct answer is not always in the first position.
 - Lessons include teach-back notes and confidence markers so recall can be practiced, saved, and synced across devices.
-- The Simulator tab provides a one-question-at-a-time full test flow inspired by commercial CDL practice-test pacing, without copying paid-site wording.
+- The Simulator tab provides one-question-at-a-time test flows for each core exam and endorsement area, with scores, explanations, history, and missed-question review.
 - The visual system uses a light theme with color-coded learning sections, richer cards, and shared styling across the main and endorsement courses.
 - Cloud progress sync uses Supabase and GitHub Pages; local progress still works if you are not signed in.
 
