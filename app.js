@@ -82,8 +82,11 @@
       els.practiceType.value = "class-a";
       els.questionCount.value = "10";
       startPractice("class-a", 10);
+      scrollToPanel("practice");
     });
-    els.focusSimulator.addEventListener("click", () => setMode("simulator"));
+    els.focusSimulator.addEventListener("click", () => {
+      setMode("simulator", { scroll: true });
+    });
 
     els.resetProgress.addEventListener("click", () => {
       const confirmed = window.confirm("Reset local course progress, quiz history, and flashcard scheduling?");
@@ -860,7 +863,7 @@
     `;
   }
 
-  function setMode(mode) {
+  function setMode(mode, options = {}) {
     activeMode = mode;
     els.tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.mode === mode));
     els.panels.forEach((panel) => panel.classList.toggle("hidden", panel.dataset.panel !== mode));
@@ -869,6 +872,17 @@
     if (mode === "flashcards") renderFlashcards();
     if (mode === "review") renderReview();
     if (mode === "sources") renderSources();
+    if (options.scroll) scrollToPanel(mode);
+  }
+
+  function scrollToPanel(mode) {
+    const panel = document.querySelector(`[data-panel="${mode}"]`);
+    if (!panel) return;
+    window.requestAnimationFrame(() => {
+      const offset = window.matchMedia("(max-width: 720px)").matches ? 10 : 18;
+      const top = panel.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    });
   }
 
   function moveModule(direction) {

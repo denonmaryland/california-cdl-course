@@ -201,6 +201,17 @@ a {
   transform: translateY(-1px);
 }
 
+.primary-button:active,
+.complete-button:active,
+.secondary-button:active,
+.icon-button:active,
+.answer-button:active,
+.confidence-button:active,
+.tab-button:active,
+.quick-start-card:active {
+  transform: translateY(0) scale(0.98);
+}
+
 .primary-button:disabled,
 .secondary-button:disabled,
 .complete-button:disabled {
