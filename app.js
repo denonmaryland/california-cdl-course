@@ -399,7 +399,6 @@
     });
     els.practiceArea.querySelector("#practiceQuit").addEventListener("click", () => {
       practiceSession = null;
-      simulatorSession = null;
       renderPracticeIntro();
     });
   }
@@ -620,13 +619,15 @@
       return `<div><strong>${percent}%</strong><span>${escapeHtml(topic)} · ${value.correct}/${value.total}</span></div>`;
     }).join("");
 
+    const finishedType = simulatorSession.type;
+    const finishedLabel = simulatorSession.label;
     simulatorSession = null;
     els.simulatorArea.innerHTML = `
       <article class="test-card simulator-card">
         <div class="test-meta">
           <span class="pill ${score >= 80 ? "green" : "red"}">${score}%</span>
           <span class="pill">${correct}/${total} correct</span>
-          <span class="pill">${escapeHtml(simulatorSession.label)}</span>
+          <span class="pill">${escapeHtml(finishedLabel)}</span>
         </div>
         <h3>${score >= 80 ? "Passing-range simulator result" : "Below passing range"}</h3>
         <p>${score >= 80 ? "Strong signal. Keep reviewing misses until the explanations feel obvious." : "Use the topic breakdown, then retake after reviewing weak sections."}</p>
@@ -640,7 +641,7 @@
     `;
     renderDashboard();
     renderReview();
-    els.simulatorArea.querySelector("#simAgain").addEventListener("click", () => startSimulator(attempt.simulatorType));
+    els.simulatorArea.querySelector("#simAgain").addEventListener("click", () => startSimulator(finishedType));
     els.simulatorArea.querySelector("#simReview").addEventListener("click", () => setMode("review"));
     els.simulatorArea.querySelector("#simMenu").addEventListener("click", renderSimulatorIntro);
   }
@@ -801,7 +802,9 @@
       <article class="source-card">
         <h3>${escapeHtml(source.label)}</h3>
         <p>${escapeHtml(source.detail)}</p>
-        <a href="${escapeAttribute(source.url)}" target="_blank" rel="noreferrer">Open source</a>
+        ${source.url && !source.url.startsWith("./source/")
+          ? `<a href="${escapeAttribute(source.url)}" target="_blank" rel="noreferrer">Open source</a>`
+          : `<span class="source-note">Local-only source file</span>`}
       </article>
     `).join("");
     els.sourcesArea.innerHTML = `
@@ -852,7 +855,7 @@
         .filter(Boolean);
     }
     if (type === "class-a") {
-      return COURSE.questions.filter((question) =>
+      return getSimulatorPool().filter((question) =>
         ["general", "air-brakes", "combination", "cargo"].includes(question.exam)
       );
     }
@@ -864,9 +867,10 @@
       "endorsement-school": "School Bus"
     };
     if (endorsementTopics[type]) {
-      return COURSE.questions.filter((question) => question.topic === endorsementTopics[type]);
+      return getSimulatorPool().filter((question) => question.topic === endorsementTopics[type]);
     }
-    return COURSE.questions.filter((question) => question.exam === type);
+    if (type === "endorsements") return getSimulatorPool().filter((question) => question.exam === "endorsements");
+    return getSimulatorPool().filter((question) => question.exam === type);
   }
 
   function getSimulatorPool() {

@@ -808,6 +808,19 @@ a {
   margin-top: 0;
 }
 
+.source-note {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.35rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--muted);
+  background: var(--surface);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
 .test-meta {
   display: flex;
   flex-wrap: wrap;

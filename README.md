@@ -48,6 +48,9 @@ Project folder:
 - App behavior: `app.js`
 - Standalone endorsement content: `endorsements/endorsement-data.js`
 - Standalone endorsement behavior: `endorsements/endorsement-course.js`
+- Core simulator questions: `simulator-data.js`
+- Supplemental simulator depth packs: `simulator-expansion.js`
+- Course audit notes: `COURSE_AUDIT.md`
 - Layout: `styles.css`
 
 ## Current Behavior Notes
@@ -56,7 +59,8 @@ Project folder:
 - The main course now includes expanded handbook-backed teaching blocks inside each lesson: Handbook Lesson, DMV Test Angle, On-The-Road Habit, and Common Traps.
 - Quick-check answers and endorsement quiz answers are shuffled so the correct answer is not always in the first position.
 - Lessons include teach-back notes and confidence markers so recall can be practiced, saved, and synced across devices.
-- The Simulator tab provides one-question-at-a-time test flows for each core exam and endorsement area, with scores, explanations, history, and missed-question review.
+- The Simulator tab provides one-question-at-a-time test flows for each core exam and endorsement area, with scores, explanations, history, missed-question review, and enough questions for every listed simulator length.
+- Practice mode draws from the same broader handbook-backed simulator bank, so topic drills and endorsement drills are deeper than the quick checks inside lessons.
 - The visual system uses a light theme with color-coded learning sections, richer cards, and shared styling across the main and endorsement courses.
 - Cloud progress sync uses Supabase and GitHub Pages; local progress still works if you are not signed in.
 
