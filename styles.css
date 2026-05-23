@@ -781,6 +781,7 @@ a {
 }
 
 .practice-area,
+.simulator-area,
 .flashcard-area,
 .review-area,
 .sources-area {
@@ -843,6 +844,64 @@ a {
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 1rem;
+}
+
+.simulator-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  gap: 1rem;
+  align-items: stretch;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(221, 248, 239, 0.9), rgba(239, 247, 255, 0.95));
+}
+
+.simulator-hero h3 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.simulator-hero p:not(.eyebrow) {
+  max-width: 760px;
+  color: var(--muted);
+}
+
+.simulator-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.simulator-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.simulator-progress > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.simulator-progress strong {
+  font-size: 1.25rem;
+}
+
+.progress-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e7eef2;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--blue), var(--green));
 }
 
 .score-grid,
@@ -1009,6 +1068,7 @@ a {
 
   .module-summary,
   .lesson-grid,
+  .simulator-hero,
   .score-grid,
   .topic-grid,
   .endorsement-card-grid {

@@ -22,6 +22,7 @@
     questionCount: document.getElementById("questionCount"),
     startPractice: document.getElementById("startPractice"),
     practiceArea: document.getElementById("practiceArea"),
+    simulatorArea: document.getElementById("simulatorArea"),
     flashcardArea: document.getElementById("flashcardArea"),
     endorsementsArea: document.getElementById("endorsementsArea"),
     reviewArea: document.getElementById("reviewArea"),
@@ -37,6 +38,7 @@
   let activeModuleId = state.activeModuleId || COURSE.modules[0].id;
   let activeMode = "learn";
   let practiceSession = null;
+  let simulatorSession = null;
   let flashcardQueue = [];
   let flashcardIndex = 0;
   let cloudSync = null;
@@ -98,6 +100,7 @@
     renderModules();
     renderActiveModule();
     renderPracticeIntro();
+    renderSimulatorIntro();
     renderFlashcards();
     renderEndorsementHub();
     renderReview();
@@ -383,6 +386,7 @@
     });
     els.practiceArea.querySelector("#practiceQuit").addEventListener("click", () => {
       practiceSession = null;
+      simulatorSession = null;
       renderPracticeIntro();
     });
   }
@@ -445,6 +449,166 @@
     els.practiceArea.querySelector("#goReview").addEventListener("click", () => setMode("review"));
   }
 
+  function renderSimulatorIntro() {
+    if (!els.simulatorArea || simulatorSession) return;
+    const latest = state.simulatorHistory.slice(-3).reverse();
+    const latestMarkup = latest.length
+      ? latest.map((attempt) => `
+          <div>
+            <strong>${attempt.score}%</strong>
+            <span>${attempt.correct}/${attempt.total} correct · ${formatDate(new Date(attempt.completedAt))}</span>
+          </div>
+        `).join("")
+      : `<p class="empty-state">Start a full 100-question run. The simulator is original, handbook-backed, and modeled after one-question-at-a-time DMV practice flow.</p>`;
+    els.simulatorArea.innerHTML = `
+      <div class="simulator-hero">
+        <div>
+          <p class="eyebrow">Exam mode</p>
+          <h3>100 questions, one at a time</h3>
+          <p>This section uses an original question bank built from the California handbook, course lessons, and DMV-style topic coverage. It is not a copy of the paid site's wording.</p>
+          <div class="practice-nav">
+            <button class="primary-button" id="startSimulator" type="button">Start 100-Question Simulator</button>
+          </div>
+        </div>
+        <div class="score-grid">${latestMarkup}</div>
+      </div>
+    `;
+    els.simulatorArea.querySelector("#startSimulator").addEventListener("click", startSimulator);
+  }
+
+  function startSimulator() {
+    const pool = getSimulatorPool();
+    const questions = buildSimulatorSet(pool, 100).map(shufflePracticeChoices);
+    simulatorSession = {
+      questions,
+      current: 0,
+      answers: {},
+      startedAt: new Date().toISOString()
+    };
+    renderSimulatorQuestion();
+  }
+
+  function renderSimulatorQuestion() {
+    if (!simulatorSession) return renderSimulatorIntro();
+    const question = simulatorSession.questions[simulatorSession.current];
+    const selected = simulatorSession.answers[question.id];
+    const answered = selected !== undefined;
+    const answeredCount = Object.keys(simulatorSession.answers).length;
+    const correctCount = simulatorSession.questions.filter((item) => simulatorSession.answers[item.id] === item.answer).length;
+    const progressPercent = Math.round(((simulatorSession.current + 1) / simulatorSession.questions.length) * 100);
+    els.simulatorArea.innerHTML = `
+      <article class="test-card simulator-card">
+        <div class="simulator-progress">
+          <div>
+            <span class="pill">Question ${simulatorSession.current + 1} of ${simulatorSession.questions.length}</span>
+            <span class="pill green">${escapeHtml(question.topic)}</span>
+            <span class="pill">${escapeHtml(question.section)}</span>
+          </div>
+          <strong>${correctCount}/${answeredCount || 0}</strong>
+        </div>
+        <div class="progress-track"><span style="width:${progressPercent}%"></span></div>
+        <h3>${escapeHtml(question.question)}</h3>
+        <div class="answer-grid simulator-answer-grid"></div>
+        <div class="feedback" aria-live="polite">${answered ? escapeHtml(question.explanation) : ""}</div>
+        <div class="practice-nav">
+          <button class="secondary-button" id="simPrev" type="button" ${simulatorSession.current === 0 ? "disabled" : ""}>Previous</button>
+          <button class="secondary-button" id="simNext" type="button">${simulatorSession.current === simulatorSession.questions.length - 1 ? "Finish Simulator" : "Next Question"}</button>
+          <button class="secondary-button" id="simQuit" type="button">Quit</button>
+        </div>
+      </article>
+    `;
+
+    const answerGrid = els.simulatorArea.querySelector(".simulator-answer-grid");
+    question.choices.forEach((choice, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "answer-button";
+      button.textContent = choice;
+      if (answered) {
+        button.disabled = true;
+        if (index === question.answer) button.classList.add("correct");
+        if (index === selected && selected !== question.answer) button.classList.add("incorrect");
+      }
+      button.addEventListener("click", () => {
+        simulatorSession.answers[question.id] = index;
+        if (index !== question.answer) {
+          state.missedQuestions[question.id] = (state.missedQuestions[question.id] || 0) + 1;
+        }
+        saveState();
+        renderSimulatorQuestion();
+      });
+      answerGrid.appendChild(button);
+    });
+
+    els.simulatorArea.querySelector("#simPrev").addEventListener("click", () => {
+      simulatorSession.current = Math.max(0, simulatorSession.current - 1);
+      renderSimulatorQuestion();
+    });
+    els.simulatorArea.querySelector("#simNext").addEventListener("click", () => {
+      if (simulatorSession.current === simulatorSession.questions.length - 1) return finishSimulator();
+      simulatorSession.current += 1;
+      renderSimulatorQuestion();
+    });
+    els.simulatorArea.querySelector("#simQuit").addEventListener("click", () => {
+      const confirmed = window.confirm("Quit this simulator attempt? Current answers will not be scored.");
+      if (!confirmed) return;
+      simulatorSession = null;
+      renderSimulatorIntro();
+    });
+  }
+
+  function finishSimulator() {
+    const total = simulatorSession.questions.length;
+    const correct = simulatorSession.questions.filter((question) => simulatorSession.answers[question.id] === question.answer).length;
+    const score = Math.round((correct / total) * 100);
+    const topicMap = {};
+    simulatorSession.questions.forEach((question) => {
+      topicMap[question.topic] ||= { correct: 0, total: 0 };
+      topicMap[question.topic].total += 1;
+      if (simulatorSession.answers[question.id] === question.answer) topicMap[question.topic].correct += 1;
+    });
+    const attempt = {
+      type: "simulator",
+      score,
+      correct,
+      total,
+      topicMap,
+      completedAt: new Date().toISOString()
+    };
+    state.simulatorHistory.push(attempt);
+    state.simulatorHistory = state.simulatorHistory.slice(-10);
+    state.quizHistory.push(attempt);
+    state.quizHistory = state.quizHistory.slice(-30);
+    saveState();
+
+    const topicMarkup = Object.entries(topicMap).map(([topic, value]) => {
+      const percent = Math.round((value.correct / value.total) * 100);
+      return `<div><strong>${percent}%</strong><span>${escapeHtml(topic)} · ${value.correct}/${value.total}</span></div>`;
+    }).join("");
+
+    simulatorSession = null;
+    els.simulatorArea.innerHTML = `
+      <article class="test-card simulator-card">
+        <div class="test-meta">
+          <span class="pill ${score >= 80 ? "green" : "red"}">${score}%</span>
+          <span class="pill">${correct}/${total} correct</span>
+          <span class="pill">100-question simulator</span>
+        </div>
+        <h3>${score >= 80 ? "Passing-range simulator result" : "Below passing range"}</h3>
+        <p>${score >= 80 ? "Strong signal. Keep reviewing misses until the explanations feel obvious." : "Use the topic breakdown, then retake after reviewing weak sections."}</p>
+        <div class="topic-grid">${topicMarkup}</div>
+        <div class="practice-nav">
+          <button class="primary-button" id="simAgain" type="button">Run Another Simulator</button>
+          <button class="secondary-button" id="simReview" type="button">Review Misses</button>
+        </div>
+      </article>
+    `;
+    renderDashboard();
+    renderReview();
+    els.simulatorArea.querySelector("#simAgain").addEventListener("click", startSimulator);
+    els.simulatorArea.querySelector("#simReview").addEventListener("click", () => setMode("review"));
+  }
+
   function renderFlashcards() {
     flashcardQueue = getDueFlashcards();
     if (!flashcardQueue.length) {
@@ -502,7 +666,7 @@
 
   function renderReview() {
     const missed = Object.entries(state.missedQuestions)
-      .map(([id, count]) => ({ question: COURSE.questions.find((item) => item.id === id), count }))
+      .map(([id, count]) => ({ question: findQuestionById(id), count }))
       .filter((item) => item.question)
       .sort((a, b) => b.count - a.count);
 
@@ -621,6 +785,7 @@
     els.tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.mode === mode));
     els.panels.forEach((panel) => panel.classList.toggle("hidden", panel.dataset.panel !== mode));
     if (mode === "practice" && !practiceSession) renderPracticeIntro();
+    if (mode === "simulator" && !simulatorSession) renderSimulatorIntro();
     if (mode === "flashcards") renderFlashcards();
     if (mode === "review") renderReview();
     if (mode === "sources") renderSources();
@@ -647,7 +812,7 @@
   function getQuestionPool(type) {
     if (type === "missed") {
       return Object.keys(state.missedQuestions)
-        .map((id) => COURSE.questions.find((question) => question.id === id))
+        .map(findQuestionById)
         .filter(Boolean);
     }
     if (type === "class-a") {
@@ -666,6 +831,30 @@
       return COURSE.questions.filter((question) => question.topic === endorsementTopics[type]);
     }
     return COURSE.questions.filter((question) => question.exam === type);
+  }
+
+  function getSimulatorPool() {
+    return [
+      ...COURSE.questions,
+      ...((window.CDL_SIMULATOR_QUESTIONS || []).map((question) => ({ ...question, simulatorOnly: true })))
+    ];
+  }
+
+  function buildSimulatorSet(pool, count) {
+    const core = pool.filter((question) => ["general", "air-brakes", "combination", "cargo"].includes(question.exam));
+    const endorsements = pool.filter((question) => question.exam === "endorsements");
+    const targetCore = Math.min(core.length, Math.round(count * 0.78));
+    const selected = [
+      ...shuffle(core).slice(0, targetCore),
+      ...shuffle(endorsements).slice(0, count - targetCore)
+    ];
+    const selectedIds = new Set(selected.map((question) => question.id));
+    const filler = shuffle(pool).filter((question) => !selectedIds.has(question.id));
+    return shuffle([...selected, ...filler]).slice(0, Math.min(count, pool.length));
+  }
+
+  function findQuestionById(id) {
+    return getSimulatorPool().find((question) => question.id === id);
   }
 
   function calculateReadiness() {
@@ -734,6 +923,7 @@
         completedLessons: parsed.completedLessons || {},
         activeModuleId: parsed.activeModuleId || COURSE.modules[0].id,
         quizHistory: Array.isArray(parsed.quizHistory) ? parsed.quizHistory : [],
+        simulatorHistory: Array.isArray(parsed.simulatorHistory) ? parsed.simulatorHistory : [],
         missedQuestions: parsed.missedQuestions || {},
         flashcards: parsed.flashcards || {},
         lessonConfidence: parsed.lessonConfidence || {},
@@ -745,6 +935,7 @@
         completedLessons: {},
         activeModuleId: COURSE.modules[0].id,
         quizHistory: [],
+        simulatorHistory: [],
         missedQuestions: {},
         flashcards: {},
         lessonConfidence: {},
@@ -780,6 +971,7 @@
       completedLessons: value?.completedLessons || {},
       activeModuleId: value?.activeModuleId || COURSE.modules[0].id,
       quizHistory: Array.isArray(value?.quizHistory) ? value.quizHistory : [],
+      simulatorHistory: Array.isArray(value?.simulatorHistory) ? value.simulatorHistory : [],
       missedQuestions: value?.missedQuestions || {},
       flashcards: value?.flashcards || {},
       lessonConfidence: value?.lessonConfidence || {},
@@ -799,6 +991,7 @@
       completedLessons: { ...remote.completedLessons, ...local.completedLessons },
       activeModuleId: local.activeModuleId || remote.activeModuleId || COURSE.modules[0].id,
       quizHistory: [...remote.quizHistory, ...local.quizHistory].slice(-30),
+      simulatorHistory: [...remote.simulatorHistory, ...local.simulatorHistory].slice(-10),
       missedQuestions,
       flashcards: { ...remote.flashcards, ...local.flashcards },
       lessonConfidence: { ...remote.lessonConfidence, ...local.lessonConfidence },
@@ -871,6 +1064,7 @@
       "endorsement-hazmat": "HazMat H",
       "endorsement-passenger": "Passenger P",
       "endorsement-school": "School Bus S",
+      simulator: "100-Question Simulator",
       missed: "Missed Questions"
     };
     return labels[type] || type;

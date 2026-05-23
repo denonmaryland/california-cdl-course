@@ -109,6 +109,7 @@
       <nav class="mode-tabs" aria-label="Course modes">
         <button class="tab-button active" data-mode="learn" type="button">Learn</button>
         <button class="tab-button" data-mode="practice" type="button">Practice</button>
+        <button class="tab-button" data-mode="simulator" type="button">Simulator</button>
         <button class="tab-button" data-mode="flashcards" type="button">Flashcards</button>
         <button class="tab-button" data-mode="endorsements" type="button">Endorsements</button>
         <button class="tab-button" data-mode="review" type="button">Review</button>
@@ -174,6 +175,14 @@
             <button class="primary-button" id="startPractice" type="button">Start</button>
           </div>
           <div id="practiceArea" class="practice-area"></div>
+        </section>
+
+        <section class="content-panel hidden" id="simulatorPanel" data-panel="simulator">
+          <div class="panel-head">
+            <p class="eyebrow">Full-length exam</p>
+            <h2>100-question DMV-style simulator</h2>
+          </div>
+          <div id="simulatorArea" class="simulator-area"></div>
         </section>
 
         <section class="content-panel hidden" id="flashcardsPanel" data-panel="flashcards">
@@ -244,6 +253,7 @@
     <script src="./cloud-sync.js"></script>
     <script src="./course-data.js"></script>
     <script src="./course-deep-dive.js"></script>
+    <script src="./simulator-data.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>
