@@ -3512,28 +3512,19 @@ a {
   min-height: clamp(150px, 22vw, 250px);
   border: 4px solid #080705;
   background:
-    radial-gradient(circle at 72% 42%, #1d2520 0 7px, transparent 8px),
-    linear-gradient(90deg, transparent 0 48%, #725333 49% 54%, transparent 55%) 50% 100% / 220px 80px no-repeat,
-    linear-gradient(165deg, transparent 0 46%, #334b38 47% 57%, transparent 58%) 0 100% / 210px 110px repeat-x,
-    linear-gradient(25deg, transparent 0 47%, #4c5d48 48% 58%, transparent 59%) 0 100% / 260px 130px repeat-x,
-    linear-gradient(180deg, #74a5b7 0 48%, #52794c 49% 65%, #493820 66% 100%);
+    linear-gradient(180deg, rgba(255, 230, 160, 0.1), rgba(8, 7, 5, 0.08)),
+    url("./assets/class-a-pixel-road-hero.png") center 48% / cover no-repeat;
   box-shadow: inset 0 0 0 3px rgba(255,230,160,0.18), 0 5px 0 rgba(0,0,0,0.46);
-  image-rendering: pixelated;
 }
 
 .module-summary::after {
-  content: "▰▰▰";
+  content: "";
   position: absolute;
-  top: clamp(5.8rem, 13vw, 10.3rem);
-  left: 52%;
-  color: #172633;
-  font: 900 clamp(2rem, 5vw, 4.5rem)/1 var(--font-display);
-  letter-spacing: -0.32em;
-  text-shadow:
-    0.22em 0.18em 0 #0a1014,
-    -0.5em 0.42em 0 #0a1014,
-    0 0.55em 0 #555e54;
-  transform: translateX(-50%);
+  inset: 1.25rem 1.25rem auto;
+  height: clamp(150px, 22vw, 250px);
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.26), transparent 18%, transparent 82%, rgba(0,0,0,0.24)),
+    linear-gradient(180deg, rgba(255,230,160,0.14), transparent 30%, rgba(0,0,0,0.16));
   pointer-events: none;
 }
 
