@@ -1159,12 +1159,20 @@
 
       const flipper = article.querySelector(".flashcard-3d");
       const rating  = article.querySelector(".flashcard-rating");
+      let ratingTimer;
 
       function doFlip() {
         flipper.classList.toggle("flipped");
         const flipped = flipper.classList.contains("flipped");
         flipper.setAttribute("aria-pressed", String(flipped));
-        rating.classList.toggle("hidden", !flipped);
+        window.clearTimeout(ratingTimer);
+        if (flipped) {
+          ratingTimer = window.setTimeout(() => {
+            if (flipper.classList.contains("flipped")) rating.classList.remove("hidden");
+          }, 220);
+        } else {
+          rating.classList.add("hidden");
+        }
       }
       flipper.addEventListener("click", doFlip);
       flipper.addEventListener("keydown", (e) => {

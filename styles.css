@@ -1139,6 +1139,10 @@ a {
   margin-top: 1rem;
 }
 
+.flashcard-rating {
+  margin-top: 1.25rem;
+}
+
 /* ─── Simulator ──────────────────────────────────────────────── */
 
 .simulator-hero {
@@ -4469,15 +4473,23 @@ html[data-theme] .confidence-button {
 /* Robust scroll-card flip: avoids mobile Safari mirrored backface rendering. */
 .flashcard-3d {
   perspective: none;
+  transform-origin: center center;
+  transition:
+    filter 0.42s cubic-bezier(0.2, 0.72, 0.17, 1),
+    transform 0.42s cubic-bezier(0.2, 0.72, 0.17, 1);
 }
 
 .flashcard-3d-inner {
   transform-style: flat;
-  transition: transform 0.34s cubic-bezier(0.2, 0.72, 0.17, 1);
+  transition: transform 0.48s cubic-bezier(0.18, 0.88, 0.24, 1);
 }
 
 .flashcard-3d.flipped .flashcard-3d-inner {
-  transform: translateY(3px) scale(0.992);
+  transform: translateY(-4px) scale(1.006);
+}
+
+.flashcard-3d.flipped {
+  filter: drop-shadow(0 26px 0 rgba(0,0,0,0.38)) drop-shadow(0 42px 34px rgba(0,0,0,0.24));
 }
 
 .flashcard-face {
@@ -4485,9 +4497,10 @@ html[data-theme] .confidence-button {
   backface-visibility: visible;
   -webkit-backface-visibility: visible;
   transition:
-    opacity 0.22s ease,
-    visibility 0s linear 0.22s,
-    transform 0.34s cubic-bezier(0.2, 0.72, 0.17, 1);
+    opacity 0.26s ease,
+    visibility 0s linear 0.26s,
+    transform 0.48s cubic-bezier(0.18, 0.88, 0.24, 1),
+    filter 0.48s cubic-bezier(0.18, 0.88, 0.24, 1);
 }
 
 .flashcard-face-front {
@@ -4500,37 +4513,57 @@ html[data-theme] .confidence-button {
   opacity: 0;
   visibility: hidden;
   z-index: 1;
-  transform: translateX(10px) rotate(1deg) scale(0.985);
+  transform: translateY(12px) rotate(0.6deg) scale(0.982);
+  filter: brightness(0.96);
 }
 
 .flashcard-3d.flipped .flashcard-face-front {
   opacity: 0;
   visibility: hidden;
   z-index: 1;
-  transform: translateX(-10px) rotate(-1deg) scale(0.985);
+  transform: translateY(-12px) rotate(-0.6deg) scale(0.982);
+  filter: brightness(0.95);
   transition:
-    opacity 0.18s ease,
-    visibility 0s linear 0.18s,
-    transform 0.34s cubic-bezier(0.2, 0.72, 0.17, 1);
+    opacity 0.22s ease,
+    visibility 0s linear 0.22s,
+    transform 0.48s cubic-bezier(0.18, 0.88, 0.24, 1),
+    filter 0.48s cubic-bezier(0.18, 0.88, 0.24, 1);
 }
 
 .flashcard-3d.flipped .flashcard-face-back {
   opacity: 1;
   visibility: visible;
   z-index: 3;
-  transform: translateX(0) rotate(0) scale(1);
+  transform: translateY(0) rotate(0) scale(1);
+  filter: brightness(1);
   transition:
-    opacity 0.22s ease 0.08s,
+    opacity 0.3s ease 0.08s,
     visibility 0s linear 0s,
-    transform 0.34s cubic-bezier(0.2, 0.72, 0.17, 1);
+    transform 0.48s cubic-bezier(0.18, 0.88, 0.24, 1),
+    filter 0.48s cubic-bezier(0.18, 0.88, 0.24, 1);
 }
 
 .flashcard-3d.flipped::before {
-  transform: rotate(-1.1deg) translateY(12px);
+  transform: rotate(-1.45deg) translateY(14px) scaleX(0.992);
 }
 
 .flashcard-3d.flipped::after {
-  transform: rotate(1.2deg) translateY(18px);
+  transform: rotate(1.55deg) translateY(22px) scaleX(0.988);
+}
+
+.flashcard-3d::before,
+.flashcard-3d::after {
+  transition: transform 0.48s cubic-bezier(0.18, 0.88, 0.24, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flashcard-3d,
+  .flashcard-3d-inner,
+  .flashcard-face,
+  .flashcard-3d::before,
+  .flashcard-3d::after {
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media (max-width: 720px) {
