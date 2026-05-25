@@ -39,6 +39,63 @@
   const allLessons = COURSE.modules.flatMap((module) =>
     module.lessons.map((lesson) => ({ ...lesson, moduleId: module.id }))
   );
+
+  // Confetti canvas (appended once to body)
+  const confettiCanvas = document.createElement("canvas");
+  confettiCanvas.id = "confetti-canvas";
+  confettiCanvas.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:999;width:100%;height:100%";
+  document.body.appendChild(confettiCanvas);
+
+  function fireConfetti() {
+    const ctx = confettiCanvas.getContext("2d");
+    confettiCanvas.width  = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+    const pieces = Array.from({ length: 110 }, () => ({
+      x:  Math.random() * confettiCanvas.width,
+      y: -20 - Math.random() * 60,
+      w: 8 + Math.random() * 8,
+      h: 5 + Math.random() * 5,
+      rot: Math.random() * Math.PI * 2,
+      spin: (Math.random() - 0.5) * 0.25,
+      vx: (Math.random() - 0.5) * 3,
+      vy: 2.5 + Math.random() * 3,
+      color: ["#1f9d7a","#286bd8","#f59e0b","#ef4444","#8b5cf6","#ec4899"][Math.floor(Math.random() * 6)]
+    }));
+    let frame;
+    function draw() {
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      let alive = false;
+      pieces.forEach((p) => {
+        p.x  += p.vx;
+        p.y  += p.vy;
+        p.vy += 0.06;
+        p.rot += p.spin;
+        if (p.y < confettiCanvas.height + 30) alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      if (alive) { frame = requestAnimationFrame(draw); }
+      else { ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); }
+    }
+    cancelAnimationFrame(frame);
+    draw();
+  }
+
+  function showModuleBanner(moduleTitle) {
+    const existing = document.getElementById("module-complete-banner");
+    if (existing) existing.remove();
+    const banner = document.createElement("div");
+    banner.id = "module-complete-banner";
+    banner.className = "module-complete-banner";
+    banner.setAttribute("role", "status");
+    banner.innerHTML = `<strong>Module complete!</strong> <span>${escapeHtml(moduleTitle)}</span>`;
+    document.body.appendChild(banner);
+    setTimeout(() => banner.remove(), 3800);
+  }
   const simulatorConfigs = [
     { id: "class-a", label: "Class A Full Mix", count: 100, description: "General Knowledge, Air Brakes, Combination Vehicles, cargo, and light endorsement coverage.", filter: (question) => ["general", "air-brakes", "combination", "cargo", "endorsements"].includes(question.exam) },
     { id: "general", label: "General Knowledge", count: 50, description: "Inspection, speed, space, hazards, weather, emergencies, railroad crossings, and safe driving rules.", filter: (question) => question.exam === "general" },
@@ -135,6 +192,58 @@
     els.startPractice.addEventListener("click", () => {
       startPractice(els.practiceType.value, Number(els.questionCount.value));
     });
+
+    // ── Global keyboard shortcuts ──────────────────────────────────────────
+    document.addEventListener("keydown", (e) => {
+      // Ignore when typing in an input or textarea
+      if (e.target.matches("input, textarea, select")) return;
+      const tag = e.target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+      const key = e.key;
+
+      // 1–4: select answer in practice or simulator
+      if (["1","2","3","4"].includes(key)) {
+        const idx = Number(key) - 1;
+        // practice
+        if (practiceSession && !practiceSession.complete) {
+          const grid = els.practiceArea.querySelector(".answer-grid");
+          if (grid) {
+            const buttons = Array.from(grid.querySelectorAll(".answer-button:not([disabled])"));
+            if (buttons[idx]) { e.preventDefault(); buttons[idx].click(); }
+          }
+        }
+        // simulator
+        if (simulatorSession) {
+          const grid = els.simulatorArea.querySelector(".simulator-answer-grid");
+          if (grid) {
+            const buttons = Array.from(grid.querySelectorAll(".answer-button:not([disabled])"));
+            if (buttons[idx]) { e.preventDefault(); buttons[idx].click(); }
+          }
+        }
+      }
+
+      // Space: flip flashcard
+      if (key === " ") {
+        const flipper = els.flashcardArea?.querySelector(".flashcard-3d");
+        if (flipper && document.querySelector("#flashcardsPanel:not(.hidden)")) {
+          e.preventDefault();
+          flipper.click();
+        }
+      }
+
+      // ArrowRight / ArrowLeft: next/prev in practice or simulator
+      if (key === "ArrowRight") {
+        const next = els.practiceArea?.querySelector("#practiceNext") ||
+                     els.simulatorArea?.querySelector("#simNext");
+        if (next && !next.disabled) { e.preventDefault(); next.click(); }
+      }
+      if (key === "ArrowLeft") {
+        const prev = els.practiceArea?.querySelector("#practicePrev") ||
+                     els.simulatorArea?.querySelector("#simPrev");
+        if (prev && !prev.disabled) { e.preventDefault(); prev.click(); }
+      }
+    });
   }
 
   function renderAll() {
@@ -151,10 +260,73 @@
 
   function renderDashboard() {
     const percent = Math.round((completedCount() / allLessons.length) * 100);
-    els.overallProgress.textContent = `${percent}%`;
-    els.readinessScore.textContent = `${calculateReadiness()}%`;
-    els.streakCount.textContent = String(state.streak.count || 0);
+    const readiness = calculateReadiness();
+    const streak = state.streak.count || 0;
+
+    // Progress rings for course % and readiness %
+    const metricsEl = document.querySelector(".dashboard-metrics");
+    if (metricsEl) {
+      metricsEl.innerHTML = `
+        ${renderRing(percent, "course complete", "#1f9d7a")}
+        ${renderRing(readiness, "practice readiness", "#286bd8")}
+        ${renderStreakHeatmap(streak)}
+      `;
+      // Animate rings after paint
+      requestAnimationFrame(() => {
+        metricsEl.querySelectorAll(".ring-fill").forEach((circle) => {
+          const pct = Number(circle.dataset.pct);
+          const r = 26;
+          const circ = 2 * Math.PI * r;
+          circle.style.strokeDashoffset = circ * (1 - pct / 100);
+        });
+      });
+    } else {
+      if (els.overallProgress) els.overallProgress.textContent = `${percent}%`;
+      if (els.readinessScore) els.readinessScore.textContent = `${readiness}%`;
+      if (els.streakCount) els.streakCount.textContent = String(streak);
+    }
+
     renderTodaysPlan();
+  }
+
+  function renderRing(pct, label, color) {
+    const r = 26;
+    const circ = 2 * Math.PI * r;
+    // Start fully offset (empty); JS animates to real value after paint
+    return `
+      <div class="metric-ring-wrap">
+        <svg class="metric-ring-svg" viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">
+          <circle class="ring-track" cx="32" cy="32" r="${r}" fill="none" stroke-width="5"/>
+          <circle class="ring-fill" cx="32" cy="32" r="${r}" fill="none" stroke="${color}"
+            stroke-width="5" stroke-dasharray="${circ}"
+            stroke-dashoffset="${circ}" data-pct="${pct}"/>
+          <text class="ring-label-num" x="32" y="37" text-anchor="middle">${pct}%</text>
+        </svg>
+        <span class="ring-label-sub">${escapeHtml(label)}</span>
+      </div>
+    `;
+  }
+
+  function renderStreakHeatmap(streak) {
+    const studyDates = state.streak.studyDates || [];
+    const today = dateKey(new Date());
+    // Last 60 days
+    const days = [];
+    for (let i = 59; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      days.push(dateKey(d));
+    }
+    const cells = days.map((dk) => {
+      const cls = dk === today ? "heatmap-cell today" : studyDates.includes(dk) ? "heatmap-cell active" : "heatmap-cell";
+      return `<div class="${cls}" title="${dk}"></div>`;
+    }).join("");
+    return `
+      <div class="streak-heatmap">
+        <div class="heatmap-grid">${cells}</div>
+        <span class="heatmap-label">${streak} day streak</span>
+      </div>
+    `;
   }
 
   function buildTodaysPlan() {
@@ -273,6 +445,51 @@
     });
   }
 
+  function buildScoreHero(score, correct, total, label) {
+    const r = 44;
+    const circ = 2 * Math.PI * r;
+    const grade = score >= 90 ? "A" : score >= 80 ? "B" : score >= 70 ? "C" : score >= 60 ? "D" : "F";
+    const tier  = score >= 80 ? "pass" : score >= 70 ? "warn" : "fail";
+    const verdict = score >= 80
+      ? "Pass — solid work"
+      : score >= 70
+      ? "Close — drill the weak spots"
+      : "More review needed";
+    return `
+      <div class="score-hero">
+        <div class="score-ring-wrap">
+          <svg viewBox="0 0 100 100" width="120" height="120" aria-hidden="true">
+            <circle class="ring-track" cx="50" cy="50" r="${r}" />
+            <circle class="score-ring-fill ${tier}" cx="50" cy="50" r="${r}"
+              stroke-dasharray="${circ.toFixed(2)}"
+              stroke-dashoffset="${circ.toFixed(2)}"
+              data-pct="${score}" />
+          </svg>
+          <div class="score-ring-label">
+            <span class="score-big-num">${score}<small>%</small></span>
+            <span class="score-grade ${tier}">${grade}</span>
+          </div>
+        </div>
+        <div class="score-meta">
+          <p class="eyebrow">${escapeHtml(label)}</p>
+          <p class="score-verdict ${tier}">${verdict}</p>
+          <p>${correct} of ${total} correct</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function animateScoreRing(container, score) {
+    requestAnimationFrame(() => {
+      const fill = container.querySelector(".score-ring-fill");
+      if (!fill) return;
+      const r = 44;
+      const circ = 2 * Math.PI * r;
+      fill.style.transition = "stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)";
+      fill.style.strokeDashoffset = (circ * (1 - score / 100)).toFixed(2);
+    });
+  }
+
   function renderModules() {
     els.moduleCount.textContent = `${COURSE.modules.length} modules`;
     els.moduleList.innerHTML = "";
@@ -285,6 +502,7 @@
       const progress = Math.round((moduleCompleted / moduleLessons) * 100);
       button.className = `module-item${module.id === activeModuleId ? " active" : ""}${isDone ? " module-done" : ""}`;
       button.dataset.moduleId = module.id;
+      button.dataset.exam = module.exam ? module.exam.toLowerCase().replace(/\s+/g, "-") : "";
       button.innerHTML = `
         <span class="module-number">${index + 1}</span>
         <span class="module-copy"><strong>${escapeHtml(module.title)}</strong><span>${escapeHtml(module.exam)} · ${escapeHtml(moduleTimeLabel(module))}</span></span>
@@ -320,8 +538,18 @@
       const node = els.lessonTemplate.content.firstElementChild.cloneNode(true);
       node.dataset.lessonId = lesson.id;
       if (lesson.id === defaultOpenLessonId) node.classList.add("open");
+      node.dataset.exam = module.exam ? module.exam.toLowerCase().replace(/\s+/g, "-") : "";
       node.querySelector(".lesson-index").textContent = `${moduleIndex + 1}.${index + 1}`;
       node.querySelector(".lesson-name").textContent = lesson.title;
+      // Read-time estimate: ~200 wpm; count words across summary + mustKnow + deepDive
+      const wordCount = [lesson.summary, ...(lesson.mustKnow || []),
+        ...(lesson.deepDive ? Object.values(lesson.deepDive).flat() : [])
+      ].join(" ").split(/\s+/).filter(Boolean).length;
+      const mins = Math.max(1, Math.round(wordCount / 200));
+      const readTimeEl = document.createElement("span");
+      readTimeEl.className = "lesson-read-time";
+      readTimeEl.textContent = `${mins} min`;
+      node.querySelector(".lesson-toggle").appendChild(readTimeEl);
       node.querySelector(".lesson-status").textContent = state.completedLessons[lesson.id] ? "Complete" : "Open";
       node.querySelector(".lesson-summary").textContent = lesson.summary;
       renderLessonDepth(node.querySelector(".lesson-depth"), lesson.deepDive);
@@ -341,6 +569,15 @@
       completeButton.addEventListener("click", () => {
         state.completedLessons[lesson.id] = true;
         saveState();
+        // Check if this lesson completion finishes the whole module
+        const parentModule = COURSE.modules.find((m) => m.lessons.some((l) => l.id === lesson.id));
+        if (parentModule) {
+          const allDone = parentModule.lessons.every((l) => state.completedLessons[l.id]);
+          if (allDone) {
+            fireConfetti();
+            showModuleBanner(parentModule.title);
+          }
+        }
         renderAll();
       });
       node.querySelector(".lesson-toggle").addEventListener("click", () => {
@@ -616,12 +853,7 @@
 
     els.practiceArea.innerHTML = `
       <article class="test-card">
-        <div class="test-meta">
-          <span class="pill ${score >= 80 ? "green" : "red"}">${score}%</span>
-          <span class="pill">${correct}/${total} correct</span>
-          <span class="pill">${escapeHtml(labelForPractice(practiceSession.type))}</span>
-        </div>
-        <h3>${score >= 80 ? "Passing-range score" : "Below passing range"}</h3>
+        ${buildScoreHero(score, correct, total, labelForPractice(practiceSession.type))}
         ${missedMarkup}
         <div class="topic-grid">${topicMarkup}</div>
         <div class="practice-nav">
@@ -630,6 +862,7 @@
         </div>
       </article>
     `;
+    animateScoreRing(els.practiceArea, score);
     practiceSession = null;
     renderDashboard();
     renderReview();
@@ -682,10 +915,32 @@
     });
   }
 
+  let simTimerInterval = null;
+
+  function clearSimTimer() {
+    if (simTimerInterval) { clearInterval(simTimerInterval); simTimerInterval = null; }
+  }
+
+  function startSimTimer(seconds, onExpire) {
+    clearSimTimer();
+    let remaining = seconds;
+    function tick() {
+      const el = document.getElementById("simTimerDisplay");
+      if (!el) { clearSimTimer(); return; }
+      el.textContent = remaining;
+      el.className = "sim-timer" + (remaining <= 10 ? " urgent" : remaining <= 20 ? " warn" : "");
+      if (remaining <= 0) { clearSimTimer(); onExpire(); }
+      remaining--;
+    }
+    tick();
+    simTimerInterval = setInterval(tick, 1000);
+  }
+
   function startSimulator(configId = "class-a") {
     const config = simulatorConfigs.find((item) => item.id === configId) || simulatorConfigs[0];
     const pool = getSimulatorPool();
     const questions = buildSimulatorSet(pool.filter(config.filter), config.count).map(shufflePracticeChoices);
+    clearSimTimer();
     simulatorSession = {
       type: config.id,
       label: config.label,
@@ -705,6 +960,7 @@
     const answeredCount = Object.keys(simulatorSession.answers).length;
     const correctCount = simulatorSession.questions.filter((item) => simulatorSession.answers[item.id] === item.answer).length;
     const progressPercent = Math.round(((simulatorSession.current + 1) / simulatorSession.questions.length) * 100);
+    clearSimTimer();
     els.simulatorArea.innerHTML = `
       <article class="test-card simulator-card">
         <div class="simulator-progress">
@@ -713,7 +969,10 @@
             <span class="pill green">${escapeHtml(question.topic)}</span>
             <span class="pill">${escapeHtml(question.section)}</span>
           </div>
-          <strong>${correctCount}/${answeredCount || 0}</strong>
+          <div style="display:flex;align-items:center;gap:.5rem">
+            <strong>${correctCount}/${answeredCount || 0}</strong>
+            ${!answered ? `<span id="simTimerDisplay" class="sim-timer">90</span>` : ""}
+          </div>
         </div>
         <div class="progress-track"><span style="width:${progressPercent}%"></span></div>
         <h3>${escapeHtml(question.question)}</h3>
@@ -721,11 +980,28 @@
         <div class="feedback" aria-live="polite">${answered ? escapeHtml(question.explanation) : ""}</div>
         <div class="practice-nav">
           <button class="secondary-button" id="simPrev" type="button" ${simulatorSession.current === 0 ? "disabled" : ""}>Previous</button>
-          <button class="secondary-button" id="simNext" type="button">${simulatorSession.current === simulatorSession.questions.length - 1 ? "Finish ${escapeHtml(simulatorSession.label)}" : "Next Question"}</button>
+          <button class="secondary-button" id="simNext" type="button">${simulatorSession.current === simulatorSession.questions.length - 1 ? `Finish ${escapeHtml(simulatorSession.label)}` : "Next Question"}</button>
           <button class="secondary-button" id="simQuit" type="button">Quit</button>
         </div>
+        <p class="kbd-hint" style="margin-top:.5rem"><kbd class="kbd">1</kbd>–<kbd class="kbd">4</kbd> to answer · <kbd class="kbd">→</kbd> next · <kbd class="kbd">←</kbd> previous</p>
       </article>
     `;
+
+    if (!answered) {
+      startSimTimer(90, () => {
+        // Time expired — mark as wrong (no selection), move forward
+        if (simulatorSession && simulatorSession.answers[question.id] === undefined) {
+          state.missedQuestions[question.id] = (state.missedQuestions[question.id] || 0) + 1;
+          saveState();
+          if (simulatorSession.current === simulatorSession.questions.length - 1) {
+            finishSimulator();
+          } else {
+            simulatorSession.current += 1;
+            renderSimulatorQuestion();
+          }
+        }
+      });
+    }
 
     const answerGrid = els.simulatorArea.querySelector(".simulator-answer-grid");
     question.choices.forEach((choice, index) => {
@@ -739,6 +1015,7 @@
         if (index === selected && selected !== question.answer) button.classList.add("incorrect");
       }
       button.addEventListener("click", () => {
+        clearSimTimer();
         simulatorSession.answers[question.id] = index;
         if (index !== question.answer) {
           state.missedQuestions[question.id] = (state.missedQuestions[question.id] || 0) + 1;
@@ -761,6 +1038,7 @@
     els.simulatorArea.querySelector("#simQuit").addEventListener("click", () => {
       const confirmed = window.confirm("Quit this simulator attempt? Current answers will not be scored.");
       if (!confirmed) return;
+      clearSimTimer();
       simulatorSession = null;
       renderSimulatorIntro();
     });
@@ -802,13 +1080,7 @@
     simulatorSession = null;
     els.simulatorArea.innerHTML = `
       <article class="test-card simulator-card">
-        <div class="test-meta">
-          <span class="pill ${score >= 80 ? "green" : "red"}">${score}%</span>
-          <span class="pill">${correct}/${total} correct</span>
-          <span class="pill">${escapeHtml(finishedLabel)}</span>
-        </div>
-        <h3>${score >= 80 ? "Passing-range simulator result" : "Below passing range"}</h3>
-        <p>${score >= 80 ? "Strong signal. Keep reviewing misses until the explanations feel obvious." : "Use the topic breakdown, then retake after reviewing weak sections."}</p>
+        ${buildScoreHero(score, correct, total, finishedLabel)}
         <div class="topic-grid">${topicMarkup}</div>
         <div class="practice-nav">
           <button class="primary-button" id="simAgain" type="button">Run This Simulator Again</button>
@@ -817,6 +1089,7 @@
         </div>
       </article>
     `;
+    animateScoreRing(els.simulatorArea, score);
     renderDashboard();
     renderReview();
     els.simulatorArea.querySelector("#simAgain").addEventListener("click", () => startSimulator(finishedType));
@@ -845,38 +1118,69 @@
   function renderFlashcard(showBack) {
     const card = flashcardQueue[flashcardIndex];
     if (!card) return renderFlashcards();
-    els.flashcardArea.innerHTML = `
-      <article class="flashcard">
-        <div class="test-meta">
-          <span class="pill">${flashcardIndex + 1} of ${flashcardQueue.length}</span>
-          <span class="pill green">${escapeHtml(card.topic)}</span>
-          <span class="pill">${escapeHtml(card.source)}</span>
-        </div>
-        <div class="flashcard-front"><p>${escapeHtml(card.front)}</p></div>
-        ${showBack ? `<div class="flashcard-back"><h3>Answer</h3><p>${escapeHtml(card.back)}</p></div>` : ""}
-        <div class="practice-nav">
-          ${showBack ? "" : `<button class="primary-button" id="showCardBack" type="button">Show Answer</button>`}
-          ${showBack ? `
+
+    // Build the 3-D card only once; subsequent calls just toggle .flipped
+    let article = els.flashcardArea.querySelector(".flashcard[data-card-id]");
+    const isNewCard = !article || article.dataset.cardId !== String(card.id);
+
+    if (isNewCard) {
+      els.flashcardArea.innerHTML = `
+        <article class="flashcard" data-card-id="${escapeAttribute(String(card.id))}">
+          <div class="test-meta">
+            <span class="pill">${flashcardIndex + 1} of ${flashcardQueue.length}</span>
+            <span class="pill green">${escapeHtml(card.topic)}</span>
+            <span class="pill">${escapeHtml(card.source)}</span>
+          </div>
+          <div class="flashcard-3d" role="button" tabindex="0" aria-label="Flip card">
+            <div class="flashcard-3d-inner">
+              <div class="flashcard-face">
+                <p class="eyebrow">Question</p>
+                <p>${escapeHtml(card.front)}</p>
+                <p class="kbd-hint"><kbd class="kbd">Space</kbd> to flip</p>
+              </div>
+              <div class="flashcard-face flashcard-face-back">
+                <p class="eyebrow">Answer</p>
+                <p>${escapeHtml(card.back)}</p>
+              </div>
+            </div>
+          </div>
+          <div class="practice-nav flashcard-rating hidden">
             <button class="confidence-button" data-confidence="again" type="button">Again</button>
             <button class="confidence-button" data-confidence="good" type="button">Good</button>
             <button class="confidence-button" data-confidence="mastered" type="button">Mastered</button>
-          ` : ""}
-        </div>
-      </article>
-    `;
-    const showButton = els.flashcardArea.querySelector("#showCardBack");
-    if (showButton) {
-      showButton.addEventListener("click", () => renderFlashcard(true));
-    }
-    Array.from(els.flashcardArea.querySelectorAll("[data-confidence]")).forEach((button) => {
-      button.addEventListener("click", () => {
-        scheduleFlashcard(card.id, button.dataset.confidence);
-        flashcardQueue.splice(flashcardIndex, 1);
-        if (flashcardIndex >= flashcardQueue.length) flashcardIndex = 0;
-        saveState();
-        renderFlashcard(false);
+          </div>
+        </article>
+      `;
+      article = els.flashcardArea.querySelector(".flashcard");
+
+      const flipper = article.querySelector(".flashcard-3d");
+      const rating  = article.querySelector(".flashcard-rating");
+
+      function doFlip() {
+        flipper.classList.toggle("flipped");
+        rating.classList.toggle("hidden", !flipper.classList.contains("flipped"));
+      }
+      flipper.addEventListener("click", doFlip);
+      flipper.addEventListener("keydown", (e) => {
+        if (e.key === " " || e.key === "Enter") { e.preventDefault(); doFlip(); }
       });
-    });
+
+      Array.from(article.querySelectorAll("[data-confidence]")).forEach((button) => {
+        button.addEventListener("click", () => {
+          scheduleFlashcard(card.id, button.dataset.confidence);
+          flashcardQueue.splice(flashcardIndex, 1);
+          if (flashcardIndex >= flashcardQueue.length) flashcardIndex = 0;
+          saveState();
+          renderFlashcard(false);
+        });
+      });
+    }
+
+    // Apply flipped state without rebuilding the DOM
+    const flipper = article.querySelector(".flashcard-3d");
+    const rating  = article.querySelector(".flashcard-rating");
+    flipper.classList.toggle("flipped", Boolean(showBack));
+    rating.classList.toggle("hidden", !showBack);
   }
 
   function renderReview() {
@@ -1198,6 +1502,10 @@
     const yesterdayKey = dateKey(yesterday);
     state.streak.count = state.streak.lastDate === yesterdayKey ? (state.streak.count || 0) + 1 : 1;
     state.streak.lastDate = today;
+    // Accumulate study dates for heatmap (keep last 90)
+    const dates = Array.isArray(state.streak.studyDates) ? state.streak.studyDates : [];
+    if (!dates.includes(today)) dates.push(today);
+    state.streak.studyDates = dates.slice(-90);
     saveState();
   }
 
