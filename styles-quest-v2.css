@@ -7,6 +7,8 @@
    • Animated HP bars, bouncing active arrow, tab glow pulse
    • Gold shimmer on buttons, staggered card entrances
    • Custom pixel scrollbar, plan action side-swipe hover
+   • Endorsement quest card RPG HUD treatment (v2 patch)
+   • Mobile animation density reduction (v2 patch)
    ═══════════════════════════════════════════════════════════════ */
 
 
@@ -364,8 +366,9 @@ body::after {
   animation: barShimmer 3s linear infinite;
 }
 
-/* Completed module bars: green flash */
-.module-item.completed .mini-progress span {
+/* Completed module bars: green flash — supports both class names */
+.module-item.completed .mini-progress span,
+.module-item.module-done .mini-progress span {
   animation: barShimmer 3s linear infinite, hpFlash 1.2s ease-in-out 0.1s;
 }
 
@@ -382,9 +385,14 @@ body::after {
 }
 
 /* Stagger the three metrics so they don't all pulse together */
+/* Legacy div-based layout */
 .dashboard-metrics > div:nth-child(1) > strong { animation-delay: 0s;    }
 .dashboard-metrics > div:nth-child(2) > strong { animation-delay: 1.15s; }
 .dashboard-metrics > div:nth-child(3) > strong { animation-delay: 2.3s;  }
+/* Ring-wrap layout (newer endorsement integration) */
+.metric-ring-wrap:nth-child(1) .ring-label-num { animation-delay: 0s;    }
+.metric-ring-wrap:nth-child(2) .ring-label-num { animation-delay: 1.15s; }
+.metric-ring-wrap:nth-child(3) .ring-label-num { animation-delay: 2.3s;  }
 
 
 /* ─────────────────────────────────────────────────────────────
@@ -713,7 +721,119 @@ body::after {
 
 
 /* ─────────────────────────────────────────────────────────────
-   25. EMPTY STATE — DASHED BORDER PULSE
+   25. ENDORSEMENT QUEST CARDS — RPG HUD TREATMENT  (v2 patch)
+   ───────────────────────────────────────────────────────────── */
+
+/* Card entrance — staggered like module items */
+.endorsement-quest-card {
+  animation: questEntrance 0.32s ease-out both;
+  position: relative;
+}
+
+.endorsement-quest-card:nth-child(1) { animation-delay: 0.04s; }
+.endorsement-quest-card:nth-child(2) { animation-delay: 0.10s; }
+.endorsement-quest-card:nth-child(3) { animation-delay: 0.16s; }
+.endorsement-quest-card:nth-child(4) { animation-delay: 0.22s; }
+.endorsement-quest-card:nth-child(5) { animation-delay: 0.28s; }
+.endorsement-quest-card:nth-child(6) { animation-delay: 0.34s; }
+
+/* Hover lift — consistent with other interactive cards */
+.endorsement-quest-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,230,160,.38),
+    0 8px 0 rgba(0,0,0,.52),
+    0 0 24px rgba(226,189,85,.16);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.endorsement-quest-card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* ── Stats as RPG HUD counters ── */
+
+/* Each stat div gets a pixel-box HUD feel */
+.endorsement-quest-stats div {
+  position: relative;
+}
+
+/* Stat number — gold, VT323, large */
+.endorsement-quest-stats strong {
+  font-family: var(--font-pixel);
+  font-size: 1.35rem;
+  color: var(--quest-gold-light);
+  text-shadow: 1px 1px 0 #080705;
+  letter-spacing: 0.04em;
+  /* Subtle pulse to feel like a live HUD counter */
+  animation: metricPulse 4s ease-in-out infinite;
+}
+
+/* Stagger the stat pulses */
+.endorsement-quest-stats div:nth-child(1) strong { animation-delay: 0s;   }
+.endorsement-quest-stats div:nth-child(2) strong { animation-delay: 1.3s; }
+.endorsement-quest-stats div:nth-child(3) strong { animation-delay: 2.6s; }
+
+/* Stat label — muted, small VT323 */
+.endorsement-quest-stats span {
+  font-family: var(--font-pixel);
+  font-size: 0.95rem;
+  color: var(--quest-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Endorsement action buttons ── */
+
+/* Container spacing */
+.endorsement-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* All links/buttons inside endorsement-actions get pixel treatment */
+.endorsement-actions a,
+.endorsement-actions button {
+  font-family: var(--font-pixel);
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.endorsement-actions a:hover,
+.endorsement-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,230,160,.48),
+    0 4px 0 #070706,
+    0 0 18px rgba(226,189,85,.20);
+}
+
+.endorsement-actions a:active,
+.endorsement-actions button:active {
+  transform: translateY(2px) scale(0.98);
+}
+
+/* Primary action in the group gets a gold left-accent line */
+.endorsement-actions a:first-child,
+.endorsement-actions button:first-child {
+  position: relative;
+}
+
+.endorsement-actions a:first-child::before,
+.endorsement-actions button:first-child::before {
+  content: "▶";
+  margin-right: 0.4rem;
+  color: var(--quest-gold);
+  font-size: 0.75em;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   26. EMPTY STATE — DASHED BORDER PULSE
    ───────────────────────────────────────────────────────────── */
 
 @keyframes dashPulse {
@@ -773,6 +893,7 @@ body::after {
    29. RESPONSIVE — FONT SIZE ADJUSTMENTS
    ───────────────────────────────────────────────────────────── */
 
+/* ── Tablet: soften heavy animations, keep RPG feel ── */
 @media (max-width: 900px) {
   .brand-block h1 {
     font-size: clamp(0.52rem, 2vw, 0.75rem);
@@ -785,8 +906,32 @@ body::after {
   .tab-button {
     font-size: 0.95rem;
   }
+
+  /* Slow down the shimmer — less noisy on smaller screens */
+  .mini-progress span,
+  .progress-track span {
+    animation-duration: 5s;
+  }
+
+  /* Reduce the star twinkle intensity */
+  .dashboard-band::before {
+    animation-duration: 4s;
+  }
+
+  /* Tone down the tab glow — still present, less intense */
+  .tab-button.active {
+    animation-duration: 3.5s;
+  }
+
+  /* Metric pulse is subtle enough to keep at tablet */
+  .dashboard-metrics > div > strong,
+  .metric-ring-wrap .ring-label-num,
+  .endorsement-quest-stats strong {
+    animation-duration: 5s;
+  }
 }
 
+/* ── Mobile: strip the most visually busy animations ── */
 @media (max-width: 600px) {
   .brand-block h1 {
     font-size: 0.55rem;
@@ -794,5 +939,86 @@ body::after {
 
   .eyebrow {
     font-size: 0.88rem;
+  }
+
+  /* Kill torch flicker — topbar repaints are expensive on mobile */
+  .topbar {
+    animation: none;
+  }
+  .topbar::before {
+    animation: none;
+    opacity: 0.4;
+  }
+
+  /* Kill CRT scanline — not meaningful at mobile resolution */
+  body::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  /* Stop the arrow bouncing — subtle enough on desktop, distracting on mobile */
+  .module-item.active::before {
+    animation: none;
+  }
+
+  /* Freeze star twinkle — dashboard is smaller anyway */
+  .dashboard-band::before {
+    animation: none;
+    opacity: 0.6;
+  }
+
+  /* Simplify card entrances to opacity-only — no translate/scale jank */
+  @keyframes questEntranceMobile {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .module-item,
+  .lesson-card.open .lesson-summary,
+  .depth-section,
+  .quick-start-card,
+  .review-card,
+  .source-card,
+  .endorsement-card,
+  .endorsement-quest-card,
+  .simulator-option:nth-child(1),
+  .simulator-option:nth-child(2),
+  .simulator-option:nth-child(3),
+  .simulator-option:nth-child(4) {
+    animation-name: questEntranceMobile;
+    animation-duration: 0.22s;
+  }
+
+  /* Stop bar shimmer — keep the green fill, drop the sweep */
+  .mini-progress span,
+  .progress-track span {
+    animation: none;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.16) 0 6px, transparent 6px 12px),
+      linear-gradient(90deg, #4f9a36, #92d94c);
+  }
+
+  /* Keep metric pulse but make it nearly imperceptible */
+  .dashboard-metrics > div > strong,
+  .metric-ring-wrap .ring-label-num,
+  .endorsement-quest-stats strong {
+    animation-duration: 8s;
+  }
+
+  /* Stop heatmap flash on mobile — active state color is enough */
+  .heatmap-cell.active {
+    animation: none;
+  }
+
+  /* Stop endorsement badge shimmer */
+  .endorsement-badge::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  /* Soften plan action hover (no translateX on touch) */
+  .plan-action:hover {
+    transform: none;
+    box-shadow: inset 0 0 0 2px rgba(255,230,160,.28), 0 4px 0 rgba(0,0,0,.42);
   }
 }
