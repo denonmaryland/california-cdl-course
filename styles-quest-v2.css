@@ -1,0 +1,798 @@
+/* ═══════════════════════════════════════════════════════════════
+   CDL QUEST SKIN v2 — ENHANCED VISUAL & ANIMATION LAYER
+   Builds on the retro 16-bit RPG base with:
+   • Pixel-authentic fonts: Press Start 2P (display) + VT323 (labels)
+   • Ambient CRT scanlines, torch flicker, star twinkle
+   • Hero image reveal in dashboard band
+   • Animated HP bars, bouncing active arrow, tab glow pulse
+   • Gold shimmer on buttons, staggered card entrances
+   • Custom pixel scrollbar, plan action side-swipe hover
+   ═══════════════════════════════════════════════════════════════ */
+
+
+/* ─────────────────────────────────────────────────────────────
+   1. PIXEL FONT APPLICATION
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --font-pixel: 'VT323', "Courier New", ui-monospace, monospace;
+  --font-press: 'Press Start 2P', "Courier New", ui-monospace, monospace;
+}
+
+/* ── Level 1: Big display titles — Press Start 2P ── */
+.brand-block h1 {
+  font-family: var(--font-press);
+  font-size: clamp(0.6rem, 1.5vw, 0.95rem);
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+}
+
+.dashboard-copy h2 {
+  font-family: var(--font-press);
+  font-size: clamp(1rem, 2.6vw, 2rem);
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+}
+
+.score-big-num,
+.score-verdict {
+  font-family: var(--font-press);
+}
+
+/* ── Level 2: UI labels — VT323 ── */
+.eyebrow {
+  font-family: var(--font-pixel);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+}
+
+.tab-button {
+  font-family: var(--font-pixel);
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+}
+
+.module-number,
+.lesson-index,
+.endorsement-code {
+  font-family: var(--font-pixel);
+  font-size: 1.1rem;
+}
+
+.pill,
+.sim-timer,
+.kbd,
+.lesson-read-time {
+  font-family: var(--font-pixel);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.rail-head span,
+.plan-copy strong,
+.source-card a,
+.endorsement-code,
+.dashboard-metrics > div > span,
+.ring-label-sub,
+.heatmap-label {
+  font-family: var(--font-pixel);
+  font-size: 1rem;
+}
+
+.sim-timer::before {
+  font-family: var(--font-pixel);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   2. KEYFRAMES
+   ───────────────────────────────────────────────────────────── */
+
+/* Torch flicker — subtle, organic, campfire-like */
+@keyframes torchFlicker {
+  0%,  100% { box-shadow: 0 5px 0 #060806, 0 10px 24px rgba(0,0,0,.36), 0 0 60px rgba(255,190,70,.05); }
+  14%        { box-shadow: 0 5px 0 #060806, 0 10px 16px rgba(0,0,0,.28), 0 0 36px rgba(255,160,40,.03); }
+  28%        { box-shadow: 0 5px 0 #060806, 0 10px 30px rgba(0,0,0,.44), 0 0 80px rgba(255,215,90,.08); }
+  45%        { box-shadow: 0 5px 0 #060806, 0 10px 20px rgba(0,0,0,.32), 0 0 48px rgba(255,175,50,.05); }
+  62%        { box-shadow: 0 5px 0 #060806, 0 10px 28px rgba(0,0,0,.40), 0 0 72px rgba(255,205,75,.07); }
+  79%        { box-shadow: 0 5px 0 #060806, 0 10px 22px rgba(0,0,0,.34), 0 0 55px rgba(255,185,60,.04); }
+}
+
+/* Torch corner radiance flicker */
+@keyframes torchRadiance {
+  0%,  100% { opacity: 0.55; }
+  30%        { opacity: 0.38; }
+  65%        { opacity: 0.68; }
+}
+
+/* Brand mark glow pulse */
+@keyframes emblemGlow {
+  0%,  100% {
+    box-shadow: inset 0 0 0 3px var(--quest-brass),
+                inset 0 0 0 6px #183a59,
+                4px 4px 0 rgba(0,0,0,.55);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: inset 0 0 0 3px var(--quest-gold),
+                inset 0 0 0 6px #1e4d72,
+                4px 4px 0 rgba(0,0,0,.55),
+                0 0 22px rgba(226,189,85,.50);
+    filter: brightness(1.1);
+  }
+}
+
+/* CRT scanline scroll */
+@keyframes scanlineMove {
+  from { background-position: 0 0; }
+  to   { background-position: 0 8px; }
+}
+
+/* Active module arrow bounce */
+@keyframes arrowBounce {
+  0%,  100% { transform: translateX(0);   opacity: 1;   }
+  50%        { transform: translateX(5px); opacity: 0.65; }
+}
+
+/* Progress bar shimmer sweep */
+@keyframes barShimmer {
+  0%   { background-position: -250% center; }
+  100% { background-position: 250% center;  }
+}
+
+/* Dashboard metric big-number pulse */
+@keyframes metricPulse {
+  0%,  100% { transform: scale(1);    text-shadow: 2px 2px 0 #070706; }
+  50%        { transform: scale(1.06); text-shadow: 2px 2px 0 #070706, 0 0 20px rgba(255,230,160,.55); }
+}
+
+/* Active tab glow pulse */
+@keyframes tabGlowPulse {
+  0%,  100% { box-shadow: inset 0 0 0 2px rgba(255,230,160,.34), 0 5px 0 #070706, 0 0 20px rgba(105,184,67,.26); }
+  50%        { box-shadow: inset 0 0 0 2px rgba(255,230,160,.54), 0 5px 0 #070706, 0 0 38px rgba(105,184,67,.50); }
+}
+
+/* Star twinkle A */
+@keyframes twinkleA {
+  from { opacity: 0.15; transform: scale(0.7);  }
+  to   { opacity: 1;    transform: scale(1.25); }
+}
+
+/* Star twinkle B (offset phase) */
+@keyframes twinkleB {
+  from { opacity: 0.8;  transform: scale(1.1);  }
+  to   { opacity: 0.1;  transform: scale(0.6);  }
+}
+
+/* Card entrance */
+@keyframes questEntrance {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);     }
+}
+
+/* Cursor icon blink (used on eyebrow ::before) */
+@keyframes cursorBlink {
+  0%,  49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* HP bar flash on complete */
+@keyframes hpFlash {
+  0%,  100% { filter: brightness(1) saturate(1);   box-shadow: 0 0 10px rgba(105,184,67,.3); }
+  50%        { filter: brightness(1.6) saturate(1.4); box-shadow: 0 0 22px rgba(105,184,67,.75); }
+}
+
+/* Plan action side-reveal */
+@keyframes planReveal {
+  from { transform: translateX(-6px); opacity: 0.6; }
+  to   { transform: translateX(0);    opacity: 1;   }
+}
+
+/* Gold shimmer sweep (for buttons / badges) */
+@keyframes goldSweep {
+  0%   { background-position: -300% center; }
+  60%  { background-position:  300% center; }
+  100% { background-position:  300% center; }
+}
+
+/* Endorsement badge idle shimmer */
+@keyframes badgeShimmer {
+  0%,  40% { background-position: -300% center; }
+  60%, 100% { background-position:  300% center; }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   3. CRT SCANLINE OVERLAY
+   ───────────────────────────────────────────────────────────── */
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.04) 3px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+  animation: scanlineMove 0.18s linear infinite;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   4. TOPBAR — TORCH FLICKER + CORNER RADIANCE
+   ───────────────────────────────────────────────────────────── */
+
+.topbar {
+  animation: torchFlicker 3.8s ease-in-out infinite;
+  /* Warm torch-light tinge on the bottom border strip */
+  border-bottom-color: rgba(185, 135, 40, 0.7);
+}
+
+/* Torch corner warmth */
+.topbar > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* We use topbar::before (already set to the brick strip) —
+   add a warm radiance overlay on top via a new background layer */
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 2% 50%,  rgba(255, 170, 50, 0.10), transparent 34%),
+    radial-gradient(ellipse at 98% 50%, rgba(255, 170, 50, 0.10), transparent 34%);
+  animation: torchRadiance 3.8s ease-in-out infinite;
+  z-index: 0;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   5. BRAND MARK — PULSE GLOW
+   ───────────────────────────────────────────────────────────── */
+
+.brand-mark {
+  animation: emblemGlow 4.2s ease-in-out infinite;
+  will-change: box-shadow, filter;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   6. DASHBOARD BAND — HERO IMAGE + STAR PARTICLES
+   ───────────────────────────────────────────────────────────── */
+
+/* Hero image reveal on the right side of the dashboard */
+.dashboard-band::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 54%;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    /* Fade to dark on left so copy stays readable */
+    linear-gradient(90deg,
+      rgba(6, 28, 24, 1)   0%,
+      rgba(6, 28, 24, 0.6) 22%,
+      rgba(6, 28, 24, 0.1) 46%,
+      transparent          60%
+    ),
+    /* Vignette on right/top/bottom */
+    linear-gradient(180deg,
+      rgba(4, 10, 8, 0.45) 0%,
+      transparent          28%,
+      transparent          72%,
+      rgba(4, 10, 8, 0.55) 100%
+    ),
+    url("./assets/class-a-pixel-road-hero.png") center 38% / cover no-repeat;
+  opacity: 0.72;
+  transition: opacity 0.5s ease;
+}
+
+.dashboard-band:hover::after {
+  opacity: 0.90;
+  transition: opacity 0.5s ease;
+}
+
+/* ── Star particles scattered over the hero area ── */
+
+/* We piggyback on the existing .dashboard-band::before which is already
+   positioned absolute — we extend its background stack with pixel stars */
+.dashboard-band::before {
+  /* Stars layered on top of the existing tree-gradient background */
+  background:
+    /* Pixel stars (sharp radial dots) */
+    radial-gradient(circle, rgba(255,245,160,0.95) 0, transparent 1.5px)  8%  12% / 4px 4px no-repeat,
+    radial-gradient(circle, rgba(255,245,160,0.80) 0, transparent 1px)   19%   7% / 2px 2px no-repeat,
+    radial-gradient(circle, rgba(255,245,160,0.90) 0, transparent 2px)   58%   5% / 5px 5px no-repeat,
+    radial-gradient(circle, rgba(170,215,255,0.85) 0, transparent 1.5px) 74%  16% / 3px 3px no-repeat,
+    radial-gradient(circle, rgba(255,245,160,0.70) 0, transparent 1px)   41%   9% / 2px 2px no-repeat,
+    radial-gradient(circle, rgba(105,184, 67,0.90) 0, transparent 1.5px) 88%   7% / 3px 3px no-repeat,
+    radial-gradient(circle, rgba(255,245,160,0.75) 0, transparent 1px)   31%  20% / 2px 2px no-repeat,
+    radial-gradient(circle, rgba(255,200,100,0.80) 0, transparent 1.5px) 63%  13% / 3px 3px no-repeat,
+    radial-gradient(circle, rgba(255,245,160,0.60) 0, transparent 1px)   82%  24% / 2px 2px no-repeat,
+    radial-gradient(circle, rgba(170,215,255,0.70) 0, transparent 1.5px) 48%  18% / 3px 3px no-repeat,
+    /* Original tree gradients from Zelda skin */
+    linear-gradient(180deg, rgba(125,173,189,0.42), rgba(125,173,189,0.02) 44%, transparent 45%),
+    linear-gradient(135deg, transparent 0 60%, rgba(40,69,48,0.52) 61% 70%, transparent 71%) 0 100% / 220px 140px repeat-x,
+    linear-gradient(45deg,  transparent 0 56%, rgba(24,54,44,0.62) 57% 70%, transparent 71%) 0 100% / 180px 120px repeat-x,
+    radial-gradient(circle at 72% 34%, rgba(255,230,160,0.16), transparent 18rem);
+
+  /* Apply star twinkle as opacity animation on the whole layer */
+  animation: twinkleA 2.4s ease-in-out infinite alternate;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   7. ACTIVE MODULE ARROW — BOUNCE ANIMATION
+   ───────────────────────────────────────────────────────────── */
+
+.module-item.active::before {
+  animation: arrowBounce 0.75s ease-in-out infinite;
+  will-change: transform;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   8. PROGRESS BARS — SHIMMER ANIMATION
+   ───────────────────────────────────────────────────────────── */
+
+.mini-progress span,
+.progress-track span {
+  background:
+    /* Shimmer highlight sweep */
+    linear-gradient(
+      90deg,
+      transparent            0%,
+      rgba(255,255,255,0.30) 35%,
+      rgba(255,255,255,0.10) 50%,
+      transparent            65%
+    ) -250% center / 200% 100% no-repeat,
+    /* Existing pixel segments */
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.16) 0 6px, transparent 6px 12px),
+    linear-gradient(90deg, #4f9a36, #92d94c);
+  background-size: 200% 100%, auto, auto;
+  animation: barShimmer 3s linear infinite;
+}
+
+/* Completed module bars: green flash */
+.module-item.completed .mini-progress span {
+  animation: barShimmer 3s linear infinite, hpFlash 1.2s ease-in-out 0.1s;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   9. DASHBOARD METRICS — NUMBER PULSE
+   ───────────────────────────────────────────────────────────── */
+
+.dashboard-metrics > div > strong,
+.metric-ring-wrap .ring-label-num {
+  display: block;
+  animation: metricPulse 3.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Stagger the three metrics so they don't all pulse together */
+.dashboard-metrics > div:nth-child(1) > strong { animation-delay: 0s;    }
+.dashboard-metrics > div:nth-child(2) > strong { animation-delay: 1.15s; }
+.dashboard-metrics > div:nth-child(3) > strong { animation-delay: 2.3s;  }
+
+
+/* ─────────────────────────────────────────────────────────────
+   10. MODE TABS — ACTIVE TAB GLOW PULSE
+   ───────────────────────────────────────────────────────────── */
+
+.tab-button.active {
+  animation: tabGlowPulse 2.4s ease-in-out infinite;
+  will-change: box-shadow;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   11. PRIMARY BUTTON — GOLD SHIMMER ON HOVER
+   ───────────────────────────────────────────────────────────── */
+
+.primary-button,
+.complete-button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Shimmer layer — lives behind the button text via z-index */
+.primary-button::after,
+.complete-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    105deg,
+    transparent            25%,
+    rgba(255,230,160,0.30) 48%,
+    rgba(255,255,200,0.18) 52%,
+    transparent            72%
+  );
+  background-size: 300% 100%;
+  background-position: -300% center;
+  pointer-events: none;
+}
+
+.primary-button:hover::after,
+.complete-button:hover::after {
+  animation: goldSweep 0.55s ease-out forwards;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   12. SECONDARY / ICON BUTTONS — ENHANCED HOVER LIFT
+   ───────────────────────────────────────────────────────────── */
+
+.secondary-button:hover,
+.icon-button:hover,
+.back-link:hover,
+.endorsement-card a:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,230,160,.52),
+    0 4px 0 #070706,
+    0 0 22px rgba(226,189,85,.22);
+}
+
+.secondary-button:active,
+.icon-button:active {
+  transform: translateY(3px) scale(0.98);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   13. MODULE ITEM CARD ENTRANCES — STAGGERED SLIDE-IN
+   ───────────────────────────────────────────────────────────── */
+
+.module-item {
+  animation: questEntrance 0.32s ease-out both;
+}
+.module-item:nth-child(1)  { animation-delay: 0.03s; }
+.module-item:nth-child(2)  { animation-delay: 0.08s; }
+.module-item:nth-child(3)  { animation-delay: 0.13s; }
+.module-item:nth-child(4)  { animation-delay: 0.18s; }
+.module-item:nth-child(5)  { animation-delay: 0.23s; }
+.module-item:nth-child(6)  { animation-delay: 0.28s; }
+.module-item:nth-child(7)  { animation-delay: 0.33s; }
+.module-item:nth-child(8)  { animation-delay: 0.38s; }
+.module-item:nth-child(9)  { animation-delay: 0.43s; }
+.module-item:nth-child(10) { animation-delay: 0.48s; }
+
+/* Lesson card open: content fades in */
+.lesson-card.open .lesson-summary {
+  animation: questEntrance 0.24s ease-out both;
+}
+
+.depth-section {
+  animation: questEntrance 0.28s ease-out both;
+}
+
+.quick-start-card {
+  animation: questEntrance 0.30s ease-out both;
+}
+
+.review-card,
+.source-card,
+.endorsement-card {
+  animation: questEntrance 0.32s ease-out both;
+}
+
+/* Simulator options staggered */
+.simulator-option:nth-child(1) { animation: questEntrance 0.28s ease-out 0.04s both; }
+.simulator-option:nth-child(2) { animation: questEntrance 0.28s ease-out 0.10s both; }
+.simulator-option:nth-child(3) { animation: questEntrance 0.28s ease-out 0.16s both; }
+.simulator-option:nth-child(4) { animation: questEntrance 0.28s ease-out 0.22s both; }
+
+
+/* ─────────────────────────────────────────────────────────────
+   14. PLAN ACTIONS — SIDE-SWIPE HOVER
+   ───────────────────────────────────────────────────────────── */
+
+.plan-action {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.plan-action:hover {
+  transform: translateX(7px);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,230,160,.38),
+    0 4px 0 rgba(0,0,0,.42),
+    -4px 0 0 var(--quest-gold);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   15. FOCUS PANEL EYEBROW — BLINKING CURSOR
+   ───────────────────────────────────────────────────────────── */
+
+.focus-panel > .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.focus-panel > .eyebrow::before {
+  content: "▣";
+  animation: cursorBlink 1s step-end infinite;
+  color: var(--quest-gold);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   16. ENDORSEMENT BADGE — IDLE SHIMMER
+   ───────────────────────────────────────────────────────────── */
+
+.endorsement-badge {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.endorsement-badge::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent            30%,
+    rgba(255,230,160,0.22) 50%,
+    transparent            70%
+  );
+  background-size: 300% 100%;
+  animation: badgeShimmer 5s ease-in-out infinite;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   17. CORRECT / INCORRECT ANSWER BUTTON — GLOW
+   ───────────────────────────────────────────────────────────── */
+
+.answer-button.correct {
+  box-shadow:
+    inset 0 0 0 2px rgba(105,184,67,0.55),
+    0 3px 0 rgba(0,0,0,.42),
+    0 0 22px rgba(105,184,67,0.30) !important;
+  animation: questEntrance 0.18s ease-out;
+}
+
+.answer-button.incorrect {
+  box-shadow:
+    inset 0 0 0 2px rgba(197,82,55,0.55),
+    0 3px 0 rgba(0,0,0,.42),
+    0 0 22px rgba(197,82,55,0.30) !important;
+  animation: questEntrance 0.18s ease-out;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   18. MODULE COMPLETE BANNER — ENTRANCE
+   ───────────────────────────────────────────────────────────── */
+
+.module-complete-banner {
+  animation: questEntrance 0.36s ease-out both;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   19. HEATMAP CELLS — ACTIVE GLOW
+   ───────────────────────────────────────────────────────────── */
+
+.heatmap-cell.active {
+  animation: hpFlash 2s ease-in-out infinite;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   20. CUSTOM PIXEL SCROLLBAR
+   ───────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0d08;
+  border-left: 2px solid #080705;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid #080705;
+  background: linear-gradient(180deg, #4c7a2c 0%, #2a5017 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,230,160,0.22);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #62973a 0%, #366320 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,230,160,0.40),
+              0 0 10px rgba(105,184,67,0.30);
+}
+
+::-webkit-scrollbar-corner {
+  background: #0a0d08;
+}
+
+/* Module rail scrollbar (narrower) */
+.module-rail::-webkit-scrollbar {
+  width: 6px;
+}
+
+.module-rail::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3a5f22, #1e3a12);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   21. TOPBAR BRICK STRIP — WARM GLOW TINT
+   ───────────────────────────────────────────────────────────── */
+
+/* Override the brick strip color to be slightly warmer */
+.topbar::after {
+  background:
+    repeating-linear-gradient(90deg, #1c1911 0 16px, #362e1e 16px 32px),
+    linear-gradient(180deg, rgba(255,175,55,0.08), transparent);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   22. LESSON CARD OPEN — LEFT BORDER ACCENT
+   ───────────────────────────────────────────────────────────── */
+
+.lesson-card.open {
+  border-left: 4px solid var(--quest-gold) !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,230,160,.30),
+    0 8px 0 rgba(0,0,0,.56),
+    0 0 28px rgba(105,184,67,.16) !important;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   23. FLASHCARD — HOVER LIFT
+   ───────────────────────────────────────────────────────────── */
+
+.flashcard-3d:not(.flipped):hover {
+  filter:
+    drop-shadow(0 30px 0 rgba(0,0,0,.45))
+    drop-shadow(0 46px 36px rgba(0,0,0,.32))
+    drop-shadow(0 0 18px rgba(226,189,85,.22));
+  transform: translateY(-4px);
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.flashcard-3d {
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   24. SCORE HERO — CELEBRATION SPARKLES
+   ───────────────────────────────────────────────────────────── */
+
+.score-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.score-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle, rgba(255,230,160,.95) 0, transparent 2px)  9%  18% / 5px 5px no-repeat,
+    radial-gradient(circle, rgba(105,184, 67,.90) 0, transparent 1.5px) 78%  14% / 4px 4px no-repeat,
+    radial-gradient(circle, rgba(255,230,160,.75) 0, transparent 2px)  48%  78% / 5px 5px no-repeat,
+    radial-gradient(circle, rgba( 90,159,178,.85) 0, transparent 1.5px) 24%  68% / 4px 4px no-repeat,
+    radial-gradient(circle, rgba(255,215,100,.90) 0, transparent 2px)  68%  55% / 5px 5px no-repeat;
+  animation: twinkleA 1.6s ease-in-out infinite alternate;
+}
+
+.score-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   25. EMPTY STATE — DASHED BORDER PULSE
+   ───────────────────────────────────────────────────────────── */
+
+@keyframes dashPulse {
+  0%,  100% { border-color: var(--quest-brass); opacity: 0.8; }
+  50%        { border-color: var(--quest-gold);  opacity: 1;   }
+}
+
+.empty-state {
+  animation: dashPulse 2.8s ease-in-out infinite;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   26. PANEL HEAD / LESSON TOOLBAR — TITLE GLOW
+   ───────────────────────────────────────────────────────────── */
+
+.lesson-toolbar h2,
+.panel-head h2 {
+  text-shadow: 2px 2px 0 #070706, 0 0 18px rgba(255,230,160,.18);
+  transition: text-shadow 0.3s ease;
+}
+
+.lesson-toolbar:hover h2,
+.panel-head:hover h2 {
+  text-shadow: 2px 2px 0 #070706, 0 0 28px rgba(255,230,160,.38);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   27. MODULE NUMBER HOVER — COLOR SHIFT
+   ───────────────────────────────────────────────────────────── */
+
+.module-item:hover .module-number {
+  background:
+    linear-gradient(180deg, rgba(255,230,160,.26), transparent),
+    linear-gradient(180deg, #5a8e38, #285f22);
+  box-shadow: inset 0 0 0 2px rgba(255,230,160,.34), 2px 2px 0 rgba(0,0,0,.55), 0 0 12px rgba(105,184,67,.30);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   28. REDUCED MOTION — RESPECT SYSTEM PREFERENCE
+   ───────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:       0.01ms !important;
+    animation-iteration-count: 1     !important;
+    transition-duration:      0.01ms !important;
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   29. RESPONSIVE — FONT SIZE ADJUSTMENTS
+   ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .brand-block h1 {
+    font-size: clamp(0.52rem, 2vw, 0.75rem);
+  }
+
+  .dashboard-copy h2 {
+    font-size: clamp(0.85rem, 3.5vw, 1.4rem);
+  }
+
+  .tab-button {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .brand-block h1 {
+    font-size: 0.55rem;
+  }
+
+  .eyebrow {
+    font-size: 0.88rem;
+  }
+}
