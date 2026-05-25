@@ -1326,7 +1326,8 @@
     window.requestAnimationFrame(() => {
       // Measure actual height of sticky elements so we don't scroll under them
       const tabs = document.querySelector(".mode-tabs");
-      const stickyH = tabs ? tabs.offsetHeight + 4 : 12;
+      const topbar = document.querySelector(".topbar");
+      const stickyH = (topbar ? topbar.offsetHeight : 0) + (tabs ? tabs.offsetHeight : 0) + 12;
       const top = panel.getBoundingClientRect().top + window.scrollY - stickyH;
       window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     });

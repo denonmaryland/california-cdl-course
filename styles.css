@@ -1409,6 +1409,12 @@ a {
   font-size: 0.9rem;
 }
 
+.score-grid .empty-state,
+.topic-grid .empty-state {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
 /* ─── Practice start grid ─────────────────────────────────────── */
 
 .practice-start-grid {
@@ -2904,7 +2910,7 @@ a {
   position: sticky;
   background:
     linear-gradient(180deg, rgba(255, 230, 160, 0.08), rgba(0, 0, 0, 0)),
-    linear-gradient(135deg, rgba(20, 54, 44, 0.96), rgba(20, 22, 15, 0.97) 48%, rgba(58, 41, 22, 0.96));
+    linear-gradient(135deg, #14362c, #14160f 48%, #3a2916);
   border: 4px solid var(--quest-stone-dark);
   border-width: 0 0 4px;
   box-shadow: 0 5px 0 #060806, 0 10px 24px rgba(0,0,0,0.36);
@@ -4196,7 +4202,7 @@ html[data-theme="dark"] .answer-button.incorrect {
   .topbar {
     border-bottom-width: 4px;
     background:
-      linear-gradient(135deg, rgba(20, 54, 44, 0.98), rgba(20, 22, 15, 0.98));
+      linear-gradient(135deg, #14362c, #14160f);
   }
 
   .brand-mark {
@@ -4246,7 +4252,7 @@ html[data-theme="dark"] .answer-button.incorrect {
   }
 
   .mode-tabs {
-    top: 0;
+    top: 68px;
     margin: 0 -0.65rem;
     padding: 0.45rem 0.65rem;
     background: linear-gradient(180deg, rgba(20, 18, 12, 0.98), rgba(20, 18, 12, 0.92)) !important;
@@ -4537,6 +4543,17 @@ html[data-theme] .confidence-button {
 }
 
 @media (max-width: 720px) {
+  .score-grid,
+  .topic-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .score-grid .empty-state,
+  .topic-grid .empty-state {
+    padding: 1rem;
+    text-align: left;
+  }
+
   .flashcard-3d {
     min-height: clamp(360px, 98vw, 460px);
   }
