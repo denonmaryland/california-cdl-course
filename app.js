@@ -40,6 +40,49 @@
     module.lessons.map((lesson) => ({ ...lesson, moduleId: module.id }))
   );
 
+  const ENDORSEMENT_META = {
+    "doubles-triples": {
+      code: "T",
+      shortTitle: "Doubles and Triples",
+      topic: "Doubles/Triples",
+      practice: "endorsement-doubles",
+      simulator: "doubles-triples",
+      href: "./endorsements/doubles-triples.html"
+    },
+    tanker: {
+      code: "N",
+      shortTitle: "Tank Vehicles",
+      topic: "Tanker",
+      practice: "endorsement-tanker",
+      simulator: "tanker",
+      href: "./endorsements/tanker.html"
+    },
+    hazmat: {
+      code: "H",
+      shortTitle: "Hazardous Materials",
+      topic: "HazMat",
+      practice: "endorsement-hazmat",
+      simulator: "hazmat",
+      href: "./endorsements/hazmat.html"
+    },
+    passenger: {
+      code: "P",
+      shortTitle: "Passenger",
+      topic: "Passenger",
+      practice: "endorsement-passenger",
+      simulator: "passenger",
+      href: "./endorsements/passenger.html"
+    },
+    "school-bus": {
+      code: "S",
+      shortTitle: "School Bus",
+      topic: "School Bus",
+      practice: "endorsement-school",
+      simulator: "school-bus",
+      href: "./endorsements/school-bus.html"
+    }
+  };
+
   // Confetti canvas (appended once to body)
   const confettiCanvas = document.createElement("canvas");
   confettiCanvas.id = "confetti-canvas";
@@ -117,6 +160,7 @@
   let simulatorSession = null;
   let flashcardQueue = [];
   let flashcardIndex = 0;
+  let flashcardScope = null;
   let cloudSync = null;
 
   init();
@@ -188,7 +232,10 @@
     els.nextModule.addEventListener("click", () => moveModule(1));
 
     els.tabs.forEach((tab) => {
-      tab.addEventListener("click", () => setMode(tab.dataset.mode));
+      tab.addEventListener("click", () => {
+        if (tab.dataset.mode === "flashcards") flashcardScope = null;
+        setMode(tab.dataset.mode);
+      });
     });
 
     els.startPractice.addEventListener("click", () => {
@@ -335,7 +382,7 @@
     const actions = [];
 
     // 1. Due flashcards
-    const dueCards = getDueFlashcards();
+    const dueCards = getDueFlashcards(null);
     if (dueCards.length > 0) {
       actions.push({
         icon: "▤",
@@ -1101,9 +1148,15 @@
   }
 
   function renderFlashcards() {
-    flashcardQueue = getDueFlashcards();
+    flashcardQueue = getDueFlashcards(flashcardScope);
+    if (!flashcardQueue.length && flashcardScope) {
+      flashcardQueue = getAllFlashcards().filter((card) => card.id.startsWith(`endorsement-${flashcardScope}-`));
+    }
     if (!flashcardQueue.length) {
-      const next = COURSE.flashcards.map((card) => {
+      const scopedCards = flashcardScope
+        ? getAllFlashcards().filter((card) => card.id.startsWith(`endorsement-${flashcardScope}-`))
+        : getAllFlashcards();
+      const next = scopedCards.map((card) => {
         const cardState = state.flashcards[card.id];
         return cardState?.due ? new Date(cardState.due) : new Date();
       }).sort((a, b) => a - b)[0];
@@ -1241,57 +1294,62 @@
   }
 
   function renderEndorsementHub() {
-    const cards = [
-      {
-        code: "T",
-        title: "Doubles and Triples",
-        href: "./endorsements/doubles-triples.html",
-        text: "Go deep on converter dollies, crack-the-whip, coupling and uncoupling, shut-off valves, and multi-trailer air checks."
-      },
-      {
-        code: "N",
-        title: "Tank Vehicles",
-        href: "./endorsements/tanker.html",
-        text: "Study surge, outage, baffles, bulkheads, high center of gravity, smooth control, and tank-specific inspections."
-      },
-      {
-        code: "H",
-        title: "Hazardous Materials",
-        href: "./endorsements/hazmat.html",
-        text: "Build fluency with shipping papers, labels, placards, loading rules, parking rules, emergencies, and security steps."
-      },
-      {
-        code: "P",
-        title: "Passenger",
-        href: "./endorsements/passenger.html",
-        text: "Learn bus inspection, passenger loading, standee lines, supervision, stops, railroad crossings, and prohibited practices."
-      },
-      {
-        code: "S",
-        title: "School Bus",
-        href: "./endorsements/school-bus.html",
-        text: "Focus on danger zones, mirror systems, loading and unloading, student management, evacuation, crossings, and post-trip checks."
-      }
-    ];
+    const courses = endorsementCourseEntries();
 
     els.endorsementsArea.innerHTML = `
       <div class="source-card">
-        <h3>Optional Side Quests</h3>
-        <p>The main course keeps a quick endorsement preview, but these standalone courses are built for deeper study and separate progress tracking.</p>
+        <h3>Optional side quests</h3>
+        <p>Each endorsement now plugs into the same study loop: full side-quest course, scheduled flashcards, 10-question drills, simulator gates, and missed-question review.</p>
       </div>
       <div class="endorsement-card-grid">
-        ${cards.map((card) => `
-          <article class="endorsement-card">
+        ${courses.map(({ id, course, meta, progress }) => `
+          <article class="endorsement-card endorsement-quest-card" data-endorsement-card="${escapeAttribute(id)}">
             <div class="endorsement-card-head">
-              <span class="endorsement-code">${escapeHtml(card.code)}</span>
-              <h3>${escapeHtml(card.title)}</h3>
+              <span class="endorsement-code">${escapeHtml(meta.code)}</span>
+              <h3>${escapeHtml(meta.shortTitle)}</h3>
             </div>
-            <p>${escapeHtml(card.text)}</p>
-            <a href="${escapeAttribute(card.href)}">Enter Quest: ${escapeHtml(card.code)}</a>
+            <p>${escapeHtml(course.subtitle)}</p>
+            <div class="endorsement-quest-stats">
+              <div><strong>${progress.complete}%</strong><span>course</span></div>
+              <div><strong>${progress.bestScore}%</strong><span>best quiz</span></div>
+              <div><strong>${progress.dueCards}</strong><span>cards due</span></div>
+              <div><strong>${progress.simScore ? `${progress.simScore}%` : "0%"}</strong><span>trial</span></div>
+            </div>
+            <div class="progress-track"><span style="width:${progress.complete}%"></span></div>
+            <div class="endorsement-actions">
+              <button class="primary-button" data-endorsement-practice="${escapeAttribute(meta.practice)}" type="button">10-Question Challenge</button>
+              <button class="secondary-button" data-endorsement-cards="${escapeAttribute(id)}" type="button">Study Cards</button>
+              <button class="secondary-button" data-endorsement-sim="${escapeAttribute(meta.simulator)}" type="button">Trial Gate</button>
+              <a href="${escapeAttribute(meta.href)}">Enter Full Quest</a>
+            </div>
           </article>
         `).join("")}
       </div>
     `;
+    Array.from(els.endorsementsArea.querySelectorAll("[data-endorsement-practice]")).forEach((button) => {
+      button.addEventListener("click", () => {
+        setMode("practice");
+        els.practiceType.value = button.dataset.endorsementPractice;
+        els.questionCount.value = "10";
+        startPractice(button.dataset.endorsementPractice, 10);
+        scrollToPanel("practice");
+      });
+    });
+    Array.from(els.endorsementsArea.querySelectorAll("[data-endorsement-sim]")).forEach((button) => {
+      button.addEventListener("click", () => {
+        setMode("simulator");
+        startSimulator(button.dataset.endorsementSim);
+        scrollToPanel("simulator");
+      });
+    });
+    Array.from(els.endorsementsArea.querySelectorAll("[data-endorsement-cards]")).forEach((button) => {
+      button.addEventListener("click", () => {
+        flashcardScope = button.dataset.endorsementCards;
+        flashcardIndex = 0;
+        setMode("flashcards");
+        scrollToPanel("flashcards");
+      });
+    });
   }
 
   function renderSources() {
@@ -1323,6 +1381,7 @@
     if (mode === "practice" && !practiceSession) renderPracticeIntro();
     if (mode === "simulator" && !simulatorSession) renderSimulatorIntro();
     if (mode === "flashcards") renderFlashcards();
+    if (mode === "endorsements") renderEndorsementHub();
     if (mode === "review") renderReview();
     if (mode === "sources") renderSources();
     if (options.scroll) scrollToPanel(mode);
@@ -1484,13 +1543,86 @@
     return "Not passing range yet. Use short topic tests, then return to the Class A mix.";
   }
 
-  function getDueFlashcards() {
+  function getDueFlashcards(scope = flashcardScope) {
     const today = startOfToday();
-    return COURSE.flashcards.filter((card) => {
+    const cards = scope
+      ? getAllFlashcards().filter((card) => card.id.startsWith(`endorsement-${scope}-`))
+      : getAllFlashcards();
+    return cards.filter((card) => {
       const cardState = state.flashcards[card.id];
       if (!cardState?.due) return true;
       return new Date(cardState.due) <= today;
     });
+  }
+
+  function getAllFlashcards() {
+    return [
+      ...COURSE.flashcards.map((card) => ({ ...card, origin: "main" })),
+      ...getStandaloneEndorsementFlashcards()
+    ];
+  }
+
+  function getStandaloneEndorsementFlashcards() {
+    return endorsementBaseEntries().flatMap(({ id, course, meta }) =>
+      (course.flashcards || []).map((card, index) => ({
+        id: `endorsement-${id}-${index + 1}`,
+        topic: `${meta.shortTitle} ${meta.code}`,
+        source: course.source || "Endorsement course",
+        front: card[0],
+        back: card[1],
+        origin: "endorsement",
+        endorsementId: id
+      }))
+    );
+  }
+
+  function endorsementCourseEntries() {
+    return endorsementBaseEntries()
+      .map((entry) => ({ ...entry, progress: endorsementProgress(entry.id, entry.course, entry.meta) }));
+  }
+
+  function endorsementBaseEntries() {
+    const courses = window.CDL_ENDORSEMENTS || {};
+    return Object.entries(ENDORSEMENT_META)
+      .map(([id, meta]) => ({ id, meta, course: courses[id] }))
+      .filter((entry) => entry.course);
+  }
+
+  function endorsementProgress(id, course, meta) {
+    const lessonsTotal = (course.modules || []).reduce((sum, module) => sum + (module.lessons || []).length, 0);
+    const standalone = readStandaloneEndorsementState(id);
+    const completed = Object.keys(standalone.completed || {}).length;
+    const dueCards = getAllFlashcardsForEndorsement(id).filter((card) => {
+      const cardState = state.flashcards[card.id];
+      if (!cardState?.due) return true;
+      return new Date(cardState.due) <= startOfToday();
+    }).length;
+    const simAttempt = state.simulatorHistory
+      .filter((attempt) => attempt.simulatorType === meta.simulator)
+      .slice(-1)[0];
+    return {
+      complete: lessonsTotal ? Math.round((completed / lessonsTotal) * 100) : 0,
+      bestScore: Number(standalone.bestScore || 0),
+      dueCards,
+      simScore: simAttempt?.score || 0
+    };
+  }
+
+  function getAllFlashcardsForEndorsement(id) {
+    return getStandaloneEndorsementFlashcards().filter((card) => card.endorsementId === id);
+  }
+
+  function readStandaloneEndorsementState(id) {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(`ca-cdl-endorsement-${id}-v1`) || "{}");
+      return {
+        completed: parsed.completed || {},
+        bestScore: Number(parsed.bestScore || 0),
+        flashcards: parsed.flashcards || {}
+      };
+    } catch (error) {
+      return { completed: {}, bestScore: 0, flashcards: {} };
+    }
   }
 
   function scheduleFlashcard(id, confidence) {

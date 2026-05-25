@@ -669,7 +669,7 @@ a {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 /* ─── Module summary ─────────────────────────────────────────── */
@@ -1401,6 +1401,48 @@ a {
 .endorsement-card a:hover {
   transform: translateY(-1px);
   border-color: rgba(40, 107, 216, 0.3);
+}
+
+.endorsement-quest-card {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.endorsement-quest-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.endorsement-quest-stats div {
+  min-width: 0;
+  padding: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.endorsement-quest-stats strong,
+.endorsement-quest-stats span {
+  display: block;
+}
+
+.endorsement-quest-stats span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.endorsement-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.endorsement-actions .primary-button,
+.endorsement-actions .secondary-button,
+.endorsement-actions a {
+  flex: 1 1 150px;
+  justify-content: center;
 }
 
 .empty-state {
@@ -4031,6 +4073,26 @@ html[data-theme="dark"] .answer-button.incorrect {
     linear-gradient(180deg, #477b28, #214716);
 }
 
+.endorsement-quest-stats div {
+  color: var(--quest-text);
+  border: 3px solid #080705;
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255,230,160,0.07), transparent),
+    linear-gradient(180deg, #2d2819, #17150f);
+  box-shadow: inset 0 0 0 2px rgba(185,139,50,0.16), 0 3px 0 rgba(0,0,0,0.34);
+}
+
+.endorsement-quest-stats strong {
+  color: var(--quest-gold-light);
+  font-family: var(--font-display);
+  text-shadow: 1px 1px 0 #080705;
+}
+
+.endorsement-quest-stats span {
+  color: var(--quest-muted);
+}
+
 .empty-state {
   color: var(--quest-muted);
   border: 4px dashed var(--quest-brass);
@@ -4366,6 +4428,10 @@ html[data-theme="dark"] .answer-button.incorrect {
   .simulator-option,
   .endorsement-card {
     min-height: 150px;
+  }
+
+  .endorsement-quest-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .flashcard-face {

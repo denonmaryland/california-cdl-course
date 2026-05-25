@@ -19,6 +19,7 @@
   let state = loadState();
   let quiz = null;
   let cardIndex = 0;
+  let flashcardQueue = [];
   let cloudSync = null;
 
   const els = {
@@ -31,6 +32,7 @@
     lessonList: document.getElementById("lessonList"),
     quizArea: document.getElementById("quizArea"),
     flashcardArea: document.getElementById("flashcardArea"),
+    cardDue: document.getElementById("cardDueValue"),
     resetButton: document.getElementById("resetProgress")
   };
 
@@ -74,6 +76,7 @@
     els.source.textContent = course.source;
     els.progress.textContent = `${Math.round((Object.keys(state.completed).length / lessons.length) * 100)}%`;
     els.score.textContent = state.bestScore ? `${state.bestScore}%` : "0%";
+    if (els.cardDue) els.cardDue.textContent = String(getDueFlashcards().length);
     renderLessons();
     renderQuizIntro();
     renderFlashcards();
@@ -210,26 +213,36 @@
   }
 
   function renderFlashcards() {
-    const card = course.flashcards[cardIndex % course.flashcards.length];
+    flashcardQueue = getDueFlashcards();
+    if (!flashcardQueue.length) flashcardQueue = getEndorsementFlashcards();
+    const card = flashcardQueue[cardIndex % flashcardQueue.length];
+    const dueCount = getDueFlashcards().length;
+    if (els.cardDue) els.cardDue.textContent = String(dueCount);
     els.flashcardArea.innerHTML = `
       <article class="flashcard">
         <div class="test-meta">
-          <span class="pill">${cardIndex + 1} of ${course.flashcards.length}</span>
+          <span class="pill">${cardIndex + 1} of ${flashcardQueue.length}</span>
           <span class="pill">${escapeHtml(course.code)}</span>
+          <span class="pill green">${dueCount} due</span>
         </div>
         <div class="flashcard-3d" role="button" tabindex="0" aria-label="Flip flashcard" aria-pressed="false">
           <div class="flashcard-3d-inner">
             <div class="flashcard-face flashcard-face-front">
               <p class="eyebrow">Question</p>
-              <p>${escapeHtml(card[0])}</p>
+              <p>${escapeHtml(card.front)}</p>
               <p class="flip-hint"><span>Tap card to flip</span><kbd class="kbd">Space</kbd></p>
             </div>
             <div class="flashcard-face flashcard-face-back">
               <p class="eyebrow">Answer</p>
-              <p>${escapeHtml(card[1])}</p>
-              <p class="flip-hint"><span>Tap again to return</span></p>
+              <p>${escapeHtml(card.back)}</p>
+              <p class="flip-hint"><span>Rate your recall below</span></p>
             </div>
           </div>
+        </div>
+        <div class="practice-nav flashcard-rating hidden">
+          <button class="confidence-button" data-confidence="again" type="button">Again</button>
+          <button class="confidence-button" data-confidence="good" type="button">Good</button>
+          <button class="confidence-button" data-confidence="mastered" type="button">Mastered</button>
         </div>
         <div class="practice-nav">
           <button class="primary-button" id="showCard" type="button">Flip Card</button>
@@ -238,9 +251,20 @@
       </article>
     `;
     const flipper = els.flashcardArea.querySelector(".flashcard-3d");
+    const rating = els.flashcardArea.querySelector(".flashcard-rating");
+    let ratingTimer;
     const flipCard = () => {
       flipper.classList.toggle("flipped");
-      flipper.setAttribute("aria-pressed", String(flipper.classList.contains("flipped")));
+      const flipped = flipper.classList.contains("flipped");
+      flipper.setAttribute("aria-pressed", String(flipped));
+      window.clearTimeout(ratingTimer);
+      if (flipped) {
+        ratingTimer = window.setTimeout(() => {
+          if (flipper.classList.contains("flipped")) rating.classList.remove("hidden");
+        }, 220);
+      } else {
+        rating.classList.add("hidden");
+      }
     };
     flipper.addEventListener("click", flipCard);
     flipper.addEventListener("keydown", (event) => {
@@ -251,17 +275,59 @@
     });
     document.getElementById("showCard").addEventListener("click", flipCard);
     document.getElementById("nextCard").addEventListener("click", () => {
-      cardIndex = (cardIndex + 1) % course.flashcards.length;
+      cardIndex = (cardIndex + 1) % flashcardQueue.length;
       renderFlashcards();
     });
+    Array.from(els.flashcardArea.querySelectorAll("[data-confidence]")).forEach((button) => {
+      button.addEventListener("click", () => {
+        scheduleFlashcard(card.id, button.dataset.confidence);
+        cardIndex = Math.min(cardIndex, Math.max(0, flashcardQueue.length - 2));
+        saveState();
+        renderFlashcards();
+      });
+    });
+  }
+
+  function getEndorsementFlashcards() {
+    return (course.flashcards || []).map((card, index) => ({
+      id: `${courseId}-${index + 1}`,
+      front: card[0],
+      back: card[1]
+    }));
+  }
+
+  function getDueFlashcards() {
+    const today = startOfToday();
+    return getEndorsementFlashcards().filter((card) => {
+      const cardState = state.flashcards[card.id];
+      if (!cardState?.due) return true;
+      return new Date(cardState.due) <= today;
+    });
+  }
+
+  function scheduleFlashcard(id, confidence) {
+    const existing = state.flashcards[id] || { interval: 0 };
+    const interval = confidence === "again"
+      ? 1
+      : confidence === "good"
+        ? Math.max(3, existing.interval + 2)
+        : Math.max(7, existing.interval * 2 || 7);
+    const due = startOfToday();
+    due.setDate(due.getDate() + interval);
+    state.flashcards[id] = {
+      interval,
+      due: due.toISOString(),
+      lastConfidence: confidence,
+      reviewedAt: new Date().toISOString()
+    };
   }
 
   function loadState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(storageKey) || "{}");
-      return { completed: parsed.completed || {}, bestScore: parsed.bestScore || 0 };
+      return { completed: parsed.completed || {}, bestScore: parsed.bestScore || 0, flashcards: parsed.flashcards || {} };
     } catch (error) {
-      return { completed: {}, bestScore: 0 };
+      return { completed: {}, bestScore: 0, flashcards: {} };
     }
   }
 
@@ -288,7 +354,8 @@
   function normalizeState(value) {
     return {
       completed: value?.completed || {},
-      bestScore: Number(value?.bestScore || 0)
+      bestScore: Number(value?.bestScore || 0),
+      flashcards: value?.flashcards || {}
     };
   }
 
@@ -297,8 +364,15 @@
     const local = normalizeState(localValue);
     return {
       completed: { ...remote.completed, ...local.completed },
-      bestScore: Math.max(remote.bestScore, local.bestScore)
+      bestScore: Math.max(remote.bestScore, local.bestScore),
+      flashcards: { ...remote.flashcards, ...local.flashcards }
     };
+  }
+
+  function startOfToday() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
   }
 
   function shuffle(items) {

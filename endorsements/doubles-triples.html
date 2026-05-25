@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Doubles and Triples Endorsement Course</title>
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="../styles.css?v=cdl-quest-rpg-flip-smooth">
-    <link rel="stylesheet" href="./endorsement.css?v=cdl-quest-rpg-auditfix">
+    <link rel="stylesheet" href="../styles.css?v=cdl-quest-rpg-endorsements">
+    <link rel="stylesheet" href="./endorsement.css?v=cdl-quest-rpg-endorsements">
     <script src="../theme.js"></script>
   </head>
   <body data-course="doubles-triples">
@@ -27,7 +27,7 @@
           <p class="eyebrow" id="courseSource"></p>
           <h2 id="courseTitleHero">T Endorsement</h2>
           <p id="courseSubtitle"></p>
-          <div class="endorsement-dashboard"><div><strong id="progressValue">0%</strong><span>course complete</span></div><div><strong id="scoreValue">0%</strong><span>best quiz score</span></div></div>
+          <div class="endorsement-dashboard"><div><strong id="progressValue">0%</strong><span>course complete</span></div><div><strong id="scoreValue">0%</strong><span>best quiz score</span></div><div><strong id="cardDueValue">0</strong><span>cards due</span></div></div>
         </div>
         <div class="endorsement-badge"><strong>T</strong></div>
       </section>
@@ -43,7 +43,7 @@
     <script src="../config.js"></script>
     <script src="../cloud-sync.js"></script>
     <script src="./endorsement-data.js"></script>
-    <script src="./endorsement-course.js"></script>
+    <script src="./endorsement-course.js?v=cdl-quest-rpg-endorsements"></script>
     <script>document.getElementById("courseTitleHero").textContent = window.CDL_ENDORSEMENTS["doubles-triples"].title;</script>
   </body>
 </html>
