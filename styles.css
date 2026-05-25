@@ -2276,6 +2276,27 @@ button {
 
 /* ─── Dark mode ──────────────────────────────────────────────── */
 
+/* Force light when user chose light, even if OS is dark */
+[data-theme="light"] {
+  --ink: #182432;
+  --ink-light: #3a5068;
+  --muted: #6a7d8e;
+  --line: #dde4ea;
+  --paper: #f5f7f9;
+  --surface: #eef1f4;
+  --green: #1f9d7a;
+  --blue: #286bd8;
+  --red: #d95d45;
+  --amber: #f6bd38;
+  --violet: #7c5cff;
+  --mint: rgba(31, 157, 122, 0.1);
+  --cream: rgba(246, 189, 56, 0.1);
+  --rose: rgba(217, 93, 69, 0.1);
+  --shadow: 0 4px 24px rgba(24, 36, 50, 0.08);
+  --card-shadow: 0 2px 10px rgba(24, 36, 50, 0.06);
+  --focus: #182432;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --ink: #dde8f0;
@@ -2457,3 +2478,103 @@ button {
   .kbd { background: var(--paper); border-color: var(--line); }
   .shortcuts-bar { background: var(--surface); border-color: var(--line); }
 }
+
+/* Manual dark override — mirrors the @media block above */
+[data-theme="dark"] {
+  --ink: #dde8f0;
+  --ink-light: #9ab8cc;
+  --muted: #6a8fa8;
+  --line: #1e3040;
+  --paper: #0f1e2c;
+  --surface: #091420;
+  --green: #28c496;
+  --blue: #5b9ef8;
+  --red: #e8705a;
+  --amber: #f5c842;
+  --violet: #9878ff;
+  --mint: rgba(31, 157, 122, 0.15);
+  --cream: rgba(246, 189, 56, 0.12);
+  --rose: rgba(217, 93, 69, 0.12);
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  --focus: #dde8f0;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body { background: var(--surface); color: var(--ink); }
+
+html[data-theme="dark"] .topbar { background: rgba(9, 20, 32, 0.94); border-bottom-color: var(--line); }
+html[data-theme="dark"] .mode-tabs { background: rgba(9, 20, 32, 0.97) !important; border-bottom-color: var(--line); }
+
+html[data-theme="dark"] .sync-strip,
+html[data-theme="dark"] .dashboard-band,
+html[data-theme="dark"] .module-rail,
+html[data-theme="dark"] .content-panel,
+html[data-theme="dark"] .lesson-card,
+html[data-theme="dark"] .test-card,
+html[data-theme="dark"] .flashcard,
+html[data-theme="dark"] .review-card,
+html[data-theme="dark"] .source-card,
+html[data-theme="dark"] .readiness-card,
+html[data-theme="dark"] .simulator-hero,
+html[data-theme="dark"] .simulator-option,
+html[data-theme="dark"] .endorsement-card,
+html[data-theme="dark"] .quick-start-card,
+html[data-theme="dark"] .study-coach,
+html[data-theme="dark"] .quick-check,
+html[data-theme="dark"] .summary-block,
+html[data-theme="dark"] .depth-section { background: var(--paper); border-color: var(--line); }
+
+html[data-theme="dark"] .lesson-stack,
+html[data-theme="dark"] .practice-area,
+html[data-theme="dark"] .simulator-area,
+html[data-theme="dark"] .flashcard-area,
+html[data-theme="dark"] .review-area,
+html[data-theme="dark"] .sources-area,
+html[data-theme="dark"] .module-summary,
+html[data-theme="dark"] .lesson-grid > div,
+html[data-theme="dark"] .dashboard-metrics > div,
+html[data-theme="dark"] .metric-ring-wrap,
+html[data-theme="dark"] .streak-heatmap { background: var(--surface); }
+
+html[data-theme="dark"] .focus-panel { background: linear-gradient(160deg, rgba(15, 35, 55, 0.9), rgba(10, 30, 45, 0.9)); border-color: rgba(91, 158, 248, 0.15); }
+html[data-theme="dark"] .plan-action { background: rgba(15, 30, 44, 0.9); border-color: rgba(30, 48, 64, 0.9); }
+html[data-theme="dark"] .plan-action:hover { background: rgba(20, 40, 58, 0.95); border-color: rgba(91, 158, 248, 0.25); }
+html[data-theme="dark"] .lesson-toggle { background: var(--paper); }
+html[data-theme="dark"] .lesson-toggle:hover { background: rgba(30, 48, 64, 0.5); }
+html[data-theme="dark"] .lesson-card.open .lesson-toggle { background: linear-gradient(90deg, rgba(10, 30, 48, 0.8), var(--paper)); }
+html[data-theme="dark"] .sync-strip-toggle:hover { background: rgba(30, 48, 64, 0.4); }
+html[data-theme="dark"] .sync-strip-body { border-top-color: var(--line); }
+html[data-theme="dark"] .module-item:hover { background: rgba(30, 48, 64, 0.5); }
+html[data-theme="dark"] .module-item.active { background: linear-gradient(90deg, rgba(31, 157, 122, 0.12), rgba(91, 158, 248, 0.08)); }
+
+html[data-theme="dark"] .secondary-button,
+html[data-theme="dark"] .icon-button,
+html[data-theme="dark"] .tab-button:not(.active) { background: var(--paper); border-color: var(--line); color: var(--ink); }
+html[data-theme="dark"] .secondary-button:hover,
+html[data-theme="dark"] .icon-button:hover,
+html[data-theme="dark"] .tab-button:hover { border-color: rgba(91, 158, 248, 0.35); }
+html[data-theme="dark"] .answer-button,
+html[data-theme="dark"] .confidence-chip,
+html[data-theme="dark"] .confidence-button { background: var(--paper); border-color: var(--line); color: var(--ink); }
+html[data-theme="dark"] .answer-button.correct { background: linear-gradient(90deg, rgba(31, 157, 122, 0.2), rgba(20, 40, 55, 0.9)); border-color: var(--green); }
+html[data-theme="dark"] .answer-button.incorrect { background: linear-gradient(90deg, rgba(217, 93, 69, 0.2), rgba(20, 40, 55, 0.9)); border-color: var(--red); }
+html[data-theme="dark"] .tab-button.active { background: var(--ink); color: var(--surface); }
+html[data-theme="dark"] .pill { background: rgba(30, 48, 64, 0.8); color: var(--ink); }
+html[data-theme="dark"] .pill.green { background: rgba(31, 157, 122, 0.18); color: var(--green); }
+html[data-theme="dark"] .pill.red   { background: rgba(217, 93, 69, 0.18); color: var(--red); }
+html[data-theme="dark"] .pill.amber { background: rgba(246, 189, 56, 0.15); color: var(--amber); }
+html[data-theme="dark"] .mini-progress { background: var(--line); }
+html[data-theme="dark"] .recall-notes textarea,
+html[data-theme="dark"] .sync-controls input,
+html[data-theme="dark"] .practice-controls select { background: var(--surface); border-color: var(--line); color: var(--ink); }
+html[data-theme="dark"] .heatmap-cell { background: var(--line); }
+html[data-theme="dark"] .sim-timer { background: var(--paper); border-color: var(--line); }
+html[data-theme="dark"] .sim-timer.warn { background: rgba(246, 189, 56, 0.1); }
+html[data-theme="dark"] .sim-timer.urgent { background: rgba(217, 93, 69, 0.1); }
+html[data-theme="dark"] .module-complete-banner { background: linear-gradient(135deg, rgba(31, 157, 122, 0.14), rgba(91, 158, 248, 0.1)); border-color: rgba(40, 196, 150, 0.25); }
+html[data-theme="dark"] .simulator-hero { background: linear-gradient(135deg, rgba(31, 157, 122, 0.1), rgba(91, 158, 248, 0.1)); }
+html[data-theme="dark"] .quick-check { background: linear-gradient(135deg, rgba(246, 189, 56, 0.07), rgba(15, 30, 44, 0.95)); border-color: rgba(246, 189, 56, 0.18); }
+html[data-theme="dark"] .study-coach { background: linear-gradient(135deg, rgba(124, 92, 255, 0.08), rgba(15, 30, 44, 0.95)); border-color: rgba(124, 92, 255, 0.18); }
+html[data-theme="dark"] .kbd { background: var(--paper); border-color: var(--line); }
+html[data-theme="dark"] .shortcuts-bar { background: var(--surface); border-color: var(--line); }

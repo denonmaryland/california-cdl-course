@@ -129,6 +129,28 @@
   }
 
   function bindEvents() {
+    // ── Theme toggle ──────────────────────────────────────────────
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon   = themeToggle?.querySelector(".theme-icon");
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("cdl-theme", theme);
+      if (themeIcon) themeIcon.textContent = theme === "dark" ? "☀️" : "🌙";
+    }
+    function initTheme() {
+      const saved = localStorage.getItem("cdl-theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = saved || (prefersDark ? "dark" : "light");
+      applyTheme(theme);
+    }
+    initTheme();
+    if (themeToggle) {
+      themeToggle.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme");
+        applyTheme(current === "dark" ? "light" : "dark");
+      });
+    }
+
     els.continueButton.addEventListener("click", () => {
       continueLearning();
     });
