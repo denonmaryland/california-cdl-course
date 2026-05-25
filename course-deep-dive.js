@@ -388,7 +388,7 @@
       ],
       testAngle: [
         "For dual air systems, pressure should build from about 85 to 100 psi within 45 seconds at governed engine speed.",
-        "Static leakage limits are 2 psi single, 3 psi two-vehicle combination, and 5 psi three-or-more combination in one minute."
+        "Static leakage limits are 2 psi single, 3 psi two-vehicle combination, and 4 psi three-or-more combination in one minute."
       ],
       roadHabit: [
         "Use the same order every time: build pressure, check governor, check static, check applied, check low-air warning, check pop-out, then rebuild.",

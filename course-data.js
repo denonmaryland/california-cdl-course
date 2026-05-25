@@ -845,9 +845,9 @@ window.CDL_COURSE = {
     { id: "fc-013", topic: "Air Brakes", front: "Applied leakage limits?", back: "3 psi single, 4 psi two-vehicle combo, 6 psi three-or-more combo in 1 minute.", source: "Section 5.3" },
     { id: "fc-014", topic: "Air Brakes", front: "Static leakage limits?", back: "2 psi single, 3 psi two-vehicle combo, 5 psi three-or-more combo in 1 minute.", source: "Section 5.3" },
     { id: "fc-015", topic: "Air Brakes", front: "When do spring brake controls usually pop out?", back: "Usually between 20 and 45 psi or manufacturer specification.", source: "Section 5.3" },
-    { id: "fc-016", topic: "Combination", front: "What is offtracking?", back: "Rear wheels follow a different path than front wheels, usually cutting inside on turns.", source: "Section 6.1" },
-    { id: "fc-017", topic: "Combination", front: "How do you stop a trailer skid from locked wheels?", back: "Release the brakes to restore traction.", source: "Section 6.1" },
-    { id: "fc-018", topic: "Combination", front: "What are glad hands?", back: "Coupling devices for tractor and trailer air lines.", source: "Section 6.2" },
+    { id: "fc-016", topic: "Combination Vehicles", front: "What is offtracking?", back: "Rear wheels follow a different path than front wheels, usually cutting inside on turns.", source: "Section 6.1" },
+    { id: "fc-017", topic: "Combination Vehicles", front: "How do you stop a trailer skid from locked wheels?", back: "Release the brakes to restore traction.", source: "Section 6.1" },
+    { id: "fc-018", topic: "Combination Vehicles", front: "What are glad hands?", back: "Coupling devices for tractor and trailer air lines.", source: "Section 6.2" },
     { id: "fc-019", topic: "Tanker", front: "What is surge?", back: "Liquid movement inside a tank that can push the vehicle.", source: "Section 8.2" },
     { id: "fc-020", topic: "HazMat", front: "What is the purpose of placards?", back: "To communicate the hazard class/risk to others, especially responders.", source: "Section 9.3" }
   ],
@@ -1437,7 +1437,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q054",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 1,
       section: "Section 6.1",
@@ -1448,7 +1448,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q055",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 2,
       section: "Section 6.1",
@@ -1459,7 +1459,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q056",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 1,
       section: "Section 6.1",
@@ -1470,7 +1470,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q057",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 2,
       section: "Section 6.1",
@@ -1481,7 +1481,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q058",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 2,
       section: "Section 6.1",
@@ -1492,7 +1492,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q059",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 1,
       section: "Section 6.1",
@@ -1503,7 +1503,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q060",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 2,
       section: "Section 6.1",
@@ -1514,7 +1514,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q061",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 2,
       section: "Section 6.2",
@@ -1525,7 +1525,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q062",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 2,
       section: "Section 6.2",
@@ -1536,7 +1536,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q063",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 2,
       section: "Section 6.4",
@@ -1547,7 +1547,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q064",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 2,
       section: "Section 6.4",
@@ -1558,7 +1558,7 @@ window.CDL_COURSE = {
     },
     {
       id: "q065",
-      topic: "Combination",
+      topic: "Combination Vehicles",
       exam: "combination",
       difficulty: 2,
       section: "Section 6.5",
