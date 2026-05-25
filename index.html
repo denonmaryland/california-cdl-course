@@ -7,13 +7,7 @@
     <meta name="description" content="A local study course built from the California Commercial Driver Handbook for Class A CDL (Commercial Driver's License) permit prep.">
     <link rel="icon" href="./favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="./styles.css">
-    <script>
-      // Apply saved theme before first paint to avoid flash
-      (function () {
-        var t = localStorage.getItem("cdl-theme");
-        if (t) document.documentElement.setAttribute("data-theme", t);
-      })();
-    </script>
+    <script src="./theme.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to course</a>
@@ -29,7 +23,7 @@
         </div>
       </div>
       <div class="top-actions" role="group" aria-label="Course actions">
-        <button class="icon-button theme-toggle-btn" id="themeToggle" type="button" title="Toggle dark/light mode" aria-label="Toggle dark/light mode">
+        <button class="icon-button theme-toggle-btn" id="themeToggle" data-theme-toggle type="button" title="Switch to dark mode" aria-label="Switch to dark mode">
           <span class="theme-icon" aria-hidden="true"></span>
         </button>
         <button class="icon-button" id="resetProgress" type="button" title="Reset progress" aria-label="Reset progress">
