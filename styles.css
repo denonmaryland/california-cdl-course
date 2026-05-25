@@ -4258,6 +4258,49 @@ html[data-theme="dark"] .answer-button.incorrect {
     font-size: 0.74rem;
   }
 
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .content-panel,
+  .module-rail {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .content-panel {
+    order: 1;
+  }
+
+  .module-rail {
+    order: 2;
+    position: relative;
+    top: auto;
+    max-height: none;
+    overflow: hidden;
+  }
+
+  .module-list {
+    display: flex;
+    gap: 0.55rem;
+    overflow-x: auto;
+    padding-bottom: 0.85rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .module-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .module-item {
+    min-width: min(260px, 82vw);
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
   .dashboard-band {
     grid-template-columns: 1fr;
     padding: 0.95rem;
