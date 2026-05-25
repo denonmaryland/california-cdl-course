@@ -459,14 +459,15 @@
       <div class="score-hero">
         <div class="score-ring-wrap">
           <svg viewBox="0 0 100 100" width="120" height="120" aria-hidden="true">
-            <circle class="ring-track" cx="50" cy="50" r="${r}" />
+            <circle class="score-ring-track" cx="50" cy="50" r="${r}" fill="none" stroke-width="8" />
             <circle class="score-ring-fill ${tier}" cx="50" cy="50" r="${r}"
+              fill="none" stroke-width="8"
               stroke-dasharray="${circ.toFixed(2)}"
               stroke-dashoffset="${circ.toFixed(2)}"
               data-pct="${score}" />
           </svg>
-          <div class="score-ring-label">
-            <span class="score-big-num">${score}<small>%</small></span>
+          <div class="score-ring-inner">
+            <span class="score-big-num ${tier}">${score}<small>%</small></span>
             <span class="score-grade ${tier}">${grade}</span>
           </div>
         </div>
