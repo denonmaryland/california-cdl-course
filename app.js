@@ -1154,16 +1154,17 @@
             <span class="pill green">${escapeHtml(card.topic)}</span>
             <span class="pill">${escapeHtml(card.source)}</span>
           </div>
-          <div class="flashcard-3d" role="button" tabindex="0" aria-label="Flip card">
+          <div class="flashcard-3d" role="button" tabindex="0" aria-label="Flip flashcard" aria-pressed="false">
             <div class="flashcard-3d-inner">
-              <div class="flashcard-face">
+              <div class="flashcard-face flashcard-face-front">
                 <p class="eyebrow">Question</p>
                 <p>${escapeHtml(card.front)}</p>
-                <p class="kbd-hint"><kbd class="kbd">Space</kbd> to flip</p>
+                <p class="flip-hint"><span>Tap card to flip</span><kbd class="kbd">Space</kbd></p>
               </div>
               <div class="flashcard-face flashcard-face-back">
                 <p class="eyebrow">Answer</p>
                 <p>${escapeHtml(card.back)}</p>
+                <p class="flip-hint"><span>Rate your recall below</span></p>
               </div>
             </div>
           </div>
@@ -1181,7 +1182,9 @@
 
       function doFlip() {
         flipper.classList.toggle("flipped");
-        rating.classList.toggle("hidden", !flipper.classList.contains("flipped"));
+        const flipped = flipper.classList.contains("flipped");
+        flipper.setAttribute("aria-pressed", String(flipped));
+        rating.classList.toggle("hidden", !flipped);
       }
       flipper.addEventListener("click", doFlip);
       flipper.addEventListener("keydown", (e) => {
@@ -1203,6 +1206,7 @@
     const flipper = article.querySelector(".flashcard-3d");
     const rating  = article.querySelector(".flashcard-rating");
     flipper.classList.toggle("flipped", Boolean(showBack));
+    flipper.setAttribute("aria-pressed", String(Boolean(showBack)));
     rating.classList.toggle("hidden", !showBack);
   }
 

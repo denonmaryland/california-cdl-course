@@ -217,17 +217,39 @@
           <span class="pill">${cardIndex + 1} of ${course.flashcards.length}</span>
           <span class="pill">${escapeHtml(course.code)}</span>
         </div>
-        <div class="flashcard-front"><p>${escapeHtml(card[0])}</p></div>
-        <div class="flashcard-back hidden" id="cardBack"><h3>Answer</h3><p>${escapeHtml(card[1])}</p></div>
+        <div class="flashcard-3d" role="button" tabindex="0" aria-label="Flip flashcard" aria-pressed="false">
+          <div class="flashcard-3d-inner">
+            <div class="flashcard-face flashcard-face-front">
+              <p class="eyebrow">Question</p>
+              <p>${escapeHtml(card[0])}</p>
+              <p class="flip-hint"><span>Tap card to flip</span><kbd class="kbd">Space</kbd></p>
+            </div>
+            <div class="flashcard-face flashcard-face-back">
+              <p class="eyebrow">Answer</p>
+              <p>${escapeHtml(card[1])}</p>
+              <p class="flip-hint"><span>Tap again to return</span></p>
+            </div>
+          </div>
+        </div>
         <div class="practice-nav">
-          <button class="primary-button" id="showCard" type="button">Show Answer</button>
+          <button class="primary-button" id="showCard" type="button">Flip Card</button>
           <button class="secondary-button" id="nextCard" type="button">Next Card</button>
         </div>
       </article>
     `;
-    document.getElementById("showCard").addEventListener("click", () => {
-      document.getElementById("cardBack").classList.remove("hidden");
+    const flipper = els.flashcardArea.querySelector(".flashcard-3d");
+    const flipCard = () => {
+      flipper.classList.toggle("flipped");
+      flipper.setAttribute("aria-pressed", String(flipper.classList.contains("flipped")));
+    };
+    flipper.addEventListener("click", flipCard);
+    flipper.addEventListener("keydown", (event) => {
+      if (event.key === " " || event.key === "Enter") {
+        event.preventDefault();
+        flipCard();
+      }
     });
+    document.getElementById("showCard").addEventListener("click", flipCard);
     document.getElementById("nextCard").addEventListener("click", () => {
       cardIndex = (cardIndex + 1) % course.flashcards.length;
       renderFlashcards();
