@@ -6,7 +6,7 @@
     <title>California Class A CDL (Commercial Driver's License) Course</title>
     <meta name="description" content="A local study course built from the California Commercial Driver Handbook for Class A CDL (Commercial Driver's License) permit prep.">
     <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles.css?v=cdl-quest-rpg">
     <script src="./theme.js"></script>
   </head>
   <body>
@@ -19,7 +19,7 @@
         </div>
         <div>
           <p class="eyebrow">California DMV (Department of Motor Vehicles) handbook based</p>
-          <h1>Class A CDL (Commercial Driver's License) Course</h1>
+          <h1>Class A CDL (Commercial Driver's License) Quest</h1>
         </div>
       </div>
       <div class="top-actions" role="group" aria-label="Course actions">
@@ -53,34 +53,34 @@
     <main id="main" class="course-shell">
       <section class="dashboard-band" aria-labelledby="dashboardTitle">
         <div class="dashboard-copy">
-          <p class="eyebrow">Permit target</p>
-          <h2 id="dashboardTitle">General Knowledge, Air Brakes, Combination Vehicles</h2>
+          <p class="eyebrow">Quest hub</p>
+          <h2 id="dashboardTitle">Class A CDL Quest</h2>
           <p>
-            Built for the California Class A path: learn the handbook in modules, prove recall with short checks,
-            then use timed practice and missed-question review until the weak spots shrink.
+            Your Quest to Earn the Road: learn the handbook in modules, prove recall with short checks,
+            and clear each trial gate until your weak spots shrink.
           </p>
           <div class="dashboard-metrics" aria-label="Progress summary">
             <div>
               <strong id="overallProgress">0%</strong>
-              <span>course complete</span>
+              <span>quest XP</span>
             </div>
             <div>
               <strong id="readinessScore">0%</strong>
-              <span>practice readiness</span>
+              <span>skill readiness</span>
             </div>
             <div>
               <strong id="streakCount">0</strong>
-              <span>study day streak</span>
+              <span>daily streak</span>
             </div>
           </div>
           <div class="dashboard-actions" aria-label="Recommended study actions">
-            <button class="primary-button" id="focusContinue" type="button">Continue Study</button>
-            <button class="secondary-button" id="focusPractice" type="button">10-Question Drill</button>
-            <button class="secondary-button" id="focusSimulator" type="button">Exam Simulators</button>
+            <button class="primary-button" id="focusContinue" type="button">Continue Quest</button>
+            <button class="secondary-button" id="focusPractice" type="button">10-Question Challenge</button>
+            <button class="secondary-button" id="focusSimulator" type="button">Trial Gates</button>
           </div>
         </div>
         <div class="focus-panel" aria-label="Today's study plan">
-          <p class="eyebrow">Today's plan</p>
+          <p class="eyebrow">Active quest log</p>
           <div id="todaysPlan" class="todays-plan" aria-live="polite"></div>
         </div>
       </section>
@@ -122,7 +122,7 @@
         <section class="content-panel hidden" id="practicePanel" data-panel="practice">
           <div class="panel-head">
             <p class="eyebrow">Practice test</p>
-            <h2>Build exam stamina</h2>
+            <h2>Challenge Arena</h2>
           </div>
           <div class="practice-controls">
             <label>
@@ -159,14 +159,14 @@
         <section class="content-panel hidden" id="simulatorPanel" data-panel="simulator">
           <div class="panel-head">
             <p class="eyebrow">Exam simulators</p>
-            <h2>DMV (Department of Motor Vehicles)-style exam simulators</h2>
+            <h2>Trial gates and boss exams</h2>
           </div>
           <div id="simulatorArea" class="simulator-area"></div>
         </section>
 
         <section class="content-panel hidden" id="flashcardsPanel" data-panel="flashcards">
           <div class="panel-head">
-            <p class="eyebrow">Active recall</p>
+            <p class="eyebrow">Training mode</p>
             <h2>Flashcards due today</h2>
           </div>
           <div id="flashcardArea" class="flashcard-area"></div>
@@ -174,23 +174,23 @@
 
         <section class="content-panel hidden" id="endorsementsPanel" data-panel="endorsements">
           <div class="panel-head">
-            <p class="eyebrow">Deep study</p>
-            <h2>Standalone endorsement courses</h2>
+            <p class="eyebrow">Side quests</p>
+            <h2>Standalone endorsement quests</h2>
           </div>
           <div id="endorsementsArea" class="sources-area"></div>
         </section>
 
         <section class="content-panel hidden" id="reviewPanel" data-panel="review">
           <div class="panel-head">
-            <p class="eyebrow">Weak spots</p>
-            <h2>Missed-question review</h2>
+            <p class="eyebrow">Training grounds</p>
+            <h2>Weak spots and rematches</h2>
           </div>
           <div id="reviewArea" class="review-area"></div>
         </section>
 
         <section class="content-panel hidden" id="sourcesPanel" data-panel="sources">
           <div class="panel-head">
-            <p class="eyebrow">Traceability</p>
+            <p class="eyebrow">Archive library</p>
             <h2>Handbook and online references</h2>
           </div>
           <div id="sourcesArea" class="sources-area"></div>
@@ -210,13 +210,13 @@
           <div class="lesson-depth"></div>
           <div class="lesson-grid">
             <div>
-              <h3>Must Know</h3>
+              <h3>Quest Objective</h3>
               <ul class="must-know"></ul>
             </div>
             <div>
-              <h3>Memory Hook</h3>
+              <h3>Wisdom Scroll</h3>
               <p class="memory-hook"></p>
-              <h3>Drill</h3>
+              <h3>Challenge</h3>
               <p class="drill-text"></p>
             </div>
           </div>

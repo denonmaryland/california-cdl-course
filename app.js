@@ -269,8 +269,8 @@
     const metricsEl = document.querySelector(".dashboard-metrics");
     if (metricsEl) {
       metricsEl.innerHTML = `
-        ${renderRing(percent, "course complete", "#1f9d7a")}
-        ${renderRing(readiness, "practice readiness", "#286bd8")}
+        ${renderRing(percent, "quest XP", "#69b843")}
+        ${renderRing(readiness, "skill readiness", "#5a9fb2")}
         ${renderStreakHeatmap(streak)}
       `;
       // Animate rings after paint
@@ -338,7 +338,7 @@
     const dueCards = getDueFlashcards();
     if (dueCards.length > 0) {
       actions.push({
-        icon: "🃏",
+        icon: "▤",
         label: `${dueCards.length} flashcard${dueCards.length > 1 ? "s" : ""} due`,
         detail: "Spaced repetition – keep recall sharp",
         fn: () => { setMode("flashcards"); scrollToPanel("flashcards"); }
@@ -352,7 +352,7 @@
     if (missedEntries.length > 0) {
       const total = missedEntries.reduce((sum, [, n]) => sum + n, 0);
       actions.push({
-        icon: "🎯",
+        icon: "!",
         label: `Review ${total} missed question${total > 1 ? "s" : ""}`,
         detail: "Hit the weak spots before they stick",
         fn: () => { setMode("practice"); startPractice("missed", Math.min(total, 20)); scrollToPanel("practice"); }
@@ -378,7 +378,7 @@
         const [topic] = weakTopics[0];
         const pct = Math.round((topicMap[topic].correct / topicMap[topic].total) * 100);
         actions.push({
-          icon: "📊",
+          icon: "▥",
           label: `Drill weak topic: ${topic}`,
           detail: `${pct}% recent accuracy — needs reps`,
           fn: () => { setMode("practice"); startPractice("class-a", 10); scrollToPanel("practice"); }
@@ -393,7 +393,7 @@
       );
       if (lowConfLesson) {
         actions.push({
-          icon: "🔁",
+          icon: "↻",
           label: `Re-study: ${lowConfLesson.title}`,
           detail: `Marked "again" — another pass will help`,
           fn: () => {
@@ -413,14 +413,14 @@
       const nextLesson = nextIncompleteLesson();
       if (nextLesson) {
         actions.push({
-          icon: "📖",
+          icon: "▣",
           label: nextLesson.title,
           detail: `${moduleTitle(nextLesson.moduleId)} · ${lessonStatusLabel(nextLesson.id)}`,
           fn: () => continueLearning()
         });
       } else {
         actions.push({
-          icon: "✅",
+          icon: "✓",
           label: "All lessons complete",
           detail: "Run a full exam simulator to stay sharp",
           fn: () => { setMode("simulator"); scrollToPanel("simulator"); }
@@ -530,9 +530,9 @@
     els.nextModule.disabled = moduleIndex === COURSE.modules.length - 1;
 
     els.moduleSummary.innerHTML = `
-      <div class="summary-block"><strong>Objective</strong><span>${escapeHtml(module.objective)}</span></div>
-      <div class="summary-block"><strong>Memory Model</strong><span>${escapeHtml(module.memory)}</span></div>
-      <div class="summary-block"><strong>Watch For</strong><span>${escapeHtml(module.caution)}</span></div>
+      <div class="summary-block"><strong>Quest Objective</strong><span>${escapeHtml(module.objective)}</span></div>
+      <div class="summary-block"><strong>Wisdom Scroll</strong><span>${escapeHtml(module.memory)}</span></div>
+      <div class="summary-block"><strong>Danger Warning</strong><span>${escapeHtml(module.caution)}</span></div>
     `;
 
     els.lessonList.innerHTML = "";
@@ -648,7 +648,7 @@
 
   function renderQuickCheck(container, check, seed) {
     container.innerHTML = `
-      <h3>Quick Check</h3>
+      <h3>Quick Challenge</h3>
       <p>${escapeHtml(check.question)}</p>
       <div class="quick-check-options"></div>
       <div class="feedback" aria-live="polite"></div>
@@ -693,28 +693,28 @@
       : `<p class="empty-state">Start with a 10-question baseline. Misses automatically feed the review queue.</p>`;
     els.practiceArea.innerHTML = `
       <div class="readiness-card">
-        <h3>Current readiness</h3>
+        <h3>Current skill readiness</h3>
         <p>${readinessMessage()}</p>
         <div class="score-grid">${historyMarkup}</div>
       </div>
       <div class="practice-start-grid" aria-label="Quick practice starts">
         <button class="quick-start-card" data-practice-preset="class-a" type="button">
-          <span>10 questions</span>
+          <span>Mini challenge</span>
           <strong>Class A baseline</strong>
           <em>General, air, combination, and cargo</em>
         </button>
         <button class="quick-start-card" data-practice-preset="air-brakes" type="button">
-          <span>10 questions</span>
+          <span>Mini challenge</span>
           <strong>Air Brakes tune-up</strong>
           <em>Warning devices, leakage, spring brakes</em>
         </button>
         <button class="quick-start-card" data-practice-preset="combination" type="button">
-          <span>10 questions</span>
+          <span>Mini challenge</span>
           <strong>Combination tune-up</strong>
           <em>Coupling, offtracking, rollover risk</em>
         </button>
         <button class="quick-start-card" data-practice-preset="missed" type="button">
-          <span>Review</span>
+          <span>Rematch</span>
           <strong>Missed questions</strong>
           <em>Only the questions that caught you</em>
         </button>
@@ -890,8 +890,8 @@
     els.simulatorArea.innerHTML = `
       <div class="simulator-hero">
         <div>
-          <p class="eyebrow">Exam mode</p>
-          <h3>Pick the exam you want to drill</h3>
+          <p class="eyebrow">Boss battle mode</p>
+          <h3>Pick the trial gate you want to clear</h3>
           <p>Run one-question-at-a-time simulators for the core Class A tests and each endorsement path. Every attempt saves your score and sends misses to Review.</p>
         </div>
         <div class="score-grid">${latestMarkup}</div>
@@ -907,7 +907,7 @@
                 <h3>${escapeHtml(config.label)}</h3>
                 <p>${escapeHtml(config.description)}</p>
               </div>
-              <button class="primary-button" data-simulator="${escapeAttribute(config.id)}" ${count ? "" : "disabled"} type="button">Start</button>
+              <button class="primary-button" data-simulator="${escapeAttribute(config.id)}" ${count ? "" : "disabled"} type="button">Enter Trial</button>
             </article>
           `;
         }).join("")}
@@ -1086,9 +1086,9 @@
         ${buildScoreHero(score, correct, total, finishedLabel)}
         <div class="topic-grid">${topicMarkup}</div>
         <div class="practice-nav">
-          <button class="primary-button" id="simAgain" type="button">Run This Simulator Again</button>
+          <button class="primary-button" id="simAgain" type="button">Rematch This Trial</button>
           <button class="secondary-button" id="simReview" type="button">Review Misses</button>
-          <button class="secondary-button" id="simMenu" type="button">Simulator Menu</button>
+          <button class="secondary-button" id="simMenu" type="button">Trial Gate Menu</button>
         </div>
       </article>
     `;
@@ -1268,7 +1268,7 @@
 
     els.endorsementsArea.innerHTML = `
       <div class="source-card">
-        <h3>Use These After the Base Class A Path</h3>
+        <h3>Optional Side Quests</h3>
         <p>The main course keeps a quick endorsement preview, but these standalone courses are built for deeper study and separate progress tracking.</p>
       </div>
       <div class="endorsement-card-grid">
@@ -1279,7 +1279,7 @@
               <h3>${escapeHtml(card.title)}</h3>
             </div>
             <p>${escapeHtml(card.text)}</p>
-            <a href="${escapeAttribute(card.href)}">Open ${escapeHtml(card.code)} Course</a>
+            <a href="${escapeAttribute(card.href)}">Enter Quest: ${escapeHtml(card.code)}</a>
           </article>
         `).join("")}
       </div>
@@ -1299,7 +1299,7 @@
     els.sourcesArea.innerHTML = `
       <div class="source-list">
         <article class="source-card">
-          <h3>How this course was built</h3>
+          <h3>Archive record: how this course was built</h3>
           <p>${escapeHtml(COURSE.disclaimer)}</p>
           <p>The handbook supplies the course content. The online sources supply current DMV/Federal test framing, sample-test topic signals, and the 80 percent passing threshold.</p>
         </article>
