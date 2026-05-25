@@ -4468,3 +4468,83 @@ html[data-theme] .confidence-button {
     linear-gradient(180deg, rgba(255,230,160,0.05), transparent),
     linear-gradient(180deg, #282316, #13130d);
 }
+
+/* Robust scroll-card flip: avoids mobile Safari mirrored backface rendering. */
+.flashcard-3d {
+  perspective: none;
+}
+
+.flashcard-3d-inner {
+  transform-style: flat;
+  transition: transform 0.34s cubic-bezier(0.2, 0.72, 0.17, 1);
+}
+
+.flashcard-3d.flipped .flashcard-3d-inner {
+  transform: translateY(3px) scale(0.992);
+}
+
+.flashcard-face {
+  transform: none;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+  transition:
+    opacity 0.22s ease,
+    visibility 0s linear 0.22s,
+    transform 0.34s cubic-bezier(0.2, 0.72, 0.17, 1);
+}
+
+.flashcard-face-front {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+
+.flashcard-face-back {
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1;
+  transform: translateX(10px) rotate(1deg) scale(0.985);
+}
+
+.flashcard-3d.flipped .flashcard-face-front {
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1;
+  transform: translateX(-10px) rotate(-1deg) scale(0.985);
+  transition:
+    opacity 0.18s ease,
+    visibility 0s linear 0.18s,
+    transform 0.34s cubic-bezier(0.2, 0.72, 0.17, 1);
+}
+
+.flashcard-3d.flipped .flashcard-face-back {
+  opacity: 1;
+  visibility: visible;
+  z-index: 3;
+  transform: translateX(0) rotate(0) scale(1);
+  transition:
+    opacity 0.22s ease 0.08s,
+    visibility 0s linear 0s,
+    transform 0.34s cubic-bezier(0.2, 0.72, 0.17, 1);
+}
+
+.flashcard-3d.flipped::before {
+  transform: rotate(-1.1deg) translateY(12px);
+}
+
+.flashcard-3d.flipped::after {
+  transform: rotate(1.2deg) translateY(18px);
+}
+
+@media (max-width: 720px) {
+  .flashcard-3d {
+    min-height: clamp(360px, 98vw, 460px);
+  }
+
+  .flashcard-face {
+    align-content: start;
+    gap: 0.75rem;
+    padding-top: 1.45rem;
+    padding-bottom: 1.45rem;
+  }
+}
