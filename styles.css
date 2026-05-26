@@ -4650,6 +4650,50 @@ html[data-theme] .recall-notes textarea:focus {
   border-color: #5f3c16;
 }
 
+/* Smooth lesson accordions. The original display none/block swap made
+   opening lessons feel like a hard layout jump. */
+html[data-theme] .lesson-card {
+  overflow-anchor: none;
+}
+
+html[data-theme] .lesson-body {
+  display: block;
+  max-height: 0;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  transform: translateY(-0.35rem);
+  transition:
+    max-height 0.52s cubic-bezier(0.22, 0.78, 0.22, 1),
+    padding-top 0.34s ease,
+    padding-bottom 0.34s ease,
+    opacity 0.26s ease,
+    transform 0.34s ease;
+}
+
+html[data-theme] .lesson-card.open .lesson-body {
+  max-height: 5200px;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 720px) {
+  html[data-theme] .lesson-card.open .lesson-body {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme] .lesson-body {
+    transition: none;
+    transform: none;
+  }
+}
+
 html[data-theme] .lesson-card {
   color: var(--quest-text);
   background:
