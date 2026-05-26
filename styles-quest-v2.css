@@ -305,32 +305,20 @@ body::after {
   transition: opacity 0.5s ease;
 }
 
-/* ── Star particles scattered over the hero area ── */
+/* ── Route glow over the hero area ── */
 
-/* We piggyback on the existing .dashboard-band::before which is already
-   positioned absolute — we extend its background stack with pixel stars */
+/* Codex polish: replace the animated terrain/blob layer with a calmer
+   road-inspired overlay that supports the truck art without obscuring it. */
 .dashboard-band::before {
-  /* Stars layered on top of the existing tree-gradient background */
+  z-index: 0;
+  opacity: 0.34;
   background:
-    /* Pixel stars (sharp radial dots) */
-    radial-gradient(circle, rgba(255,245,160,0.95) 0, transparent 1.5px)  8%  12% / 4px 4px no-repeat,
-    radial-gradient(circle, rgba(255,245,160,0.80) 0, transparent 1px)   19%   7% / 2px 2px no-repeat,
-    radial-gradient(circle, rgba(255,245,160,0.90) 0, transparent 2px)   58%   5% / 5px 5px no-repeat,
-    radial-gradient(circle, rgba(170,215,255,0.85) 0, transparent 1.5px) 74%  16% / 3px 3px no-repeat,
-    radial-gradient(circle, rgba(255,245,160,0.70) 0, transparent 1px)   41%   9% / 2px 2px no-repeat,
-    radial-gradient(circle, rgba(105,184, 67,0.90) 0, transparent 1.5px) 88%   7% / 3px 3px no-repeat,
-    radial-gradient(circle, rgba(255,245,160,0.75) 0, transparent 1px)   31%  20% / 2px 2px no-repeat,
-    radial-gradient(circle, rgba(255,200,100,0.80) 0, transparent 1.5px) 63%  13% / 3px 3px no-repeat,
-    radial-gradient(circle, rgba(255,245,160,0.60) 0, transparent 1px)   82%  24% / 2px 2px no-repeat,
-    radial-gradient(circle, rgba(170,215,255,0.70) 0, transparent 1.5px) 48%  18% / 3px 3px no-repeat,
-    /* Original tree gradients from Zelda skin */
-    linear-gradient(180deg, rgba(125,173,189,0.42), rgba(125,173,189,0.02) 44%, transparent 45%),
-    linear-gradient(135deg, transparent 0 60%, rgba(40,69,48,0.52) 61% 70%, transparent 71%) 0 100% / 220px 140px repeat-x,
-    linear-gradient(45deg,  transparent 0 56%, rgba(24,54,44,0.62) 57% 70%, transparent 71%) 0 100% / 180px 120px repeat-x,
-    radial-gradient(circle at 72% 34%, rgba(255,230,160,0.16), transparent 18rem);
-
-  /* Apply star twinkle as opacity animation on the whole layer */
-  animation: twinkleA 2.4s ease-in-out infinite alternate;
+    radial-gradient(circle at 72% 31%, rgba(255,230,160,0.20), transparent 17rem),
+    radial-gradient(circle at 90% 18%, rgba(170,215,255,0.16), transparent 11rem),
+    linear-gradient(118deg, transparent 0 56%, rgba(226,189,85,0.26) 56.2% 56.7%, transparent 57%),
+    linear-gradient(118deg, transparent 0 64%, rgba(226,189,85,0.18) 64.2% 64.7%, transparent 65%),
+    linear-gradient(180deg, rgba(125,173,189,0.16), rgba(125,173,189,0.03) 38%, transparent 60%);
+  animation: none;
 }
 
 
@@ -916,9 +904,9 @@ body::after {
     animation-duration: 5s;
   }
 
-  /* Reduce the star twinkle intensity */
+  /* Keep the dashboard route glow quiet on smaller screens */
   .dashboard-band::before {
-    animation-duration: 4s;
+    opacity: 0.3;
   }
 
   /* Tone down the tab glow — still present, less intense */
@@ -964,10 +952,10 @@ body::after {
     animation: none;
   }
 
-  /* Freeze star twinkle — dashboard is smaller anyway */
+  /* Keep the route glow subtle on mobile */
   .dashboard-band::before {
     animation: none;
-    opacity: 0.6;
+    opacity: 0.24;
   }
 
   /* Simplify card entrances to opacity-only — no translate/scale jank */
