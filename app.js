@@ -312,6 +312,8 @@
     const readiness = calculateReadiness();
     const streak = state.streak.count || 0;
 
+    renderStatusHud(percent, readiness, streak);
+
     // Progress rings for course % and readiness %
     const metricsEl = document.querySelector(".dashboard-metrics");
     if (metricsEl) {
@@ -336,6 +338,28 @@
     }
 
     renderTodaysPlan();
+  }
+
+  function renderStatusHud(percent, readiness, streak) {
+    const hud = document.getElementById("statusHud");
+    if (!hud) return;
+    const completed = completedCount();
+    const bestRecent = state.quizHistory.length
+      ? Math.max(...state.quizHistory.slice(-12).map((quiz) => quiz.score || 0))
+      : 0;
+    const mastery = Math.max(1, Math.min(14, Math.ceil((percent + readiness + bestRecent) / 20)));
+    hud.innerHTML = `
+      <div class="hud-primary">
+        <span>Mastery ${mastery}</span>
+        <strong>${percent}%</strong>
+      </div>
+      <div class="hud-progress" aria-hidden="true"><span style="width:${percent}%"></span></div>
+      <div class="hud-stats">
+        <span>${readiness}% ready</span>
+        <span>${completed}/${allLessons.length} lessons</span>
+        <span>${streak} day streak</span>
+      </div>
+    `;
   }
 
   function renderRing(pct, label, color) {
@@ -1420,7 +1444,8 @@
       // Measure actual height of sticky elements so we don't scroll under them
       const tabs = document.querySelector(".mode-tabs");
       const topbar = document.querySelector(".topbar");
-      const stickyH = (topbar ? topbar.offsetHeight : 0) + (tabs ? tabs.offsetHeight : 0) + 12;
+      const tabsInsideTopbar = Boolean(tabs && topbar && topbar.contains(tabs));
+      const stickyH = (topbar ? topbar.offsetHeight : 0) + (!tabsInsideTopbar && tabs ? tabs.offsetHeight : 0) + 12;
       const top = panel.getBoundingClientRect().top + window.scrollY - stickyH;
       window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     });
