@@ -178,27 +178,84 @@
   50%, 100% { opacity: 0; }
 }
 
-/* Dashboard route/headlight glow pulse */
+/* Dashboard route/headlight glow pulse and road movement */
 @keyframes routeGlowPulse {
-  0%, 100% {
-    opacity: 0.24;
+  0% {
+    opacity: 0.22;
     filter: saturate(0.95) brightness(0.96);
+    background-position:
+      78% 54%,
+      74% 64%,
+      0 102%,
+      0 102%,
+      0 0,
+      0 0;
   }
-  46% {
-    opacity: 0.48;
-    filter: saturate(1.16) brightness(1.08);
+  45% {
+    opacity: 0.5;
+    filter: saturate(1.18) brightness(1.1);
+    background-position:
+      82% 53%,
+      76% 62%,
+      38px 102%,
+      -28px 102%,
+      9px 0,
+      -6px 0;
+  }
+  100% {
+    opacity: 0.25;
+    filter: saturate(0.98) brightness(0.98);
+    background-position:
+      79% 54%,
+      75% 64%,
+      88px 102%,
+      -74px 102%,
+      18px 0,
+      -12px 0;
   }
 }
 
-/* Subtle animated-photo treatment for the truck hero. */
+/* Animated-photo treatment for the truck hero: slow push plus light engine vibration. */
 @keyframes truckHeroMotion {
-  0%, 100% {
-    transform: scale(1) translate3d(0, 0, 0);
-    filter: saturate(0.98) brightness(0.96);
+  0% {
+    transform: scale(1.018) translate3d(0, 0, 0);
+    filter: saturate(0.98) brightness(0.96) contrast(1);
+    background-position:
+      0 0,
+      0 0,
+      50% 44%;
+  }
+  22% {
+    transform: scale(1.026) translate3d(-0.18%, 0.12%, 0);
+    filter: saturate(1.05) brightness(1.01) contrast(1.02);
+    background-position:
+      0 0,
+      0 0,
+      50.8% 43.7%;
   }
   50% {
-    transform: scale(1.035) translate3d(-1.4%, -0.7%, 0);
-    filter: saturate(1.1) brightness(1.04);
+    transform: scale(1.044) translate3d(-0.58%, -0.18%, 0);
+    filter: saturate(1.1) brightness(1.04) contrast(1.035);
+    background-position:
+      0 0,
+      0 0,
+      51.8% 43.2%;
+  }
+  76% {
+    transform: scale(1.034) translate3d(-0.3%, 0.1%, 0);
+    filter: saturate(1.05) brightness(1.01) contrast(1.02);
+    background-position:
+      0 0,
+      0 0,
+      51% 43.8%;
+  }
+  100% {
+    transform: scale(1.018) translate3d(0.05%, 0, 0);
+    filter: saturate(0.98) brightness(0.96) contrast(1);
+    background-position:
+      0 0,
+      0 0,
+      50% 44%;
   }
 }
 
@@ -298,7 +355,7 @@ body::after {
 .dashboard-band::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -1.5%;
   pointer-events: none;
   z-index: 0;
   background:
@@ -315,11 +372,15 @@ body::after {
       rgba(4, 10, 8, 0.64) 100%
     ),
     url("./assets/class-a-pixel-road-hero.png") center 44% / cover no-repeat;
+  background-size:
+    100% 100%,
+    100% 100%,
+    cover;
   opacity: 0.82;
   transform-origin: 70% 48%;
-  animation: truckHeroMotion 18s ease-in-out infinite;
+  animation: truckHeroMotion 10s steps(24, end) infinite;
   transition: opacity 0.5s ease, filter 0.5s ease;
-  will-change: transform, filter;
+  will-change: transform, filter, background-position;
 }
 
 .dashboard-band:hover::after {
@@ -327,19 +388,39 @@ body::after {
   transition: opacity 0.5s ease, filter 0.5s ease;
 }
 
-/* ── Route glow over the hero area ── */
+/* ── Route glow, road shimmer, and tree-sway overlays over the hero area ── */
 
-/* Codex polish: replace the animated terrain/blob layer with a calmer
-   road-inspired overlay that supports the truck art without obscuring it. */
+/* Codex polish: animate Claude's dashboard-band::before overlay as a lightweight
+   driving-scene layer instead of adding a heavy GIF asset. */
 .dashboard-band::before {
   z-index: 0;
+  inset: 0;
+  height: auto;
+  opacity: 0.38;
   background:
-    radial-gradient(circle at 82% 53%, rgba(255,230,160,0.34), transparent 8.5rem),
-    radial-gradient(circle at 75% 62%, rgba(255,230,160,0.18), transparent 13rem),
-    linear-gradient(118deg, transparent 0 58%, rgba(226,189,85,0.24) 58.2% 58.65%, transparent 59%),
-    linear-gradient(118deg, transparent 0 66%, rgba(226,189,85,0.17) 66.2% 66.7%, transparent 67%),
-    linear-gradient(180deg, rgba(125,173,189,0.16), rgba(125,173,189,0.03) 38%, transparent 60%);
-  animation: routeGlowPulse 3.8s ease-in-out infinite;
+    radial-gradient(ellipse at 80% 55%, rgba(255,230,160,0.35), transparent 8rem),
+    radial-gradient(ellipse at 74% 65%, rgba(255,230,160,0.18), transparent 14rem),
+    repeating-linear-gradient(116deg, transparent 0 44px, rgba(248,214,112,0.32) 45px 49px, transparent 50px 96px),
+    repeating-linear-gradient(116deg, transparent 0 58px, rgba(255,255,210,0.16) 59px 62px, transparent 63px 122px),
+    radial-gradient(ellipse at 91% 14%, rgba(91,143,91,0.16), transparent 17rem),
+    radial-gradient(ellipse at 64% 18%, rgba(68,112,76,0.14), transparent 18rem);
+  background-size:
+    100% 100%,
+    100% 100%,
+    210px 160px,
+    310px 210px,
+    120% 72%,
+    130% 68%;
+  background-repeat:
+    no-repeat,
+    no-repeat,
+    repeat,
+    repeat,
+    no-repeat,
+    no-repeat;
+  mix-blend-mode: screen;
+  animation: routeGlowPulse 2.8s linear infinite;
+  will-change: opacity, filter, background-position;
 }
 
 
@@ -898,6 +979,12 @@ body::after {
     animation-iteration-count: 1     !important;
     transition-duration:      0.01ms !important;
   }
+
+  .dashboard-band::before,
+  .dashboard-band::after {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 
@@ -927,7 +1014,12 @@ body::after {
 
   /* Keep the dashboard route glow quiet on smaller screens */
   .dashboard-band::before {
-    animation-duration: 5.2s;
+    opacity: 0.26;
+    animation-duration: 4.4s;
+  }
+
+  .dashboard-band::after {
+    animation-duration: 16s;
   }
 
   /* Tone down the tab glow — still present, less intense */
@@ -975,7 +1067,13 @@ body::after {
 
   /* Keep the route glow subtle on mobile */
   .dashboard-band::before {
-    animation-duration: 6s;
+    opacity: 0.16;
+    animation-duration: 8s;
+  }
+
+  .dashboard-band::after {
+    inset: 0;
+    animation: truckHeroMotion 22s ease-in-out infinite;
   }
 
   /* Simplify card entrances to opacity-only — no translate/scale jank */
