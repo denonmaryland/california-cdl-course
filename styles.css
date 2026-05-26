@@ -1143,6 +1143,43 @@ a {
   margin-top: 1.25rem;
 }
 
+.flashcard-hud {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.flashcard-deck-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.flashcard-deck-status strong {
+  color: var(--ink);
+}
+
+.flashcard-deck-progress {
+  height: 0.55rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.flashcard-deck-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green), var(--blue));
+  transition: width 0.34s ease;
+}
+
 /* ─── Simulator ──────────────────────────────────────────────── */
 
 .simulator-hero {
@@ -4537,9 +4574,53 @@ html[data-theme] .confidence-button {
 }
 
 /* Robust scroll-card flip: avoids mobile Safari mirrored backface rendering. */
+.flashcard {
+  animation: flashcard-enter 0.28s cubic-bezier(0.18, 0.88, 0.24, 1) both;
+}
+
+.flashcard.flashcard-leaving {
+  pointer-events: none;
+  animation: flashcard-exit 0.18s ease both;
+}
+
+.flashcard-hud {
+  margin-bottom: 0.65rem;
+}
+
+.flashcard-hud .test-meta {
+  margin: 0;
+}
+
+.flashcard-deck-status {
+  color: var(--quest-muted);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  text-shadow: 1px 1px 0 #080705;
+}
+
+.flashcard-deck-status strong {
+  color: var(--quest-gold-light);
+}
+
+.flashcard-deck-progress {
+  height: 0.75rem;
+  border: 3px solid #080705;
+  border-radius: 0;
+  background: #100f0a;
+  box-shadow: inset 0 0 0 2px rgba(185,139,50,0.18), 0 3px 0 rgba(0,0,0,0.38);
+}
+
+.flashcard-deck-progress span {
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0 7px, transparent 7px 14px),
+    linear-gradient(90deg, #5fa33a, #dfc15f);
+  box-shadow: 0 0 12px rgba(146,217,76,0.28);
+}
+
 .flashcard-3d {
   perspective: none;
   transform-origin: center center;
+  outline: none;
   transition:
     filter 0.42s cubic-bezier(0.2, 0.72, 0.17, 1),
     transform 0.42s cubic-bezier(0.2, 0.72, 0.17, 1);
@@ -4547,11 +4628,11 @@ html[data-theme] .confidence-button {
 
 .flashcard-3d-inner {
   transform-style: flat;
-  transition: transform 0.48s cubic-bezier(0.18, 0.88, 0.24, 1);
+  transition: transform 0.56s cubic-bezier(0.16, 0.92, 0.18, 1);
 }
 
 .flashcard-3d.flipped .flashcard-3d-inner {
-  transform: translateY(-4px) scale(1.006);
+  transform: translateY(-6px) rotate(-0.45deg) scale(1.008);
 }
 
 .flashcard-3d.flipped {
@@ -4562,24 +4643,35 @@ html[data-theme] .confidence-button {
   transform: none;
   backface-visibility: visible;
   -webkit-backface-visibility: visible;
+  border-width: 4px;
+  border-color: #080705;
+  border-radius: 0;
   transition:
-    opacity 0.26s ease,
-    visibility 0s linear 0.26s,
-    transform 0.48s cubic-bezier(0.18, 0.88, 0.24, 1),
-    filter 0.48s cubic-bezier(0.18, 0.88, 0.24, 1);
+    opacity 0.28s ease,
+    visibility 0s linear 0.28s,
+    transform 0.56s cubic-bezier(0.16, 0.92, 0.18, 1),
+    filter 0.56s cubic-bezier(0.16, 0.92, 0.18, 1);
+}
+
+.flashcard-face::after {
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.34), transparent 36%),
+    radial-gradient(circle at 86% 13%, rgba(255, 230, 160, 0.22), transparent 19%),
+    linear-gradient(90deg, transparent 0 84%, rgba(95, 60, 22, 0.08) 84% 86%, transparent 86%);
 }
 
 .flashcard-face-front {
   opacity: 1;
   visibility: visible;
   z-index: 2;
+  transform: translateY(0) rotate(-0.18deg);
 }
 
 .flashcard-face-back {
   opacity: 0;
   visibility: hidden;
   z-index: 1;
-  transform: translateY(12px) rotate(0.6deg) scale(0.982);
+  transform: translateY(20px) rotate(1.1deg) scale(0.972);
   filter: brightness(0.96);
 }
 
@@ -4587,39 +4679,121 @@ html[data-theme] .confidence-button {
   opacity: 0;
   visibility: hidden;
   z-index: 1;
-  transform: translateY(-12px) rotate(-0.6deg) scale(0.982);
+  transform: translateY(-22px) rotate(-1.15deg) scale(0.972);
   filter: brightness(0.95);
   transition:
-    opacity 0.22s ease,
-    visibility 0s linear 0.22s,
-    transform 0.48s cubic-bezier(0.18, 0.88, 0.24, 1),
-    filter 0.48s cubic-bezier(0.18, 0.88, 0.24, 1);
+    opacity 0.24s ease,
+    visibility 0s linear 0.24s,
+    transform 0.56s cubic-bezier(0.16, 0.92, 0.18, 1),
+    filter 0.56s cubic-bezier(0.16, 0.92, 0.18, 1);
 }
 
 .flashcard-3d.flipped .flashcard-face-back {
   opacity: 1;
   visibility: visible;
   z-index: 3;
-  transform: translateY(0) rotate(0) scale(1);
+  transform: translateY(0) rotate(0.18deg) scale(1);
   filter: brightness(1);
   transition:
-    opacity 0.3s ease 0.08s,
+    opacity 0.32s ease 0.08s,
     visibility 0s linear 0s,
-    transform 0.48s cubic-bezier(0.18, 0.88, 0.24, 1),
-    filter 0.48s cubic-bezier(0.18, 0.88, 0.24, 1);
+    transform 0.56s cubic-bezier(0.16, 0.92, 0.18, 1),
+    filter 0.56s cubic-bezier(0.16, 0.92, 0.18, 1);
 }
 
 .flashcard-3d.flipped::before {
-  transform: rotate(-1.45deg) translateY(14px) scaleX(0.992);
+  transform: rotate(-2.4deg) translateY(18px) scaleX(0.992);
 }
 
 .flashcard-3d.flipped::after {
-  transform: rotate(1.55deg) translateY(22px) scaleX(0.988);
+  transform: rotate(2.35deg) translateY(28px) scaleX(0.988);
 }
 
 .flashcard-3d::before,
 .flashcard-3d::after {
-  transition: transform 0.48s cubic-bezier(0.18, 0.88, 0.24, 1);
+  border-radius: 0;
+  transition: transform 0.56s cubic-bezier(0.16, 0.92, 0.18, 1);
+}
+
+.flashcard-rating {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.26s ease, transform 0.26s ease;
+}
+
+.flashcard-rating.rating-ready {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.flashcard-rating .confidence-button {
+  display: grid;
+  min-height: 4.7rem;
+  align-content: center;
+  gap: 0.22rem;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.flashcard-rating .confidence-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(110deg, transparent 15%, rgba(255,255,255,0.18) 45%, transparent 70%);
+  transform: translateX(-100%);
+  transition: opacity 0.2s ease, transform 0.38s ease;
+}
+
+.flashcard-rating .confidence-button:hover::after {
+  opacity: 1;
+  transform: translateX(100%);
+}
+
+.flashcard-rating .confidence-button span,
+.flashcard-rating .confidence-button small {
+  position: relative;
+  z-index: 1;
+}
+
+.flashcard-rating .confidence-button small {
+  color: rgba(255, 247, 201, 0.72);
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.flashcard-rating .confidence-button:disabled {
+  cursor: wait;
+  opacity: 0.78;
+}
+
+@keyframes flashcard-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.986);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes flashcard-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.988);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4627,7 +4801,10 @@ html[data-theme] .confidence-button {
   .flashcard-3d-inner,
   .flashcard-face,
   .flashcard-3d::before,
-  .flashcard-3d::after {
+  .flashcard-3d::after,
+  .flashcard,
+  .flashcard-rating {
+    animation: none !important;
     transition-duration: 0.01ms !important;
   }
 }
@@ -4645,13 +4822,31 @@ html[data-theme] .confidence-button {
   }
 
   .flashcard-3d {
-    min-height: clamp(360px, 98vw, 460px);
+    width: min(100%, 620px);
+    min-height: clamp(315px, 84vw, 390px);
   }
 
   .flashcard-face {
     align-content: start;
     gap: 0.75rem;
-    padding-top: 1.45rem;
-    padding-bottom: 1.45rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .flashcard-face > p:not(.eyebrow, .flip-hint) {
+    font-size: clamp(1.15rem, 5.5vw, 1.55rem);
+    line-height: 1.08;
+  }
+
+  .flashcard-deck-status {
+    font-size: 0.72rem;
+  }
+
+  .flashcard-rating {
+    grid-template-columns: 1fr;
+  }
+
+  .flashcard-rating .confidence-button {
+    min-height: 4.2rem;
   }
 }

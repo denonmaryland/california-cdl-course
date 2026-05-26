@@ -681,11 +681,12 @@ body::after {
     drop-shadow(0 46px 36px rgba(0,0,0,.32))
     drop-shadow(0 0 18px rgba(226,189,85,.22));
   transform: translateY(-4px);
-  transition: transform 0.25s ease, filter 0.25s ease;
+  transition: transform 0.34s cubic-bezier(0.16, 0.92, 0.18, 1), filter 0.34s ease;
 }
 
 .flashcard-3d {
-  transition: transform 0.25s ease, filter 0.25s ease;
+  /* Codex flashcard UX polish: keep Claude's hover glow, but let the card settle more smoothly. */
+  transition: transform 0.42s cubic-bezier(0.16, 0.92, 0.18, 1), filter 0.42s ease;
 }
 
 

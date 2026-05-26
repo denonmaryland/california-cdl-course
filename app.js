@@ -1174,6 +1174,8 @@
   function renderFlashcard(showBack) {
     const card = flashcardQueue[flashcardIndex];
     if (!card) return renderFlashcards();
+    const progressPercent = Math.round(((flashcardIndex + 1) / flashcardQueue.length) * 100);
+    const originLabel = card.origin === "endorsement" ? "Side quest card" : "Core deck card";
 
     // Build the 3-D card only once; subsequent calls just toggle .flipped
     let article = els.flashcardArea.querySelector(".flashcard[data-card-id]");
@@ -1181,34 +1183,42 @@
 
     if (isNewCard) {
       els.flashcardArea.innerHTML = `
-        <article class="flashcard" data-card-id="${escapeAttribute(String(card.id))}">
-          <div class="test-meta">
-            <span class="pill">${flashcardIndex + 1} of ${flashcardQueue.length}</span>
-            <span class="pill green">${escapeHtml(card.topic)}</span>
-            <span class="pill">${escapeHtml(card.source)}</span>
+        <article class="flashcard flashcard-entering" data-card-id="${escapeAttribute(String(card.id))}">
+          <div class="flashcard-hud" aria-label="Flashcard progress">
+            <div class="test-meta">
+              <span class="pill">${flashcardIndex + 1} of ${flashcardQueue.length}</span>
+              <span class="pill green">${escapeHtml(card.topic)}</span>
+              <span class="pill">${escapeHtml(card.source)}</span>
+            </div>
+            <div class="flashcard-deck-status">
+              <span>${escapeHtml(originLabel)}</span>
+              <strong>${progressPercent}%</strong>
+            </div>
+            <div class="flashcard-deck-progress" aria-hidden="true"><span style="width:${progressPercent}%"></span></div>
           </div>
           <div class="flashcard-3d" role="button" tabindex="0" aria-label="Flip flashcard" aria-pressed="false">
             <div class="flashcard-3d-inner">
               <div class="flashcard-face flashcard-face-front">
                 <p class="eyebrow">Question</p>
                 <p>${escapeHtml(card.front)}</p>
-                <p class="flip-hint"><span>Tap card to flip</span><kbd class="kbd">Space</kbd></p>
+                <p class="flip-hint"><span>Tap the card to reveal the answer</span><kbd class="kbd">Space</kbd></p>
               </div>
               <div class="flashcard-face flashcard-face-back">
                 <p class="eyebrow">Answer</p>
                 <p>${escapeHtml(card.back)}</p>
-                <p class="flip-hint"><span>Rate your recall below</span></p>
+                <p class="flip-hint"><span>Lock in the answer, then rate your recall below</span></p>
               </div>
             </div>
           </div>
-          <div class="practice-nav flashcard-rating hidden">
-            <button class="confidence-button" data-confidence="again" type="button">Again</button>
-            <button class="confidence-button" data-confidence="good" type="button">Good</button>
-            <button class="confidence-button" data-confidence="mastered" type="button">Mastered</button>
+          <div class="practice-nav flashcard-rating hidden" aria-label="Rate this flashcard">
+            <button class="confidence-button" data-confidence="again" type="button"><span>Again</span><small>Review soon</small></button>
+            <button class="confidence-button" data-confidence="good" type="button"><span>Good</span><small>Build streak</small></button>
+            <button class="confidence-button" data-confidence="mastered" type="button"><span>Mastered</span><small>Level up</small></button>
           </div>
         </article>
       `;
       article = els.flashcardArea.querySelector(".flashcard");
+      window.setTimeout(() => article?.classList.remove("flashcard-entering"), 260);
 
       const flipper = article.querySelector(".flashcard-3d");
       const rating  = article.querySelector(".flashcard-rating");
@@ -1221,9 +1231,13 @@
         window.clearTimeout(ratingTimer);
         if (flipped) {
           ratingTimer = window.setTimeout(() => {
-            if (flipper.classList.contains("flipped")) rating.classList.remove("hidden");
+            if (flipper.classList.contains("flipped")) {
+              rating.classList.remove("hidden");
+              window.requestAnimationFrame(() => rating.classList.add("rating-ready"));
+            }
           }, 220);
         } else {
+          rating.classList.remove("rating-ready");
           rating.classList.add("hidden");
         }
       }
@@ -1234,11 +1248,15 @@
 
       Array.from(article.querySelectorAll("[data-confidence]")).forEach((button) => {
         button.addEventListener("click", () => {
+          Array.from(article.querySelectorAll("[data-confidence]")).forEach((ratingButton) => {
+            ratingButton.disabled = true;
+          });
+          article.classList.add("flashcard-leaving");
           scheduleFlashcard(card.id, button.dataset.confidence);
           flashcardQueue.splice(flashcardIndex, 1);
           if (flashcardIndex >= flashcardQueue.length) flashcardIndex = 0;
           saveState();
-          renderFlashcard(false);
+          window.setTimeout(() => renderFlashcard(false), 190);
         });
       });
     }
@@ -1246,9 +1264,11 @@
     // Apply flipped state without rebuilding the DOM
     const flipper = article.querySelector(".flashcard-3d");
     const rating  = article.querySelector(".flashcard-rating");
+    article.classList.remove("flashcard-leaving");
     flipper.classList.toggle("flipped", Boolean(showBack));
     flipper.setAttribute("aria-pressed", String(Boolean(showBack)));
     rating.classList.toggle("hidden", !showBack);
+    rating.classList.toggle("rating-ready", Boolean(showBack));
   }
 
   function renderReview() {
