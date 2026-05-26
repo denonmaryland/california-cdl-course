@@ -84,7 +84,7 @@
 
 .endorsement-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.42fr);
+  grid-template-columns: minmax(0, 1fr) minmax(390px, 0.48fr);
   gap: 1rem;
   align-items: start;
 }
@@ -136,6 +136,27 @@
 
 .side-stack .content-panel {
   min-height: auto;
+}
+
+.side-stack .flashcard {
+  width: 100%;
+  max-width: none;
+}
+
+.side-stack .flashcard-3d {
+  width: min(100%, 360px);
+  min-height: clamp(300px, 34vw, 390px);
+}
+
+.side-stack .flashcard-face {
+  padding: clamp(1rem, 2.4vw, 1.45rem);
+}
+
+.side-stack .flashcard-face > p:not(.eyebrow, .flip-hint) {
+  max-width: none;
+  overflow-wrap: anywhere;
+  font-size: clamp(1.25rem, 2.8vw, 1.9rem);
+  line-height: 1.08;
 }
 
 @media (max-width: 1040px) {
@@ -266,5 +287,38 @@
   .sync-strip > div:first-child,
   .sync-strip .sync-controls {
     padding-inline: 0.75rem;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .topbar .brand-block {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .topbar .brand-block h1 {
+    max-width: none;
+    overflow-wrap: anywhere;
+  }
+
+  .topbar .top-actions {
+    flex: 1 1 100%;
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding: 0 0.75rem 0.75rem;
+  }
+
+  .side-stack .flashcard-3d {
+    width: min(100%, 620px);
+    min-height: clamp(315px, 84vw, 390px);
+  }
+
+  .side-stack .flashcard-face > p:not(.eyebrow, .flip-hint) {
+    font-size: clamp(1.15rem, 5.5vw, 1.55rem);
   }
 }
