@@ -234,7 +234,7 @@
     els.tabs.forEach((tab) => {
       tab.addEventListener("click", () => {
         if (tab.dataset.mode === "flashcards") flashcardScope = null;
-        setMode(tab.dataset.mode);
+        setMode(tab.dataset.mode, { scroll: window.matchMedia("(max-width: 720px)").matches });
       });
     });
 
