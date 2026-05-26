@@ -190,6 +190,18 @@
   }
 }
 
+/* Subtle animated-photo treatment for the truck hero. */
+@keyframes truckHeroMotion {
+  0%, 100% {
+    transform: scale(1) translate3d(0, 0, 0);
+    filter: saturate(0.98) brightness(0.96);
+  }
+  50% {
+    transform: scale(1.035) translate3d(-1.4%, -0.7%, 0);
+    filter: saturate(1.1) brightness(1.04);
+  }
+}
+
 /* HP bar flash on complete */
 @keyframes hpFlash {
   0%,  100% { filter: brightness(1) saturate(1);   box-shadow: 0 0 10px rgba(105,184,67,.3); }
@@ -279,42 +291,40 @@ body::after {
 
 
 /* ─────────────────────────────────────────────────────────────
-   6. DASHBOARD BAND — HERO IMAGE + STAR PARTICLES
+   6. DASHBOARD BAND — ANIMATED TRUCK HERO
    ───────────────────────────────────────────────────────────── */
 
-/* Hero image reveal on the right side of the dashboard */
+/* Full-panel animated truck scene with dark overlays for readable copy. */
 .dashboard-band::after {
   content: "";
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 54%;
+  inset: 0;
   pointer-events: none;
   z-index: 0;
   background:
-    /* Fade to dark on left so copy stays readable */
     linear-gradient(90deg,
-      rgba(6, 28, 24, 1)   0%,
-      rgba(6, 28, 24, 0.6) 22%,
-      rgba(6, 28, 24, 0.1) 46%,
-      transparent          60%
+      rgba(6, 18, 18, 0.98) 0%,
+      rgba(6, 18, 18, 0.88) 36%,
+      rgba(6, 18, 18, 0.36) 62%,
+      rgba(6, 18, 18, 0.08) 100%
     ),
-    /* Vignette on right/top/bottom */
     linear-gradient(180deg,
-      rgba(4, 10, 8, 0.45) 0%,
-      transparent          28%,
-      transparent          72%,
-      rgba(4, 10, 8, 0.55) 100%
+      rgba(4, 10, 8, 0.50) 0%,
+      transparent 26%,
+      transparent 68%,
+      rgba(4, 10, 8, 0.64) 100%
     ),
-    url("./assets/class-a-pixel-road-hero.png") center 38% / cover no-repeat;
-  opacity: 0.72;
-  transition: opacity 0.5s ease;
+    url("./assets/class-a-pixel-road-hero.png") center 44% / cover no-repeat;
+  opacity: 0.82;
+  transform-origin: 70% 48%;
+  animation: truckHeroMotion 18s ease-in-out infinite;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+  will-change: transform, filter;
 }
 
 .dashboard-band:hover::after {
-  opacity: 0.90;
-  transition: opacity 0.5s ease;
+  opacity: 0.94;
+  transition: opacity 0.5s ease, filter 0.5s ease;
 }
 
 /* ── Route glow over the hero area ── */

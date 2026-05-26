@@ -316,7 +316,7 @@
     const metricsEl = document.querySelector(".dashboard-metrics");
     if (metricsEl) {
       metricsEl.innerHTML = `
-        ${renderRing(percent, "quest XP", "#69b843")}
+        ${renderRing(percent, "course progress", "#69b843")}
         ${renderRing(readiness, "skill readiness", "#5a9fb2")}
         ${renderStreakHeatmap(streak)}
       `;
@@ -583,9 +583,9 @@
     els.nextModule.disabled = moduleIndex === COURSE.modules.length - 1;
 
     els.moduleSummary.innerHTML = `
-      <div class="summary-block"><strong>Quest Objective</strong><span>${escapeHtml(module.objective)}</span></div>
-      <div class="summary-block"><strong>Wisdom Scroll</strong><span>${escapeHtml(module.memory)}</span></div>
-      <div class="summary-block"><strong>Danger Warning</strong><span>${escapeHtml(module.caution)}</span></div>
+      <div class="summary-block"><strong>Objective</strong><span>${escapeHtml(module.objective)}</span></div>
+      <div class="summary-block"><strong>Memory Model</strong><span>${escapeHtml(module.memory)}</span></div>
+      <div class="summary-block"><strong>Watch For</strong><span>${escapeHtml(module.caution)}</span></div>
     `;
 
     els.lessonList.innerHTML = "";
@@ -701,7 +701,7 @@
 
   function renderQuickCheck(container, check, seed) {
     container.innerHTML = `
-      <h3>Quick Challenge</h3>
+      <h3>Quick Check</h3>
       <p>${escapeHtml(check.question)}</p>
       <div class="quick-check-options"></div>
       <div class="feedback" aria-live="polite"></div>
@@ -767,7 +767,7 @@
           <em>Coupling, offtracking, rollover risk</em>
         </button>
         <button class="quick-start-card" data-practice-preset="missed" type="button">
-          <span>Rematch</span>
+          <span>Review</span>
           <strong>Missed questions</strong>
           <em>Only the questions that caught you</em>
         </button>
@@ -943,8 +943,8 @@
     els.simulatorArea.innerHTML = `
       <div class="simulator-hero">
         <div>
-          <p class="eyebrow">Boss battle mode</p>
-          <h3>Pick the trial gate you want to clear</h3>
+          <p class="eyebrow">Exam mode</p>
+          <h3>Choose an exam simulator</h3>
           <p>Run one-question-at-a-time simulators for the core Class A tests and each endorsement path. Every attempt saves your score and sends misses to Review.</p>
         </div>
         <div class="score-grid">${latestMarkup}</div>
@@ -960,7 +960,7 @@
                 <h3>${escapeHtml(config.label)}</h3>
                 <p>${escapeHtml(config.description)}</p>
               </div>
-              <button class="primary-button" data-simulator="${escapeAttribute(config.id)}" ${count ? "" : "disabled"} type="button">Enter Trial</button>
+              <button class="primary-button" data-simulator="${escapeAttribute(config.id)}" ${count ? "" : "disabled"} type="button">Start Exam</button>
             </article>
           `;
         }).join("")}
@@ -1139,9 +1139,9 @@
         ${buildScoreHero(score, correct, total, finishedLabel)}
         <div class="topic-grid">${topicMarkup}</div>
         <div class="practice-nav">
-          <button class="primary-button" id="simAgain" type="button">Rematch This Trial</button>
+          <button class="primary-button" id="simAgain" type="button">Retake This Exam</button>
           <button class="secondary-button" id="simReview" type="button">Review Misses</button>
-          <button class="secondary-button" id="simMenu" type="button">Trial Gate Menu</button>
+          <button class="secondary-button" id="simMenu" type="button">Exam Menu</button>
         </div>
       </article>
     `;
@@ -1181,7 +1181,7 @@
     const card = flashcardQueue[flashcardIndex];
     if (!card) return renderFlashcards();
     const progressPercent = Math.round(((flashcardIndex + 1) / flashcardQueue.length) * 100);
-    const originLabel = card.origin === "endorsement" ? "Side quest card" : "Core deck card";
+    const originLabel = card.origin === "endorsement" ? "Endorsement card" : "Core course card";
 
     // Build the 3-D card only once; subsequent calls just toggle .flipped
     let article = els.flashcardArea.querySelector(".flashcard[data-card-id]");
@@ -1218,8 +1218,8 @@
           </div>
           <div class="practice-nav flashcard-rating hidden" aria-label="Rate this flashcard">
             <button class="confidence-button" data-confidence="again" type="button"><span>Again</span><small>Review soon</small></button>
-            <button class="confidence-button" data-confidence="good" type="button"><span>Good</span><small>Build streak</small></button>
-            <button class="confidence-button" data-confidence="mastered" type="button"><span>Mastered</span><small>Level up</small></button>
+            <button class="confidence-button" data-confidence="good" type="button"><span>Good</span><small>Keep practicing</small></button>
+            <button class="confidence-button" data-confidence="mastered" type="button"><span>Mastered</span><small>Strong recall</small></button>
           </div>
         </article>
       `;
@@ -1324,8 +1324,8 @@
 
     els.endorsementsArea.innerHTML = `
       <div class="source-card">
-        <h3>Optional side quests</h3>
-        <p>Each endorsement now plugs into the same study loop: full side-quest course, scheduled flashcards, 10-question drills, simulator gates, and missed-question review.</p>
+        <h3>Optional endorsements</h3>
+        <p>Each endorsement uses the same study loop: full course, scheduled flashcards, 10-question drills, exam simulators, and missed-question review.</p>
       </div>
       <div class="endorsement-card-grid">
         ${courses.map(({ id, course, meta, progress }) => `
@@ -1339,14 +1339,14 @@
               <div><strong>${progress.complete}%</strong><span>course</span></div>
               <div><strong>${progress.bestScore}%</strong><span>best quiz</span></div>
               <div><strong>${progress.dueCards}</strong><span>cards due</span></div>
-              <div><strong>${progress.simScore ? `${progress.simScore}%` : "0%"}</strong><span>trial</span></div>
+              <div><strong>${progress.simScore ? `${progress.simScore}%` : "0%"}</strong><span>simulator</span></div>
             </div>
             <div class="progress-track"><span style="width:${progress.complete}%"></span></div>
             <div class="endorsement-actions">
-              <button class="primary-button" data-endorsement-practice="${escapeAttribute(meta.practice)}" type="button">10-Question Challenge</button>
+              <button class="primary-button" data-endorsement-practice="${escapeAttribute(meta.practice)}" type="button">10-Question Practice</button>
               <button class="secondary-button" data-endorsement-cards="${escapeAttribute(id)}" type="button">Study Cards</button>
-              <button class="secondary-button" data-endorsement-sim="${escapeAttribute(meta.simulator)}" type="button">Trial Gate</button>
-              <a href="${escapeAttribute(meta.href)}">Enter Full Quest</a>
+              <button class="secondary-button" data-endorsement-sim="${escapeAttribute(meta.simulator)}" type="button">Simulator</button>
+              <a href="${escapeAttribute(meta.href)}">Open Full Course</a>
             </div>
           </article>
         `).join("")}

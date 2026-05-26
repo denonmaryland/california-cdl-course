@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>California Class A CDL Quest</title>
+    <title>California Class A CDL Course</title>
     <meta name="description" content="A local study course built from the California Commercial Driver Handbook for Class A CDL (Commercial Driver's License) permit prep.">
     <link rel="icon" href="./favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=cdl-quest-streak-v1">
-    <link rel="stylesheet" href="./styles-quest-v2.css?v=6">
+    <link rel="stylesheet" href="./styles.css?v=cdl-course-copy-v2">
+    <link rel="stylesheet" href="./styles-quest-v2.css?v=7">
     <script src="./theme.js"></script>
   </head>
   <body>
@@ -23,7 +23,7 @@
         </div>
         <div>
           <p class="eyebrow">California DMV (Department of Motor Vehicles) handbook based</p>
-          <h1>Class A CDL Quest</h1>
+          <h1>Class A CDL Course</h1>
         </div>
       </div>
       <div class="top-actions" role="group" aria-label="Course actions">
@@ -57,16 +57,16 @@
     <main id="main" class="course-shell">
       <section class="dashboard-band" aria-labelledby="dashboardTitle">
         <div class="dashboard-copy">
-          <p class="eyebrow">Quest hub</p>
-          <h2 id="dashboardTitle">Class A CDL Quest</h2>
+          <p class="eyebrow">Course dashboard</p>
+          <h2 id="dashboardTitle">Class A CDL Course</h2>
           <p>
-            Your Quest to Earn the Road: learn the handbook in modules, prove recall with short checks,
-            and clear each trial gate until your weak spots shrink.
+            Learn the handbook in focused modules, build recall with short checks,
+            and use exam simulators until your weak spots shrink.
           </p>
           <div class="dashboard-metrics" aria-label="Progress summary">
             <div>
               <strong id="overallProgress">0%</strong>
-              <span>quest XP</span>
+              <span>course progress</span>
             </div>
             <div>
               <strong id="readinessScore">0%</strong>
@@ -78,13 +78,13 @@
             </div>
           </div>
           <div class="dashboard-actions" aria-label="Recommended study actions">
-            <button class="primary-button" id="focusContinue" type="button">Continue Quest</button>
-            <button class="secondary-button" id="focusPractice" type="button">10-Question Challenge</button>
-            <button class="secondary-button" id="focusSimulator" type="button">Trial Gates</button>
+            <button class="primary-button" id="focusContinue" type="button">Continue Study</button>
+            <button class="secondary-button" id="focusPractice" type="button">10-Question Practice</button>
+            <button class="secondary-button" id="focusSimulator" type="button">Exam Simulators</button>
           </div>
         </div>
         <div class="focus-panel" aria-label="Today's study plan">
-          <p class="eyebrow">Active quest log</p>
+          <p class="eyebrow">Today’s study plan</p>
           <div id="todaysPlan" class="todays-plan" aria-live="polite"></div>
         </div>
       </section>
@@ -126,7 +126,7 @@
         <section class="content-panel hidden" id="practicePanel" data-panel="practice">
           <div class="panel-head">
             <p class="eyebrow">Practice test</p>
-            <h2>Challenge Arena</h2>
+            <h2>Practice drills</h2>
           </div>
           <div class="practice-controls">
             <label>
@@ -163,14 +163,14 @@
         <section class="content-panel hidden" id="simulatorPanel" data-panel="simulator">
           <div class="panel-head">
             <p class="eyebrow">Exam simulators</p>
-            <h2>Trial gates and boss exams</h2>
+            <h2>Exam simulators</h2>
           </div>
           <div id="simulatorArea" class="simulator-area"></div>
         </section>
 
         <section class="content-panel hidden" id="flashcardsPanel" data-panel="flashcards">
           <div class="panel-head">
-            <p class="eyebrow">Training mode</p>
+            <p class="eyebrow">Flashcard review</p>
             <h2>Flashcards due today</h2>
           </div>
           <div id="flashcardArea" class="flashcard-area"></div>
@@ -178,23 +178,23 @@
 
         <section class="content-panel hidden" id="endorsementsPanel" data-panel="endorsements">
           <div class="panel-head">
-            <p class="eyebrow">Side quests</p>
-            <h2>Standalone endorsement quests</h2>
+            <p class="eyebrow">Endorsements</p>
+            <h2>Standalone endorsement courses</h2>
           </div>
           <div id="endorsementsArea" class="sources-area"></div>
         </section>
 
         <section class="content-panel hidden" id="reviewPanel" data-panel="review">
           <div class="panel-head">
-            <p class="eyebrow">Training grounds</p>
-            <h2>Weak spots and rematches</h2>
+            <p class="eyebrow">Review</p>
+            <h2>Missed questions and weak spots</h2>
           </div>
           <div id="reviewArea" class="review-area"></div>
         </section>
 
         <section class="content-panel hidden" id="sourcesPanel" data-panel="sources">
           <div class="panel-head">
-            <p class="eyebrow">Archive library</p>
+            <p class="eyebrow">Sources</p>
             <h2>Handbook and online references</h2>
           </div>
           <div id="sourcesArea" class="sources-area"></div>
@@ -214,13 +214,13 @@
           <div class="lesson-depth"></div>
           <div class="lesson-grid">
             <div>
-              <h3>Quest Objective</h3>
+              <h3>Objective</h3>
               <ul class="must-know"></ul>
             </div>
             <div>
-              <h3>Wisdom Scroll</h3>
+              <h3>Memory Model</h3>
               <p class="memory-hook"></p>
-              <h3>Challenge</h3>
+              <h3>Drill</h3>
               <p class="drill-text"></p>
             </div>
           </div>
@@ -239,6 +239,6 @@
     <script src="./endorsements/endorsement-data.js"></script>
     <script src="./simulator-data.js"></script>
     <script src="./simulator-expansion.js"></script>
-    <script src="./app.js?v=cdl-quest-flashcards-v1"></script>
+    <script src="./app.js?v=cdl-course-copy-v2"></script>
   </body>
 </html>
