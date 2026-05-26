@@ -68,7 +68,7 @@
     toggle: toggleTheme
   };
 
-  setTheme(safeGetTheme() || "dark");
+  setTheme(safeGetTheme() || systemTheme());
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", bindThemeButtons);

@@ -8,9 +8,9 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css?v=cdl-course-copy-v2">
-    <link rel="stylesheet" href="./styles-road-command.css?v=3">
+    <link rel="stylesheet" href="./styles-quest-v2.css?v=8">
     <script src="./theme.js"></script>
   </head>
   <body>
@@ -22,21 +22,11 @@
           <span></span><span></span><span></span>
         </div>
         <div>
-          <p class="eyebrow">California DMV handbook based</p>
+          <p class="eyebrow">California DMV (Department of Motor Vehicles) handbook based</p>
           <h1>Class A CDL Course</h1>
         </div>
       </div>
-      <nav class="mode-tabs" aria-label="Course modes">
-        <button class="tab-button active" data-mode="learn" type="button">Learn</button>
-        <button class="tab-button" data-mode="practice" type="button">Practice</button>
-        <button class="tab-button" data-mode="simulator" type="button">Simulator</button>
-        <button class="tab-button" data-mode="flashcards" type="button">Flashcards</button>
-        <button class="tab-button" data-mode="endorsements" type="button">Endorsements</button>
-        <button class="tab-button" data-mode="review" type="button">Review</button>
-        <button class="tab-button" data-mode="sources" type="button">Sources</button>
-      </nav>
       <div class="top-actions" role="group" aria-label="Course actions">
-        <div class="status-hud" id="statusHud" aria-label="Course status"></div>
         <button class="icon-button theme-toggle-btn" id="themeToggle" data-theme-toggle type="button" title="Switch to dark mode" aria-label="Switch to dark mode">
           <span class="theme-icon" aria-hidden="true"></span>
         </button>
@@ -67,50 +57,69 @@
     <main id="main" class="course-shell">
       <section class="dashboard-band" aria-labelledby="dashboardTitle">
         <div class="dashboard-copy">
-          <p class="eyebrow">Route Command</p>
+          <p class="eyebrow">Course dashboard</p>
           <h2 id="dashboardTitle">Class A CDL Course</h2>
           <p>
-            Master the handbook in focused modules, build recall with short checks,
+            Learn the handbook in focused modules, build recall with short checks,
             and use exam simulators until your weak spots shrink.
           </p>
+          <div class="dashboard-metrics" aria-label="Progress summary">
+            <div>
+              <strong id="overallProgress">0%</strong>
+              <span>course progress</span>
+            </div>
+            <div>
+              <strong id="readinessScore">0%</strong>
+              <span>skill readiness</span>
+            </div>
+            <div>
+              <strong id="streakCount">0</strong>
+              <span>daily streak</span>
+            </div>
+          </div>
           <div class="dashboard-actions" aria-label="Recommended study actions">
             <button class="primary-button" id="focusContinue" type="button">Continue Study</button>
             <button class="secondary-button" id="focusPractice" type="button">10-Question Practice</button>
             <button class="secondary-button" id="focusSimulator" type="button">Exam Simulators</button>
           </div>
         </div>
+        <div class="focus-panel" aria-label="Today's study plan">
+          <p class="eyebrow">Today’s study plan</p>
+          <div id="todaysPlan" class="todays-plan" aria-live="polite"></div>
+        </div>
       </section>
+
+      <nav class="mode-tabs" aria-label="Course modes">
+        <button class="tab-button active" data-mode="learn" type="button">Learn</button>
+        <button class="tab-button" data-mode="practice" type="button">Practice</button>
+        <button class="tab-button" data-mode="simulator" type="button">Simulator</button>
+        <button class="tab-button" data-mode="flashcards" type="button">Flashcards</button>
+        <button class="tab-button" data-mode="endorsements" type="button">Endorsements</button>
+        <button class="tab-button" data-mode="review" type="button">Review</button>
+        <button class="tab-button" data-mode="sources" type="button">Sources</button>
+      </nav>
 
       <section class="workspace">
         <aside class="module-rail" aria-label="Course modules">
           <div class="rail-head">
-            <h2>Your Route</h2>
+            <h2>Modules</h2>
             <span id="moduleCount"></span>
           </div>
           <div id="moduleList" class="module-list"></div>
-          <div class="rail-foot">
-            <button class="route-map-btn" type="button" id="viewRouteMap">
-              <span class="route-map-icon" aria-hidden="true">⊞</span>
-              View Full Route Map
-              <span class="route-map-arrow" aria-hidden="true">›</span>
-            </button>
-          </div>
         </aside>
 
         <section class="content-panel" id="learnPanel" data-panel="learn">
-          <div class="module-command-hero">
-            <div class="lesson-toolbar">
-              <div>
-                <p class="eyebrow" id="moduleMeta">Module</p>
-                <h2 id="moduleTitle">Loading course...</h2>
-              </div>
-              <div class="lesson-actions">
-                <button class="secondary-button" id="prevModule" type="button">Previous</button>
-                <button class="secondary-button" id="nextModule" type="button">Next</button>
-              </div>
+          <div class="lesson-toolbar">
+            <div>
+              <p class="eyebrow" id="moduleMeta">Module</p>
+              <h2 id="moduleTitle">Loading course...</h2>
             </div>
-            <div id="moduleSummary" class="module-summary"></div>
+            <div class="lesson-actions">
+              <button class="secondary-button" id="prevModule" type="button">Previous</button>
+              <button class="secondary-button" id="nextModule" type="button">Next</button>
+            </div>
           </div>
+          <div id="moduleSummary" class="module-summary"></div>
           <div id="lessonList" class="lesson-stack"></div>
         </section>
 
@@ -170,7 +179,7 @@
         <section class="content-panel hidden" id="endorsementsPanel" data-panel="endorsements">
           <div class="panel-head">
             <p class="eyebrow">Endorsements</p>
-            <h2>Endorsement specializations</h2>
+            <h2>Standalone endorsement courses</h2>
           </div>
           <div id="endorsementsArea" class="sources-area"></div>
         </section>
@@ -190,18 +199,6 @@
           </div>
           <div id="sourcesArea" class="sources-area"></div>
         </section>
-
-        <!-- Right sidebar: Today's Plan + Study Streak -->
-        <aside class="right-rail" aria-label="Study sidebar">
-          <div class="focus-panel" aria-label="Today's study plan">
-            <p class="eyebrow">Today's Plan</p>
-            <div id="todaysPlan" class="todays-plan" aria-live="polite"></div>
-          </div>
-          <div class="streak-rail-panel">
-            <p class="eyebrow">Study Streak</p>
-            <div class="dashboard-metrics" aria-label="Progress and streak"></div>
-          </div>
-        </aside>
       </section>
     </main>
 
@@ -242,6 +239,6 @@
     <script src="./endorsements/endorsement-data.js"></script>
     <script src="./simulator-data.js"></script>
     <script src="./simulator-expansion.js"></script>
-    <script src="./app.js?v=road-command-hud-v1"></script>
+    <script src="./app.js?v=cdl-course-copy-v2"></script>
   </body>
 </html>

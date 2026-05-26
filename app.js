@@ -312,8 +312,6 @@
     const readiness = calculateReadiness();
     const streak = state.streak.count || 0;
 
-    renderStatusHud(percent, readiness, streak);
-
     // Progress rings for course % and readiness %
     const metricsEl = document.querySelector(".dashboard-metrics");
     if (metricsEl) {
@@ -340,30 +338,6 @@
     renderTodaysPlan();
   }
 
-  function renderStatusHud(percent, readiness, streak) {
-    const hud = document.getElementById("statusHud");
-    if (!hud) return;
-    const completed = completedCount();
-    const bestRecent = state.quizHistory.length
-      ? Math.max(...state.quizHistory.slice(-12).map((quiz) => quiz.score || 0))
-      : 0;
-    const mastery = Math.max(1, Math.min(14, Math.ceil((percent + readiness + bestRecent) / 20)));
-    const xpMax = 7500;
-    const xpEarned = Math.round((percent / 100) * xpMax);
-    const stars = completed * 5 + state.quizHistory.filter((q) => (q.score || 0) >= 80).length * 10;
-    hud.innerHTML = `
-      <div class="hud-level-row">
-        <span class="hud-level-label">LEVEL ${mastery}</span>
-        <span class="hud-xp-text">${xpEarned.toLocaleString()} / ${xpMax.toLocaleString()} XP</span>
-      </div>
-      <div class="hud-progress" aria-hidden="true"><span style="width:${percent}%"></span></div>
-      <div class="hud-chips">
-        <span class="hud-chip hud-chip-star">★ ${stars}</span>
-        <span class="hud-chip hud-chip-streak">◈ ${streak}</span>
-      </div>
-    `;
-  }
-
   function renderRing(pct, label, color) {
     const r = 26;
     const circ = 2 * Math.PI * r;
@@ -386,7 +360,7 @@
     const studyDates = state.streak.studyDates || [];
     const today = dateKey(new Date());
     const days = [];
-    for (let i = 13; i >= 0; i--) {
+    for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       days.push(dateKey(d));
@@ -396,15 +370,16 @@
       const label = new Date(`${dk}T12:00:00`).toLocaleDateString(undefined, { weekday: "short" }).slice(0, 1);
       return `<div class="${cls}" title="${dk}" aria-label="${dk}">${escapeHtml(label)}</div>`;
     }).join("");
+    const streakLabel = streak === 1 ? "day streak" : "day streak";
     return `
       <div class="streak-heatmap">
-        <div class="streak-grid-wrap">
-          <div class="heatmap-grid">${cells}</div>
-        </div>
-        <div class="streak-badge" aria-label="${streak} day streak">
+        <div class="streak-badge" aria-label="${streak} ${streakLabel}">
+          <span class="streak-flame" aria-hidden="true"></span>
           <strong>${streak}</strong>
-          <small class="streak-days-label">DAYS<br>STRONG</small>
         </div>
+        <span class="heatmap-label">${streakLabel}</span>
+        <div class="heatmap-grid">${cells}</div>
+        <span class="streak-caption">last 7 days</span>
       </div>
     `;
   }
@@ -572,8 +547,6 @@
   }
 
   function renderModules() {
-    // Per-module icons keyed by position; declared inside to avoid TDZ
-    const MODULE_ICONS = ["⌖","⚙","⚙","⚠","▣","◎","☑","◍","★","◆","▤","▥","◈","▦"];
     els.moduleCount.textContent = `${COURSE.modules.length} modules`;
     els.moduleList.innerHTML = "";
     COURSE.modules.forEach((module, index) => {
@@ -586,12 +559,10 @@
       button.className = `module-item${module.id === activeModuleId ? " active" : ""}${isDone ? " module-done" : ""}`;
       button.dataset.moduleId = module.id;
       button.dataset.exam = module.exam ? module.exam.toLowerCase().replace(/\s+/g, "-") : "";
-      const icon = MODULE_ICONS[index] || "▣";
       button.innerHTML = `
         <span class="module-number">${index + 1}</span>
-        <span class="module-cat-icon" aria-hidden="true">${icon}</span>
         <span class="module-copy"><strong>${escapeHtml(module.title)}</strong><span>${escapeHtml(module.exam)} · ${escapeHtml(moduleTimeLabel(module))}</span></span>
-        <span class="module-progress"><span class="mini-progress"><span style="width:${progress}%"></span></span></span>
+        <span class="module-progress"><span>${progress}%</span><span class="mini-progress"><span style="width:${progress}%"></span></span></span>
       `;
       button.addEventListener("click", () => {
         activeModuleId = module.id;
@@ -612,9 +583,9 @@
     els.nextModule.disabled = moduleIndex === COURSE.modules.length - 1;
 
     els.moduleSummary.innerHTML = `
-      <div class="summary-block summary-block-objective"><strong>Objective</strong><span>${escapeHtml(module.objective)}</span></div>
-      <div class="summary-block summary-block-focus"><strong>Focus</strong><span>${escapeHtml(module.memory)}</span></div>
-      <div class="summary-block summary-block-caution"><strong>Watch For</strong><span>${escapeHtml(module.caution)}</span></div>
+      <div class="summary-block"><strong>Objective</strong><span>${escapeHtml(module.objective)}</span></div>
+      <div class="summary-block"><strong>Memory Model</strong><span>${escapeHtml(module.memory)}</span></div>
+      <div class="summary-block"><strong>Watch For</strong><span>${escapeHtml(module.caution)}</span></div>
     `;
 
     els.lessonList.innerHTML = "";
@@ -1449,8 +1420,7 @@
       // Measure actual height of sticky elements so we don't scroll under them
       const tabs = document.querySelector(".mode-tabs");
       const topbar = document.querySelector(".topbar");
-      const tabsInsideTopbar = Boolean(tabs && topbar && topbar.contains(tabs));
-      const stickyH = (topbar ? topbar.offsetHeight : 0) + (!tabsInsideTopbar && tabs ? tabs.offsetHeight : 0) + 12;
+      const stickyH = (topbar ? topbar.offsetHeight : 0) + (tabs ? tabs.offsetHeight : 0) + 12;
       const top = panel.getBoundingClientRect().top + window.scrollY - stickyH;
       window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     });
