@@ -4522,12 +4522,18 @@ html[data-theme="dark"] .answer-button.incorrect {
   }
 
   .lesson-toggle {
-    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-columns: 42px minmax(0, 1fr) auto;
   }
 
   .lesson-read-time {
-    justify-self: start;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
     margin-left: 0;
+  }
+
+  .lesson-status {
+    display: none;
   }
 
   .quick-start-card,
@@ -4631,6 +4637,36 @@ html[data-theme] .lesson-toggle {
 html[data-theme] .lesson-card.open .lesson-toggle {
   background:
     linear-gradient(90deg, rgba(105,184,67,0.2), rgba(226,189,85,0.04));
+}
+
+/* Keep lesson number, title, status, and read time in one clean row. */
+html[data-theme] .lesson-toggle {
+  grid-template-columns: 44px minmax(0, 1fr) auto auto;
+}
+
+html[data-theme] .lesson-status,
+html[data-theme] .lesson-read-time {
+  justify-self: end;
+}
+
+html[data-theme] .lesson-read-time {
+  grid-column: 4;
+  margin-left: 0;
+}
+
+@media (max-width: 720px) {
+  html[data-theme] .lesson-toggle {
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+  }
+
+  html[data-theme] .lesson-status {
+    display: none;
+  }
+
+  html[data-theme] .lesson-read-time {
+    grid-column: 3;
+    grid-row: 1;
+  }
 }
 
 html[data-theme] .answer-button,
