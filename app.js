@@ -571,10 +571,9 @@
     });
   }
 
-  // Per-module icons keyed by position (index) then falls back to exam type
-  const MODULE_ICONS = ["⌖","⚙","⚙","⚠","▣","◎","☑","◍","★","◆","▤","▥","◈","▦"];
-
   function renderModules() {
+    // Per-module icons keyed by position; declared inside to avoid TDZ
+    const MODULE_ICONS = ["⌖","⚙","⚙","⚠","▣","◎","☑","◍","★","◆","▤","▥","◈","▦"];
     els.moduleCount.textContent = `${COURSE.modules.length} modules`;
     els.moduleList.innerHTML = "";
     COURSE.modules.forEach((module, index) => {
