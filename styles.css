@@ -4720,7 +4720,8 @@ html[data-theme] .content-panel[data-panel="learn"] {
 }
 
 html[data-theme] .content-panel[data-panel="learn"] .module-summary {
-  gap: clamp(0.85rem, 1.2vw, 1.15rem);
+  column-gap: clamp(0.85rem, 1.2vw, 1.15rem);
+  row-gap: clamp(1.35rem, 1.7vw, 1.75rem);
   padding: clamp(1rem, 1.5vw, 1.35rem);
   border-bottom: 0;
 }
@@ -4731,14 +4732,17 @@ html[data-theme] .content-panel[data-panel="learn"] .module-summary::after {
 
 html[data-theme] .content-panel[data-panel="learn"] .summary-block {
   min-height: 8rem;
+  position: relative;
+  z-index: 1;
 }
 
 html[data-theme] .content-panel[data-panel="learn"] .lesson-stack {
   gap: 1rem;
-  padding: 1.25rem clamp(1rem, 1.5vw, 1.35rem) 1.45rem;
-  border-top: 4px solid #080705;
+  padding: clamp(1.55rem, 2vw, 1.9rem) clamp(1rem, 1.5vw, 1.35rem) 1.45rem;
+  border-top: 2px solid rgba(226, 189, 85, 0.28);
   background:
-    linear-gradient(180deg, rgba(226,189,85,0.08), transparent 5.5rem),
+    linear-gradient(180deg, rgba(0,0,0,0.24), transparent 0.6rem),
+    linear-gradient(180deg, rgba(226,189,85,0.07), transparent 5.5rem),
     linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px) 0 0 / 12px 12px,
     linear-gradient(180deg, #14170f, #0d100b);
 }
