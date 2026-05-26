@@ -773,6 +773,8 @@ body::after {
 .endorsement-quest-stats div:nth-child(1) strong { animation-delay: 0s;   }
 .endorsement-quest-stats div:nth-child(2) strong { animation-delay: 1.3s; }
 .endorsement-quest-stats div:nth-child(3) strong { animation-delay: 2.6s; }
+/* Codex compatibility: endorsement hub renders a fourth "trial" counter. */
+.endorsement-quest-stats div:nth-child(4) strong { animation-delay: 3.9s; }
 
 /* Stat label — muted, small VT323 */
 .endorsement-quest-stats span {
