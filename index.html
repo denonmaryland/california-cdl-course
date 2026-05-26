@@ -73,39 +73,28 @@
             Master the handbook in focused modules, build recall with short checks,
             and use exam simulators until your weak spots shrink.
           </p>
-          <div class="dashboard-metrics" aria-label="Progress summary">
-            <div>
-              <strong id="overallProgress">0%</strong>
-              <span>course progress</span>
-            </div>
-            <div>
-              <strong id="readinessScore">0%</strong>
-              <span>skill readiness</span>
-            </div>
-            <div>
-              <strong id="streakCount">0</strong>
-              <span>daily streak</span>
-            </div>
-          </div>
           <div class="dashboard-actions" aria-label="Recommended study actions">
             <button class="primary-button" id="focusContinue" type="button">Continue Study</button>
             <button class="secondary-button" id="focusPractice" type="button">10-Question Practice</button>
             <button class="secondary-button" id="focusSimulator" type="button">Exam Simulators</button>
           </div>
         </div>
-        <div class="focus-panel" aria-label="Today's study plan">
-          <p class="eyebrow">Today’s study plan</p>
-          <div id="todaysPlan" class="todays-plan" aria-live="polite"></div>
-        </div>
       </section>
 
       <section class="workspace">
         <aside class="module-rail" aria-label="Course modules">
           <div class="rail-head">
-            <h2>Modules</h2>
+            <h2>Your Route</h2>
             <span id="moduleCount"></span>
           </div>
           <div id="moduleList" class="module-list"></div>
+          <div class="rail-foot">
+            <button class="route-map-btn" type="button" id="viewRouteMap">
+              <span class="route-map-icon" aria-hidden="true">⊞</span>
+              View Full Route Map
+              <span class="route-map-arrow" aria-hidden="true">›</span>
+            </button>
+          </div>
         </aside>
 
         <section class="content-panel" id="learnPanel" data-panel="learn">
@@ -201,6 +190,18 @@
           </div>
           <div id="sourcesArea" class="sources-area"></div>
         </section>
+
+        <!-- Right sidebar: Today's Plan + Study Streak -->
+        <aside class="right-rail" aria-label="Study sidebar">
+          <div class="focus-panel" aria-label="Today's study plan">
+            <p class="eyebrow">Today's Plan</p>
+            <div id="todaysPlan" class="todays-plan" aria-live="polite"></div>
+          </div>
+          <div class="streak-rail-panel">
+            <p class="eyebrow">Study Streak</p>
+            <div class="dashboard-metrics" aria-label="Progress and streak"></div>
+          </div>
+        </aside>
       </section>
     </main>
 

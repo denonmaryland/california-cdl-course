@@ -2787,3 +2787,758 @@ html[data-theme] .answer-button {
     min-width: min(310px, 84vw);
   }
 }
+
+/* Flashcard cockpit cleanup: keep the training card contained and balanced. */
+html[data-theme] .flashcard-area {
+  padding: clamp(1rem, 2vw, 1.6rem);
+  min-height: 0 !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.025), transparent),
+    rgba(4, 6, 5, 0.72);
+}
+
+html[data-theme] .flashcard {
+  width: min(980px, 100%);
+  margin-inline: auto;
+  padding: clamp(0.9rem, 1.5vw, 1.25rem);
+  min-height: 0 !important;
+  border: 1px solid rgba(232,164,54,0.28) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(0,0,0,0.12)),
+    rgba(16, 18, 15, 0.92) !important;
+}
+
+html[data-theme] .flashcard-hud {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin: 0 0 1rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(232,164,54,0.18);
+}
+
+html[data-theme] .flashcard-hud .test-meta {
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+html[data-theme] .flashcard-hud .pill {
+  max-width: 100%;
+  white-space: nowrap;
+  text-align: center;
+  color: #f8eedc;
+  border-color: rgba(232,164,54,0.28);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), transparent),
+    rgba(16, 24, 29, 0.74);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 18px rgba(0,0,0,0.16);
+}
+
+html[data-theme] .flashcard-hud .pill.green {
+  color: #b8e784;
+  border-color: rgba(157, 198, 93, 0.32);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.05), transparent),
+    rgba(32, 57, 35, 0.82);
+}
+
+html[data-theme] .flashcard-deck-status {
+  display: grid;
+  gap: 0.2rem;
+  justify-items: end;
+  min-width: 118px;
+  color: rgba(245,234,212,0.72);
+}
+
+html[data-theme] .flashcard-deck-progress {
+  grid-column: 1 / -1;
+  height: 0.55rem;
+  margin: 0;
+  border: 1px solid rgba(232,164,54,0.18);
+  border-radius: 999px;
+  background: rgba(0,0,0,0.42);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.55);
+}
+
+html[data-theme] .flashcard-3d {
+  width: min(780px, 100%);
+  min-height: clamp(280px, 30vw, 390px) !important;
+  margin: 0 auto;
+  filter: drop-shadow(0 18px 28px rgba(0,0,0,0.3));
+}
+
+html[data-theme] .flashcard-3d.flipped {
+  filter: drop-shadow(0 22px 30px rgba(0,0,0,0.34));
+}
+
+html[data-theme] .flashcard-3d-inner {
+  position: relative;
+  min-height: inherit !important;
+}
+
+html[data-theme] .flashcard-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  gap: clamp(0.75rem, 1.4vw, 1.1rem);
+  min-height: 100% !important;
+  padding: clamp(1.4rem, 3vw, 2.7rem);
+  border: 1px solid rgba(232,164,54,0.28);
+  border-radius: var(--hud-radius);
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.055) 0 10%, transparent 10% 100%),
+    radial-gradient(circle at 84% 16%, rgba(255,179,71,0.1), transparent 18rem),
+    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(0,0,0,0.14)),
+    linear-gradient(135deg, #20231c, #10120f) !important;
+  box-shadow: var(--hud-inset), inset 0 0 0 1px rgba(255,255,255,0.025);
+}
+
+html[data-theme] .flashcard-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,0.08), transparent 28%),
+    linear-gradient(90deg, transparent 0 84%, rgba(255,179,71,0.055) 84% 86%, transparent 86%);
+}
+
+html[data-theme] .flashcard-face .eyebrow {
+  width: fit-content;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid rgba(232,164,54,0.28);
+  color: var(--hud-amber-2);
+  background: rgba(0,0,0,0.22);
+}
+
+html[data-theme] .flashcard-face > p:not(.eyebrow, .flip-hint) {
+  max-width: 14ch;
+  color: #f7edda;
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+
+html[data-theme] .flashcard-face-back > p:not(.eyebrow, .flip-hint) {
+  max-width: 18ch;
+  font-size: clamp(1.85rem, 4.15vw, 3.35rem);
+}
+
+html[data-theme] .flip-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: rgba(245,234,212,0.72);
+  font-weight: 700;
+}
+
+html[data-theme] .flashcard-rating {
+  width: min(780px, 100%);
+  margin: 0.9rem auto 0;
+  gap: 0.55rem;
+}
+
+html[data-theme] .flashcard-rating .confidence-button {
+  min-height: 3.75rem;
+  padding: 0.8rem 1rem;
+  text-align: center;
+  border-radius: var(--hud-radius);
+}
+
+html[data-theme] .flashcard-rating .confidence-button[data-confidence="again"] {
+  color: #ffe6dc;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), transparent),
+    linear-gradient(180deg, rgba(145, 48, 30, 0.82), rgba(90, 29, 20, 0.92)) !important;
+}
+
+html[data-theme] .flashcard-rating .confidence-button[data-confidence="good"] {
+  color: #fff1d3;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), transparent),
+    linear-gradient(180deg, rgba(140, 91, 24, 0.86), rgba(78, 52, 18, 0.94)) !important;
+}
+
+html[data-theme] .flashcard-rating .confidence-button[data-confidence="mastered"] {
+  color: #ecffd9;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), transparent),
+    linear-gradient(180deg, rgba(68, 112, 41, 0.88), rgba(36, 70, 28, 0.94)) !important;
+}
+
+[data-theme="light"] .flashcard-area {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.16), transparent),
+    rgba(185, 167, 132, 0.44);
+}
+
+[data-theme="light"] .flashcard {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.28), rgba(0,0,0,0.035)),
+    rgba(226, 211, 179, 0.9) !important;
+}
+
+[data-theme="light"] .flashcard-face {
+  background:
+    linear-gradient(90deg, rgba(90,70,40,0.07) 0 10%, transparent 10% 100%),
+    radial-gradient(circle at 84% 16%, rgba(230,141,38,0.12), transparent 18rem),
+    linear-gradient(180deg, rgba(255,255,255,0.4), rgba(0,0,0,0.035)),
+    linear-gradient(135deg, #f2e5c9, #d3bd8f) !important;
+}
+
+[data-theme="light"] .flashcard-face > p:not(.eyebrow, .flip-hint) {
+  color: #221d16;
+}
+
+[data-theme="light"] .flip-hint {
+  color: rgba(34,29,22,0.72);
+}
+
+@media (max-width: 720px) {
+  html[data-theme] .flashcard-area {
+    padding: 0.75rem;
+  }
+
+  html[data-theme] .flashcard {
+    padding: 0.75rem;
+  }
+
+  html[data-theme] .flashcard-hud {
+    grid-template-columns: 1fr;
+  }
+
+  html[data-theme] .flashcard-hud .test-meta {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+  }
+
+  html[data-theme] .flashcard-deck-status {
+    grid-template-columns: 1fr auto;
+    justify-items: stretch;
+    align-items: center;
+    min-width: 0;
+  }
+
+  html[data-theme] .flashcard-face {
+    padding: 1.1rem;
+  }
+
+  html[data-theme] .flashcard-3d {
+    min-height: clamp(300px, 78vw, 370px) !important;
+  }
+
+  html[data-theme] .flashcard-face > p:not(.eyebrow, .flip-hint) {
+    max-width: none;
+    font-size: clamp(1.55rem, 8vw, 2.35rem);
+  }
+
+  html[data-theme] .flashcard-rating {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   VISUAL REFRESH v2 — 3-Column Workspace + Right Rail + Dark-First Layout
+   Matches the AI mockup: module rail | content | today's plan + streak
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* 1. Collapse the old dashboard hero band — content is now in the HUD topbar
+      and the right rail. Keep it in the DOM so JS buttons still work. */
+.dashboard-band {
+  display: none !important;
+}
+
+/* 2. Three-column workspace ------------------------------------------------ */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(256px, 290px) minmax(0, 1fr) 298px;
+  grid-template-rows: auto;
+  align-items: start;
+  gap: 0.85rem;
+}
+
+/* Explicit column placement so hidden panels don't disturb auto-flow */
+.module-rail  { grid-column: 1; grid-row: 1 / span 20; }
+.content-panel { grid-column: 2; grid-row: 1; }
+.right-rail   { grid-column: 3; grid-row: 1 / span 20; }
+
+/* 3. Module rail — update sticky top now that mode-tabs live inside topbar */
+.module-rail {
+  top: 88px;
+  max-height: calc(100vh - 104px);
+}
+
+/* 4. Right sidebar --------------------------------------------------------- */
+.right-rail {
+  position: sticky;
+  top: 88px;
+  max-height: calc(100vh - 104px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.right-rail::-webkit-scrollbar { display: none; }
+
+/* 5. Today's Plan panel inside right rail ---------------------------------- */
+.right-rail .focus-panel {
+  padding: 1.1rem;
+  border: 1px solid var(--hud-line-strong);
+  border-radius: var(--hud-radius);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), rgba(0,0,0,0.12)),
+    rgba(10, 11, 9, 0.76);
+  box-shadow: var(--hud-inset), var(--hud-shadow);
+  backdrop-filter: blur(8px);
+}
+
+.right-rail .focus-panel > .eyebrow {
+  margin-bottom: 0.75rem;
+  color: var(--hud-amber-2);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  border-bottom: 1px solid var(--hud-line);
+  padding-bottom: 0.55rem;
+}
+
+/* Plan action items get a right-pointing chevron hint */
+.right-rail .plan-action {
+  grid-template-columns: 2rem 1fr auto;
+  padding: 0.65rem 0.75rem;
+}
+
+.right-rail .plan-arrow::after {
+  content: " ›";
+}
+
+/* 6. Study Streak panel ---------------------------------------------------- */
+.streak-rail-panel {
+  padding: 1.1rem;
+  border: 1px solid var(--hud-line-strong);
+  border-radius: var(--hud-radius);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), rgba(0,0,0,0.12)),
+    rgba(10, 11, 9, 0.76);
+  box-shadow: var(--hud-inset), var(--hud-shadow);
+}
+
+.streak-rail-panel > .eyebrow {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--hud-amber-2);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  border-bottom: 1px solid var(--hud-line);
+  padding-bottom: 0.55rem;
+}
+
+/* 7. Dashboard-metrics inside the streak panel — vertical stack ------------ */
+.streak-rail-panel .dashboard-metrics {
+  display: flex !important;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-width: none;
+  margin-top: 0;
+}
+
+.streak-rail-panel .metric-ring-wrap {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: unset;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(232,164,54,0.2);
+  border-radius: var(--hud-radius);
+  background: rgba(5,7,5,0.52);
+}
+
+.streak-rail-panel .metric-ring-wrap .ring-label-sub {
+  font-size: 0.68rem;
+}
+
+.streak-rail-panel .streak-heatmap {
+  min-height: unset;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(232,164,54,0.2);
+  border-radius: var(--hud-radius);
+  background: rgba(5,7,5,0.52);
+}
+
+/* 8. Hexagonal streak cells (matching honeycomb look in the mockup) -------- */
+.heatmap-cell {
+  width: 28px;
+  height: 28px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  border-radius: 0;
+  border: none;
+  display: grid;
+  place-items: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 28px);
+  gap: 0.25rem;
+  justify-content: start;
+}
+
+.streak-badge {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: linear-gradient(180deg, var(--hud-amber-2), var(--hud-amber));
+  border-radius: 0;
+  border: none;
+}
+
+.streak-badge strong {
+  color: #1a0d00;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: none;
+}
+
+/* 9. Light-theme right rail ------------------------------------------------ */
+[data-theme="light"] .right-rail .focus-panel,
+[data-theme="light"] .streak-rail-panel {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.36), rgba(255,255,255,0.06)),
+    rgba(195, 175, 138, 0.62);
+  border-color: rgba(100,72,30,0.34);
+}
+
+/* 10. Responsive: right rail collapses on narrower viewports --------------- */
+@media (max-width: 1240px) {
+  .workspace {
+    grid-template-columns: minmax(240px, 275px) minmax(0, 1fr);
+  }
+  .right-rail {
+    display: none;
+  }
+}
+
+@media (max-width: 780px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+  .module-rail {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOCKUP DETAIL PASS — Level HUD · Module Icons · Summary Cards · Streak
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Level / XP HUD ───────────────────────────────────────────────────── */
+.status-hud {
+  width: 200px;
+}
+
+.hud-level-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.32rem;
+}
+
+.hud-level-label {
+  color: var(--hud-amber-2);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.hud-xp-text {
+  color: rgba(245,234,212,0.62);
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.hud-chips {
+  display: flex;
+  gap: 0.45rem;
+  margin-top: 0.3rem;
+}
+
+.hud-chip {
+  padding: 0.12rem 0.45rem;
+  border-radius: 3px;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.hud-chip-star {
+  color: #1a0d00;
+  background: linear-gradient(180deg, var(--hud-amber-2), var(--hud-amber));
+  border: 1px solid rgba(255,179,71,0.6);
+}
+
+.hud-chip-streak {
+  color: var(--hud-amber-2);
+  background: rgba(230,141,38,0.14);
+  border: 1px solid rgba(230,141,38,0.3);
+}
+
+/* ── Module rail: category icon + layout tweaks ───────────────────────── */
+.module-item {
+  display: grid;
+  grid-template-columns: 2.2rem 1.4rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+}
+
+.module-cat-icon {
+  font-size: 0.85rem;
+  color: var(--rc-amber);
+  opacity: 0.78;
+  text-align: center;
+  line-height: 1;
+}
+
+[data-exam="general"]      .module-cat-icon { color: #83a85d; }
+[data-exam="air-brakes"]   .module-cat-icon { color: #d06d54; }
+[data-exam="combination"]  .module-cat-icon { color: #78a7c7; }
+[data-exam="cargo"]        .module-cat-icon { color: #c9a768; }
+[data-exam="endorsements"] .module-cat-icon { color: #9166aa; }
+
+.module-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  min-width: 48px;
+}
+
+/* ── Rail foot: View Full Route Map button ────────────────────────────── */
+.rail-foot {
+  border-top: 1px solid var(--rc-line-strong);
+  padding: 0.6rem 0.75rem;
+}
+
+.route-map-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--hud-line-strong);
+  border-radius: var(--hud-radius);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.18)),
+    rgba(10, 11, 9, 0.6);
+  color: var(--hud-amber-2);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.16s ease, border-color 0.16s ease, transform 0.14s ease;
+}
+
+.route-map-btn:hover {
+  background:
+    linear-gradient(180deg, rgba(230,141,38,0.12), rgba(0,0,0,0.28)),
+    rgba(15, 16, 13, 0.8);
+  border-color: rgba(232,164,54,0.62);
+  transform: translateY(-1px);
+}
+
+.route-map-arrow {
+  margin-left: auto;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* ── Module hero summary cards: Objective / Focus / Watch For ─────────── */
+.module-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 1.1rem;
+}
+
+.summary-block {
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--hud-radius);
+  border: 1px solid var(--hud-line);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), rgba(0,0,0,0.18)),
+    rgba(8, 10, 8, 0.72);
+  box-shadow: var(--hud-inset);
+}
+
+.summary-block strong {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Icon prefix per card type */
+.summary-block-objective strong::before {
+  content: "◎";
+  color: #91b84e;
+  font-size: 0.95rem;
+}
+.summary-block-objective {
+  border-color: rgba(145,184,78,0.28);
+}
+.summary-block-objective strong {
+  color: #91b84e;
+}
+
+.summary-block-focus strong::before {
+  content: "⬡";
+  color: #78a7c7;
+  font-size: 0.9rem;
+}
+.summary-block-focus {
+  border-color: rgba(120,167,199,0.28);
+}
+.summary-block-focus strong {
+  color: #78a7c7;
+}
+
+.summary-block-caution strong::before {
+  content: "⚠";
+  color: var(--hud-amber-2);
+  font-size: 0.85rem;
+}
+.summary-block-caution {
+  border-color: rgba(255,179,71,0.28);
+}
+.summary-block-caution strong {
+  color: var(--hud-amber-2);
+}
+
+.summary-block span {
+  display: block;
+  color: rgba(245,234,212,0.72);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+/* ── Study streak: new layout ─────────────────────────────────────────── */
+.streak-heatmap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.streak-grid-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.22rem;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  width: auto;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  border-radius: 0;
+  border: none;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: rgba(255,255,255,0.1);
+  color: rgba(245,234,212,0.5);
+}
+
+.heatmap-cell.active,
+.heatmap-cell.today {
+  background: linear-gradient(180deg, var(--hud-amber-2), var(--hud-amber));
+  color: #1a0d00;
+}
+
+.streak-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 58px;
+  height: 58px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: linear-gradient(180deg, var(--hud-amber-2), var(--hud-amber));
+  border-radius: 0;
+  border: none;
+  gap: 0.05rem;
+}
+
+.streak-badge strong {
+  color: #1a0d00;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.streak-days-label {
+  color: #1a0d00;
+  font-family: var(--font-display);
+  font-size: 0.42rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ── Plan action icons — vivid colored squares in dark mode ──────────── */
+.right-rail .plan-action-1 .plan-icon {
+  background: rgba(145,184,78,0.22) !important;
+  color: #91b84e;
+  border: 1px solid rgba(145,184,78,0.4);
+  border-radius: 4px;
+}
+
+.right-rail .plan-action-2 .plan-icon {
+  background: rgba(207,92,53,0.22) !important;
+  color: #d06d54;
+  border: 1px solid rgba(207,92,53,0.4);
+  border-radius: 4px;
+}
+
+.right-rail .plan-action-3 .plan-icon {
+  background: rgba(145,102,170,0.22) !important;
+  color: #9166aa;
+  border: 1px solid rgba(145,102,170,0.4);
+  border-radius: 4px;
+}
