@@ -4654,6 +4654,47 @@ html[data-theme] .lesson-read-time {
   margin-left: 0;
 }
 
+/* Pixel-font safety: VT323/press-style labels need extra vertical room or
+   their descenders/edges get clipped inside the quest HUD boxes. */
+html[data-theme] .pill,
+html[data-theme] .source-note,
+html[data-theme] .sim-timer,
+html[data-theme] .kbd,
+html[data-theme] .lesson-read-time,
+html[data-theme] .lesson-index,
+html[data-theme] .module-number,
+html[data-theme] .endorsement-code {
+  line-height: 1.35;
+  overflow: visible;
+}
+
+html[data-theme] .pill,
+html[data-theme] .source-note,
+html[data-theme] .sim-timer,
+html[data-theme] .lesson-read-time {
+  min-height: 2.25rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+
+html[data-theme] .kbd {
+  min-height: 1.9rem;
+  height: auto;
+  padding-top: 0.18rem;
+  padding-bottom: 0.18rem;
+}
+
+html[data-theme] .lesson-read-time {
+  min-width: 4.15rem;
+  justify-content: center;
+}
+
+html[data-theme] .module-number,
+html[data-theme] .lesson-index,
+html[data-theme] .endorsement-code {
+  padding-top: 0.08rem;
+}
+
 @media (max-width: 720px) {
   html[data-theme] .lesson-toggle {
     grid-template-columns: 42px minmax(0, 1fr) auto;
