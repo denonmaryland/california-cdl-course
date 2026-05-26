@@ -178,6 +178,18 @@
   50%, 100% { opacity: 0; }
 }
 
+/* Dashboard route/headlight glow pulse */
+@keyframes routeGlowPulse {
+  0%, 100% {
+    opacity: 0.24;
+    filter: saturate(0.95) brightness(0.96);
+  }
+  46% {
+    opacity: 0.48;
+    filter: saturate(1.16) brightness(1.08);
+  }
+}
+
 /* HP bar flash on complete */
 @keyframes hpFlash {
   0%,  100% { filter: brightness(1) saturate(1);   box-shadow: 0 0 10px rgba(105,184,67,.3); }
@@ -311,14 +323,13 @@ body::after {
    road-inspired overlay that supports the truck art without obscuring it. */
 .dashboard-band::before {
   z-index: 0;
-  opacity: 0.34;
   background:
-    radial-gradient(circle at 72% 31%, rgba(255,230,160,0.20), transparent 17rem),
-    radial-gradient(circle at 90% 18%, rgba(170,215,255,0.16), transparent 11rem),
-    linear-gradient(118deg, transparent 0 56%, rgba(226,189,85,0.26) 56.2% 56.7%, transparent 57%),
-    linear-gradient(118deg, transparent 0 64%, rgba(226,189,85,0.18) 64.2% 64.7%, transparent 65%),
+    radial-gradient(circle at 82% 53%, rgba(255,230,160,0.34), transparent 8.5rem),
+    radial-gradient(circle at 75% 62%, rgba(255,230,160,0.18), transparent 13rem),
+    linear-gradient(118deg, transparent 0 58%, rgba(226,189,85,0.24) 58.2% 58.65%, transparent 59%),
+    linear-gradient(118deg, transparent 0 66%, rgba(226,189,85,0.17) 66.2% 66.7%, transparent 67%),
     linear-gradient(180deg, rgba(125,173,189,0.16), rgba(125,173,189,0.03) 38%, transparent 60%);
-  animation: none;
+  animation: routeGlowPulse 3.8s ease-in-out infinite;
 }
 
 
@@ -906,7 +917,7 @@ body::after {
 
   /* Keep the dashboard route glow quiet on smaller screens */
   .dashboard-band::before {
-    opacity: 0.3;
+    animation-duration: 5.2s;
   }
 
   /* Tone down the tab glow — still present, less intense */
@@ -954,8 +965,7 @@ body::after {
 
   /* Keep the route glow subtle on mobile */
   .dashboard-band::before {
-    animation: none;
-    opacity: 0.24;
+    animation-duration: 6s;
   }
 
   /* Simplify card entrances to opacity-only — no translate/scale jank */

@@ -359,21 +359,27 @@
   function renderStreakHeatmap(streak) {
     const studyDates = state.streak.studyDates || [];
     const today = dateKey(new Date());
-    // Last 60 days
     const days = [];
-    for (let i = 59; i >= 0; i--) {
+    for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       days.push(dateKey(d));
     }
     const cells = days.map((dk) => {
       const cls = dk === today ? "heatmap-cell today" : studyDates.includes(dk) ? "heatmap-cell active" : "heatmap-cell";
-      return `<div class="${cls}" title="${dk}"></div>`;
+      const label = new Date(`${dk}T12:00:00`).toLocaleDateString(undefined, { weekday: "short" }).slice(0, 1);
+      return `<div class="${cls}" title="${dk}" aria-label="${dk}">${escapeHtml(label)}</div>`;
     }).join("");
+    const streakLabel = streak === 1 ? "day streak" : "day streak";
     return `
       <div class="streak-heatmap">
+        <div class="streak-badge" aria-label="${streak} ${streakLabel}">
+          <span class="streak-flame" aria-hidden="true"></span>
+          <strong>${streak}</strong>
+        </div>
+        <span class="heatmap-label">${streakLabel}</span>
         <div class="heatmap-grid">${cells}</div>
-        <span class="heatmap-label">${streak} day streak</span>
+        <span class="streak-caption">last 7 days</span>
       </div>
     `;
   }

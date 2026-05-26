@@ -2332,29 +2332,60 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
+  justify-content: center;
+  gap: 0.45rem;
   min-width: 0;
-  padding: 0.75rem 0.6rem 0.6rem;
+  min-height: 100%;
+  padding: 0.85rem 0.7rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
 }
 
+.streak-badge {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  gap: 0.35rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.streak-badge strong {
+  color: var(--ink);
+  font-size: clamp(1.6rem, 3vw, 2.35rem);
+  line-height: 1;
+}
+
+.streak-flame {
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 55% 55% 55% 8%;
+  background: linear-gradient(135deg, var(--amber), var(--red));
+  transform: rotate(-45deg);
+  box-shadow: 0 0 16px rgba(246, 189, 56, 0.28);
+}
+
 .heatmap-grid {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 3px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.28rem;
   width: 100%;
 }
 
 .heatmap-cell {
-  aspect-ratio: 1;
-  border-radius: 3px;
+  display: grid;
+  place-items: center;
+  min-height: 1.55rem;
+  border-radius: 999px;
   background: var(--line);
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 850;
 }
 
 .heatmap-cell.active {
   background: var(--green);
+  color: #fff;
   box-shadow: 0 0 0 1px rgba(31, 157, 122, 0.2);
 }
 
@@ -2365,8 +2396,16 @@ button {
 
 .heatmap-label {
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 700;
+}
+
+.streak-caption {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 /* ─── Lesson read-time badge ─────────────────────────────────── */
@@ -4160,15 +4199,36 @@ html[data-theme="dark"] .answer-button.incorrect {
 .heatmap-cell {
   border-radius: 0;
   background: #11100c;
+  color: var(--quest-muted);
 }
 
 .heatmap-cell.active {
   background: var(--quest-moss-bright);
+  color: #fff7c9;
   box-shadow: 0 0 0 1px #080705, 0 0 8px rgba(105,184,67,0.42);
 }
 
 .heatmap-cell.today {
   outline-color: var(--quest-gold-light);
+}
+
+.streak-badge strong {
+  color: var(--quest-gold-light);
+  font-family: var(--font-display);
+  text-shadow: 2px 2px 0 #080705;
+}
+
+.streak-flame {
+  border-radius: 0;
+  background:
+    linear-gradient(135deg, #ffe6a0 0 24%, transparent 24% 100%),
+    linear-gradient(135deg, var(--quest-gold) 0 58%, #7a431b 58% 100%);
+  box-shadow: 0 0 0 2px #080705, 0 0 18px rgba(226,189,85,0.32);
+}
+
+.streak-caption {
+  color: var(--quest-muted);
+  font-family: var(--font-display);
 }
 
 .back-link {
@@ -4421,13 +4481,22 @@ html[data-theme="dark"] .answer-button.incorrect {
   }
 
   .dashboard-metrics {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .metric-ring-wrap,
-  .streak-heatmap {
+  .metric-ring-wrap {
     min-height: 116px;
     padding-inline: 0.35rem;
+  }
+
+  .streak-heatmap {
+    grid-column: 1 / -1;
+    min-height: 126px;
+    padding-inline: 0.75rem;
+  }
+
+  .heatmap-cell {
+    min-height: 1.7rem;
   }
 
   .ring-label-sub,
